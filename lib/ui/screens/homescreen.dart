@@ -45,10 +45,54 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget SideMenu(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      child: ListTile(
-        leading: Icon(Icons.settings),
-        title: Text("Настройки"),
-      ),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: AppColors.backgroundMain5,
+                borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
+            constraints: BoxConstraints(
+                maxWidth: double.infinity,
+                maxHeight: 50
+            ),
+            child: ListTile(
+              leading: Icon(Icons.settings, color: AppColors.textMain),
+              title: Text("Настройки".toUpperCase(), style: TextStyle(fontSize: 20, color: AppColors.textMain)),
+            ),
+          ),
+          Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+          Container(
+            decoration: BoxDecoration(
+                color: AppColors.backgroundMain5,
+                borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
+            constraints: BoxConstraints(
+                maxWidth: double.infinity,
+                maxHeight: 50
+            ),
+            child: ListTile(
+              leading: Icon(Icons.directions_boat, color: AppColors.textMain),
+              title: Text("Рейсы".toUpperCase(), style: TextStyle(fontSize: 20, color: AppColors.textMain)),
+            ),
+          ),
+          Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+          Container(
+            decoration: BoxDecoration(
+                color: AppColors.backgroundMain5,
+                borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
+            constraints: BoxConstraints(
+                maxWidth: double.infinity,
+                maxHeight: 50
+            ),
+            child: ListTile(
+              leading: Icon(Icons.people, color: AppColors.textMain),
+              title: Text("Пассажиры".toUpperCase(), style: TextStyle(fontSize: 20, color: AppColors.textMain)),
+            ),
+          ),
+        ],
+      )
     );
   }
 }

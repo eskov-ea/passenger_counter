@@ -55,13 +55,11 @@ class _AuthScreenState extends State<AuthScreen> {
               child: CustomSizeContainer(GestureDetector(
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Image.asset(
-                        'assets/DV-rybak-logo-cropped.png',
-                        height: 300,
-                      ),
+                    Image.asset(
+                      'assets/DV-rybak-logo-cropped.png',
+                      height: 260,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 30, right: 30, top: 30),

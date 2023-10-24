@@ -28,6 +28,7 @@ abstract class DarkColors {
 
   static const textMain = Color(0xFFFFFFFF);
   static const textSecondary = Color(0xFFD7D7D7);
+  static const textFaded = Color(0xFF797979);
   static const textInfo1 = Color(0xFFA66600);
   static const textInfo2 = Color(0xFFBF8830);
 }
@@ -53,6 +54,7 @@ abstract class AppColors {
 
   static Color textMain = isDark ? DarkColors.textMain : Color(0xFFFFFFFF);
   static Color textSecondary = isDark ? DarkColors.textSecondary : Color(0xFFD7D7D7);
+  static Color textFaded = isDark ? DarkColors.textFaded : Color(0xFFD7D7D7);
   static Color textInfo1 = isDark ? DarkColors.textInfo1 : Color(0xFFA66600);
   static Color textInfo2 = isDark ? DarkColors.textInfo2 : Color(0xFFBF8830);
 }

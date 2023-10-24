@@ -25,7 +25,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordFocus = FocusNode();
   bool _hidePassword = true;
   final bool isError = false;
-  late String errorMessage;
+  late String _errorMessage;
+  AuthViewCubitState? _authState;
 
   void _onNextFieldFocus(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
@@ -48,20 +49,20 @@ class _AuthScreenState extends State<AuthScreen> {
     return  BlocListener<AuthViewCubit, AuthViewCubitState>(
         listener: _onAuthViewCubitStateChange,
         child:  Scaffold(
+          backgroundColor: AppColors.backgroundMain1,
           body: SafeArea(
             child: SingleChildScrollView(
               child: CustomSizeContainer(GestureDetector(
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                 child: Column(
                   children: [
-                    Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 60),
-                          child: Image.asset(
-                            '',
-                            height: 150,
-                          ),
-                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Image.asset(
+                        'assets/DV-rybak-logo-cropped.png',
+                        height: 300,
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
                       child: LoginFormWidget(context),
@@ -77,13 +78,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
 
   Widget LoginFormWidget(context) {
-    final cubit = context.watch<AuthViewCubit>();
     return Form(
       child: Column(children: [
-        if (cubit.state is AuthViewCubitErrorState)
-          Text(cubit.state.errorMessage,
+        if (_authState is AuthViewCubitErrorState)
+          Text(_errorMessage,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18, color: Colors.red),),
+            style: TextStyle(fontSize: 18, color: AppColors.textInfo2),),
         TextFormField(
           controller: _loginTextFieldController,
           focusNode: _loginFocus,
@@ -91,17 +91,20 @@ class _AuthScreenState extends State<AuthScreen> {
           onFieldSubmitted: (_) {
             _onNextFieldFocus(context, _loginFocus, _passwordFocus);
           },
-          style: const TextStyle(fontSize: 20, color: DarkColors.textMain, decoration: TextDecoration.none),
-          decoration: const InputDecoration(
-            disabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: DarkColors.textMain, width: 2.5, )
+          cursorColor: AppColors.textSecondary,
+          style: const TextStyle(fontSize: 20, color: DarkColors.backgroundMain1, decoration: TextDecoration.none),
+          decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.never,
+            fillColor: AppColors.textMain,
+            filled: true,
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(32))
             ),
-
             labelText: 'Логин',
-            labelStyle: TextStyle(fontSize: 22),
-            prefixIcon: Icon(Icons.person),
-            prefixIconColor: Colors.blue,
-            focusColor: Colors.blue,
+            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain1),
+            prefixIcon: const Icon(Icons.person),
+            prefixIconColor: AppColors.backgroundMain1,
+            focusColor: AppColors.backgroundMain3,
           ),
         ),
         const SizedBox(height: 20),
@@ -109,11 +112,20 @@ class _AuthScreenState extends State<AuthScreen> {
           controller: _passwordTextFieldController,
           focusNode: _passwordFocus,
           obscureText: _hidePassword,
-          style: const TextStyle(fontSize: 20, color: DarkColors.textMain, decoration: TextDecoration.none),
+          style: const TextStyle(fontSize: 20, color: DarkColors.backgroundMain1, decoration: TextDecoration.none),
           decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.never,
+            fillColor: AppColors.textMain,
+            filled: true,
+            border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32))
+            ),
             labelText: 'Пароль',
             labelStyle: const TextStyle(fontSize: 22),
             prefixIcon: const Icon(Icons.lock),
+            prefixIconColor: AppColors.backgroundMain1,
+            focusColor: AppColors.backgroundMain3,
+            suffixIconColor: AppColors.backgroundMain3,
             suffixIcon: GestureDetector(
               child:
               Icon(_hidePassword ? Icons.visibility : Icons.visibility_off),
@@ -136,27 +148,18 @@ class _AuthScreenState extends State<AuthScreen> {
               'Забыли пароль?',
               textAlign: TextAlign.left,
               style: TextStyle(
-                  color: Colors.blueAccent,
+                  color: AppColors.textSecondary,
                   fontSize: 18
               ),
             ),
           ),
         ),
-        SizedBox(height: 20,),
+        const SizedBox(height: 20,),
         ElevatedButton(
-          child: cubit.state is AuthViewCubitAuthProgressState
-              ? const SizedBox(
-            width: 15,
-            height: 15,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          )
-              : const Text(
-            'Логин',
-            style: TextStyle(fontSize: 20),
-          ),
           style: ElevatedButton.styleFrom(
-            primary: Colors.indigo,
-            minimumSize: const Size.fromHeight(45),
+            backgroundColor: AppColors.textMain,
+            foregroundColor: AppColors.backgroundMain5,
+            minimumSize: const Size.fromHeight(60),
           ),
           onPressed: () {
             FocusManager.instance.primaryFocus?.unfocus();
@@ -164,7 +167,18 @@ class _AuthScreenState extends State<AuthScreen> {
                 _passwordTextFieldController.text, context
             );
           },
+          child: _authState is AuthViewCubitAuthProgressState
+              ? const SizedBox(
+            width: 15,
+            height: 15,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
+              : Text(
+            'Войти',
+            style: TextStyle(fontSize: 20, color: AppColors.backgroundMain1),
+          ),
         ),
+        const SizedBox(height: 20,)
       ]),
     );
   }
@@ -176,11 +190,19 @@ class _AuthScreenState extends State<AuthScreen> {
       ) {
     if (state is AuthViewCubitSuccessAuthState) {
       Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
+    } else {
+      setState(() {
+        _authState = state;
+        if (state is AuthViewCubitErrorState) {
+          _errorMessage = state.error;
+        }
+      });
     }
   }
 
   void _login(username, pass, context) async {
     BlocProvider.of<AuthViewCubit>(context).auth(email:username, password:pass);
+    Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
   }
 
 }

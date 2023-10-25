@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/homescreen.dart';
 import 'package:pleyona_app/ui/widgets/side_menu_widget.dart';
-import 'package:rive/rive.dart';
+
+import '../widgets/passenger_options_sliver.dart';
 
 
 class EntryPoint extends StatefulWidget {
@@ -16,9 +18,9 @@ class _EntryPointState extends State<EntryPoint> {
 
 
   final pageName = SideMenuItemName.HOMESCREEN;
-  bool isMenuOpen = false;
+  bool isMenuOpen = true;
 
-  void openMenu() {
+  void toggleMenu() {
     setState(() {
       isMenuOpen = !isMenuOpen;
     });
@@ -35,12 +37,10 @@ class _EntryPointState extends State<EntryPoint> {
             children: [
               Container(
                 color: AppColors.backgroundNeutral,
-                child: Center(
-                  child: Text("Hello World!", style: TextStyle(fontSize: 60),),
-                )
+                child: HomeScreen()
               ),
-              isMenuOpen ? SideMenu(currentPageName: pageName, showMenu: openMenu) : SizedBox.shrink(),
-              !isMenuOpen ? SideMenuBurger(showMenu: openMenu) : SizedBox.shrink(),
+              isMenuOpen ? SideMenu(currentPageName: pageName, showMenu: toggleMenu) : SizedBox.shrink(),
+              SideMenuBurger(isMenuOpen: isMenuOpen, toggleMenu: toggleMenu),
             ],
           ),
         ),

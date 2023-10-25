@@ -32,87 +32,101 @@ class _SideMenuState extends State<SideMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 288,
-      height: double.infinity,
-      color: AppColors.backgroundMain3,
-      child: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 100,
-            padding: EdgeInsets.only(left: 10, top: 20, bottom: 20),
-            child: ListTile(
-              leading: Icon(Icons.person, color: AppColors.textSecondary,),
-              title: Text("USERNAME", style: TextStyle(
-                  fontSize: 24, color: AppColors.textMain
-              ),),
-              subtitle: Text("pleyona@easttour.ru", style: TextStyle(
-                  fontSize: 16, color: AppColors.textSecondary
-              ),),
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          color: Colors.black26,
+        ),
+        Container(
+          width: 288,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(20),
+              bottomRight: Radius.circular(20)
             ),
+            color: AppColors.backgroundMain3,
           ),
-          SizedBox(height: 100,),
-          SizedBox(
-            height: 350,
-            child: ListView(
-              children: [
-                AppDrawerTile(
-                    pageName: SideMenuItemName.HOMESCREEN,
-                    currentPageName: _currentPage,
-                    onTap: (){
-                      setState(() {
-                        print("Clicked!");
-                        _currentPage = SideMenuItemName.HOMESCREEN;
-                      });
-                    },
-                    icon: Icon(Icons.settings, color: AppColors.textMain),
-                    name: "Настройки"
+          child: Column(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 120,
+                padding: EdgeInsets.only(left: 10, top: 60, bottom: 20),
+                child: ListTile(
+                  leading: Icon(Icons.person, color: AppColors.textSecondary,),
+                  title: Text("USERNAME", style: TextStyle(
+                      fontSize: 24, color: AppColors.textMain
+                  ),),
+                  subtitle: Text("pleyona@easttour.ru", style: TextStyle(
+                      fontSize: 16, color: AppColors.textSecondary
+                  ),),
                 ),
-                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                AppDrawerTile(
-                    pageName: SideMenuItemName.ROUTES,
-                    currentPageName: _currentPage,
-                    onTap: (){
-                      print("Clicked!");
-                      setState(() {
-                        _currentPage = SideMenuItemName.ROUTES;
-                      });
-                    },
-                    icon: Icon(Icons.directions_boat, color: AppColors.textMain),
-                    name: "Рейсы"
-                ),
-                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                AppDrawerTile(
-                    pageName: SideMenuItemName.PASSENGERS,
-                    currentPageName: _currentPage,
-                    onTap: (){
-                      print("Clicked!");
-                      setState(() {
-                        _currentPage = SideMenuItemName.PASSENGERS;
-                      });
-                    },
-                    icon: Icon(Icons.people, color: AppColors.textMain),
-                    name: "Пассажиры"
-                ),
-                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                AppDrawerTile(
-                    pageName: SideMenuItemName.SUITES,
-                    currentPageName: _currentPage,
-                    onTap: (){
-                      setState(() {
-                        _currentPage = SideMenuItemName.SUITES;
-                      });
-                    },
-                    icon: Icon(Icons.hotel_rounded, color: AppColors.textMain),
-                    name: "Номерной фонд"
-                )
+              ),
+              SizedBox(height: 50,),
+              SizedBox(
+                height: 350,
+                child: ListView(
+                  children: [
+                    AppDrawerTile(
+                        pageName: SideMenuItemName.HOMESCREEN,
+                        currentPageName: _currentPage,
+                        onTap: (){
+                          setState(() {
+                            print("Clicked!");
+                            _currentPage = SideMenuItemName.HOMESCREEN;
+                          });
+                        },
+                        icon: Icon(Icons.settings, color: AppColors.textMain),
+                        name: "Настройки"
+                    ),
+                    Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+                    AppDrawerTile(
+                        pageName: SideMenuItemName.ROUTES,
+                        currentPageName: _currentPage,
+                        onTap: (){
+                          print("Clicked!");
+                          setState(() {
+                            _currentPage = SideMenuItemName.ROUTES;
+                          });
+                        },
+                        icon: Icon(Icons.directions_boat, color: AppColors.textMain),
+                        name: "Рейсы"
+                    ),
+                    Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+                    AppDrawerTile(
+                        pageName: SideMenuItemName.PASSENGERS,
+                        currentPageName: _currentPage,
+                        onTap: (){
+                          print("Clicked!");
+                          setState(() {
+                            _currentPage = SideMenuItemName.PASSENGERS;
+                          });
+                        },
+                        icon: Icon(Icons.people, color: AppColors.textMain),
+                        name: "Пассажиры"
+                    ),
+                    Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+                    AppDrawerTile(
+                        pageName: SideMenuItemName.SUITES,
+                        currentPageName: _currentPage,
+                        onTap: (){
+                          setState(() {
+                            _currentPage = SideMenuItemName.SUITES;
+                          });
+                        },
+                        icon: Icon(Icons.hotel_rounded, color: AppColors.textMain),
+                        name: "Номерной фонд"
+                    )
 
-              ],
-            ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -162,11 +176,13 @@ class AppDrawerTile extends StatelessWidget {
 
 class SideMenuBurger extends StatefulWidget {
   const SideMenuBurger({
-    required this.showMenu,
+    required this.isMenuOpen,
+    required this.toggleMenu,
     super.key
   });
 
-  final Function() showMenu;
+  final bool isMenuOpen;
+  final Function() toggleMenu;
   @override
   State<SideMenuBurger> createState() => _SideMenuBurgerState();
 }
@@ -176,13 +192,13 @@ class _SideMenuBurgerState extends State<SideMenuBurger> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: GestureDetector(
-        onTap: widget.showMenu,
+        onTap: widget.toggleMenu,
         child: Container(
-          margin: EdgeInsets.only(left: 16, top: 10),
+          margin: EdgeInsets.only(left: 16, top: 15),
           height: 40,
           width: 40,
           decoration: BoxDecoration(
-            color: AppColors.textInfo2,
+            color: AppColors.textMain,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
@@ -192,7 +208,7 @@ class _SideMenuBurgerState extends State<SideMenuBurger> {
               )
             ]
           ),
-          child: Icon(Icons.menu),
+          child: widget.isMenuOpen ? Icon(Icons.close) : Icon(Icons.menu),
         ),
       ),
     );

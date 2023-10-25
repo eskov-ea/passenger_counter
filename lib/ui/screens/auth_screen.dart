@@ -58,7 +58,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Image.asset(
-                      'assets/DV-rybak-logo-cropped.png',
+                      'assets/images/DV-rybak-logo-cropped.png',
                       height: 260,
                     ),
                     Padding(

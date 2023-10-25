@@ -13,6 +13,7 @@ abstract class DarkColors {
   static const backgroundMain3 = Color(0xFF05326D);
   static const backgroundMain4 = Color(0xFF4282D3);
   static const backgroundMain5 = Color(0xFF6997D3);
+  static const backgroundNeutral = Color(0xFFECECEC);
 
   static const secondary1 = Color(0xFF2A17B1);
   static const secondary2 = Color(0xFF392E85);
@@ -39,6 +40,7 @@ abstract class AppColors {
   static Color backgroundMain3 = isDark ? DarkColors.backgroundMain3 : Color(0xFF05326D);
   static Color backgroundMain4 = isDark ? DarkColors.backgroundMain4 : Color(0xFF4282D3);
   static Color backgroundMain5 = isDark ? DarkColors.backgroundMain5 : Color(0xFF6997D3);
+  static Color backgroundNeutral = isDark ? DarkColors.backgroundNeutral : Color(0xFFECECEC);
 
   static Color secondary1 = isDark ? DarkColors.secondary1 : Color(0xFF2A17B1);
   static Color secondary2 = isDark ? DarkColors.secondary2 : Color(0xFF392E85);

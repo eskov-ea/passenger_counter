@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import '../ui/pages/loader_widget.dart';
 import '../ui/screens/auth_screen.dart';
-import '../ui/screens/homescreen.dart';
+import '../ui/screens/entry_point.dart';
 
 
 class ScreenFactory {
@@ -10,7 +10,7 @@ class ScreenFactory {
   }
 
   Widget makeHomeScreen() {
-    return const HomeScreen();
+    return const EntryPoint();
   }
 
   Widget makeAuthScreen() {

@@ -4,7 +4,9 @@ import 'package:pleyona_app/theme.dart';
 
 
 class PassengerOptionsSliver extends StatelessWidget {
-  const PassengerOptionsSliver({super.key});
+  PassengerOptionsSliver({super.key});
+
+  final Color cardColor = AppColors.backgroundMain2;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.secondary2,
+                color: cardColor,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
@@ -53,7 +55,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.secondary2,
+                color: cardColor,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
@@ -86,7 +88,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.secondary2,
+                color: cardColor,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
@@ -119,7 +121,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.secondary2,
+                color: cardColor,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(

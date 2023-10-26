@@ -85,7 +85,7 @@ class _EntryPointState extends State<EntryPoint> with SingleTickerProviderStateM
                   scale: scaleAnimation.value,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 20 : 0)),
-                    child: PassengerDetailsScreen()
+                    child: HomeScreen()
                   )
                 )
               ),

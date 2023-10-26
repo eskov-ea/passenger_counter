@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pleyona_app/theme.dart';
 
 import '../widgets/passenger_options_sliver.dart';
 
@@ -16,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       height: double.infinity,
       width: double.infinity,
+      color: AppColors.backgroundNeutral,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

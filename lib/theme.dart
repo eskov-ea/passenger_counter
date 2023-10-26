@@ -32,6 +32,8 @@ abstract class DarkColors {
   static const textFaded = Color(0xFF797979);
   static const textInfo1 = Color(0xFFA66600);
   static const textInfo2 = Color(0xFFBF8830);
+
+  static const errorMain = Color(0xFFC40000);
 }
 
 abstract class AppColors {
@@ -59,6 +61,8 @@ abstract class AppColors {
   static Color textFaded = isDark ? DarkColors.textFaded : Color(0xFFD7D7D7);
   static Color textInfo1 = isDark ? DarkColors.textInfo1 : Color(0xFFA66600);
   static Color textInfo2 = isDark ? DarkColors.textInfo2 : Color(0xFFBF8830);
+
+  static Color errorMain = isDark ? DarkColors.errorMain : Color(0xFFC40000);
 }
 
 

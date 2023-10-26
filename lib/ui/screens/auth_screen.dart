@@ -85,7 +85,7 @@ class _AuthScreenState extends State<AuthScreen> {
         TextFormField(
           controller: _loginTextFieldController,
           focusNode: _loginFocus,
-          autofocus: true,
+          autofocus: false,
           onFieldSubmitted: (_) {
             _onNextFieldFocus(context, _loginFocus, _passwordFocus);
           },

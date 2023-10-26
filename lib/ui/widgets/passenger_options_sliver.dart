@@ -9,6 +9,7 @@ class PassengerOptionsSliver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: AppColors.backgroundNeutral,
       child: Container(
         height: 200,
         child: ListView(
@@ -19,7 +20,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.backgroundMain2,
+                color: AppColors.secondary2,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
@@ -52,7 +53,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.backgroundMain2,
+                color: AppColors.secondary2,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
@@ -85,7 +86,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.backgroundMain2,
+                color: AppColors.secondary2,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
@@ -118,7 +119,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: AppColors.backgroundMain2,
+                color: AppColors.secondary2,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(

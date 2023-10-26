@@ -32,101 +32,93 @@ class _SideMenuState extends State<SideMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          color: Colors.black26,
-        ),
-        Container(
-          width: 288,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(20),
-              bottomRight: Radius.circular(20)
+    return Container(
+      width: 288,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        // borderRadius: BorderRadius.only(
+        //   topRight: Radius.circular(20),
+        //   bottomRight: Radius.circular(20)
+        // ),
+        color: AppColors.backgroundMain3,
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 120,
+            padding: EdgeInsets.only(left: 10, top: 60, bottom: 20),
+            child: ListTile(
+              leading: Icon(Icons.person, color: AppColors.textSecondary,),
+              title: Text("USERNAME", style: TextStyle(
+                  fontSize: 24, color: AppColors.textMain
+              ),),
+              subtitle: Text("pleyona@easttour.ru", style: TextStyle(
+                  fontSize: 16, color: AppColors.textSecondary
+              ),),
             ),
-            color: AppColors.backgroundMain3,
           ),
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 120,
-                padding: EdgeInsets.only(left: 10, top: 60, bottom: 20),
-                child: ListTile(
-                  leading: Icon(Icons.person, color: AppColors.textSecondary,),
-                  title: Text("USERNAME", style: TextStyle(
-                      fontSize: 24, color: AppColors.textMain
-                  ),),
-                  subtitle: Text("pleyona@easttour.ru", style: TextStyle(
-                      fontSize: 16, color: AppColors.textSecondary
-                  ),),
+          SizedBox(height: 50,),
+          SizedBox(
+            height: 350,
+            child: ListView(
+              children: [
+                AppDrawerTile(
+                    pageName: SideMenuItemName.HOMESCREEN,
+                    currentPageName: _currentPage,
+                    onTap: (){
+                      setState(() {
+                        print("Clicked!");
+                        _currentPage = SideMenuItemName.HOMESCREEN;
+                      });
+                    },
+                    icon: Icon(Icons.settings, color: AppColors.textMain),
+                    name: "Настройки"
                 ),
-              ),
-              SizedBox(height: 50,),
-              SizedBox(
-                height: 350,
-                child: ListView(
-                  children: [
-                    AppDrawerTile(
-                        pageName: SideMenuItemName.HOMESCREEN,
-                        currentPageName: _currentPage,
-                        onTap: (){
-                          setState(() {
-                            print("Clicked!");
-                            _currentPage = SideMenuItemName.HOMESCREEN;
-                          });
-                        },
-                        icon: Icon(Icons.settings, color: AppColors.textMain),
-                        name: "Настройки"
-                    ),
-                    Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                    AppDrawerTile(
-                        pageName: SideMenuItemName.ROUTES,
-                        currentPageName: _currentPage,
-                        onTap: (){
-                          print("Clicked!");
-                          setState(() {
-                            _currentPage = SideMenuItemName.ROUTES;
-                          });
-                        },
-                        icon: Icon(Icons.directions_boat, color: AppColors.textMain),
-                        name: "Рейсы"
-                    ),
-                    Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                    AppDrawerTile(
-                        pageName: SideMenuItemName.PASSENGERS,
-                        currentPageName: _currentPage,
-                        onTap: (){
-                          print("Clicked!");
-                          setState(() {
-                            _currentPage = SideMenuItemName.PASSENGERS;
-                          });
-                        },
-                        icon: Icon(Icons.people, color: AppColors.textMain),
-                        name: "Пассажиры"
-                    ),
-                    Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                    AppDrawerTile(
-                        pageName: SideMenuItemName.SUITES,
-                        currentPageName: _currentPage,
-                        onTap: (){
-                          setState(() {
-                            _currentPage = SideMenuItemName.SUITES;
-                          });
-                        },
-                        icon: Icon(Icons.hotel_rounded, color: AppColors.textMain),
-                        name: "Номерной фонд"
-                    )
+                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+                AppDrawerTile(
+                    pageName: SideMenuItemName.ROUTES,
+                    currentPageName: _currentPage,
+                    onTap: (){
+                      print("Clicked!");
+                      setState(() {
+                        _currentPage = SideMenuItemName.ROUTES;
+                      });
+                    },
+                    icon: Icon(Icons.directions_boat, color: AppColors.textMain),
+                    name: "Рейсы"
+                ),
+                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+                AppDrawerTile(
+                    pageName: SideMenuItemName.PASSENGERS,
+                    currentPageName: _currentPage,
+                    onTap: (){
+                      print("Clicked!");
+                      setState(() {
+                        _currentPage = SideMenuItemName.PASSENGERS;
+                      });
+                    },
+                    icon: Icon(Icons.people, color: AppColors.textMain),
+                    name: "Пассажиры"
+                ),
+                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
+                AppDrawerTile(
+                    pageName: SideMenuItemName.SUITES,
+                    currentPageName: _currentPage,
+                    onTap: (){
+                      setState(() {
+                        _currentPage = SideMenuItemName.SUITES;
+                      });
+                    },
+                    icon: Icon(Icons.hotel_rounded, color: AppColors.textMain),
+                    name: "Номерной фонд"
+                )
 
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

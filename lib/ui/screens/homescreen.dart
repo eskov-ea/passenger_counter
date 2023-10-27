@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/widgets/current_route_status_widget.dart';
 
 import '../widgets/passenger_options_sliver.dart';
 
@@ -24,12 +25,26 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SizedBox(height: 100,),
             Container(
-              padding: EdgeInsets.only(left: 20, bottom: 20),
+              padding: EdgeInsets.only(left: 15, bottom: 15),
               child: Text("Пассажиры",
                 style: TextStyle(fontSize: 34, color: Color(0xFF000000), fontWeight: FontWeight.w600),
               ),
             ),
             PassengerOptionsSliver(),
+            Container(
+              padding: EdgeInsets.only(left: 15, bottom: 15, top: 15),
+              child: Text("Ближайший рейс",
+                style: TextStyle(fontSize: 34, color: Color(0xFF000000), fontWeight: FontWeight.w600),
+              ),
+            ),
+            CurrentRouteStatusWidget(),
+            Container(
+              padding: EdgeInsets.only(left: 15, bottom: 15, top: 15),
+              child: Text("Календарь рейсов",
+                style: TextStyle(fontSize: 34, color: Color(0xFF000000), fontWeight: FontWeight.w600),
+              ),
+            ),
+            SizedBox(height: 200,)
           ],
         ),
       ),

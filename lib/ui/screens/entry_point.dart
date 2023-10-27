@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/calendar_screen.dart';
 import 'package:pleyona_app/ui/screens/homescreen.dart';
 import 'package:pleyona_app/ui/screens/passenger_details_screen.dart';
 import 'package:pleyona_app/ui/widgets/side_menu_widget.dart';
@@ -85,7 +86,7 @@ class _EntryPointState extends State<EntryPoint> with SingleTickerProviderStateM
                   scale: scaleAnimation.value,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 20 : 0)),
-                    child: PassengerDetailsScreen()
+                    child: CalendarScreen()
                   )
                 )
               ),

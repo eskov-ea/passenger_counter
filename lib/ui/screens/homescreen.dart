@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/current_route_status_widget.dart';
-
 import '../widgets/passenger_options_sliver.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -44,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(fontSize: 34, color: Color(0xFF000000), fontWeight: FontWeight.w600),
               ),
             ),
-            SizedBox(height: 200,)
+            SizedBox(height: 50,)
           ],
         ),
       ),

@@ -34,6 +34,7 @@ abstract class DarkColors {
   static const textInfo2 = Color(0xFFBF8830);
 
   static const errorMain = Color(0xFFC40000);
+  static const errorFieldFillColor = Color(0xFFFFEAEA);
 }
 
 abstract class AppColors {
@@ -63,6 +64,7 @@ abstract class AppColors {
   static Color textInfo2 = isDark ? DarkColors.textInfo2 : Color(0xFFBF8830);
 
   static Color errorMain = isDark ? DarkColors.errorMain : Color(0xFFC40000);
+  static Color errorFieldFillColor = isDark ? DarkColors.errorFieldFillColor : Color(0xFFFFEAEA);
 }
 
 

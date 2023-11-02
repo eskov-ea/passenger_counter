@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 
 
@@ -27,7 +28,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () {
-                  print("Clicked!");
+                  Navigator.of(context).pushNamed(MainNavigationRouteNames.passengerEditingScreen);
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),

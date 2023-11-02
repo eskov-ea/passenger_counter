@@ -20,6 +20,7 @@ abstract class DarkColors {
   static const secondary3 = Color(0xFF150873);
   static const secondary4 = Color(0xFF5D4BD8);
   static const secondary5 = Color(0xFF7D71D8);
+  static const secondary6 = Color(0xFFF0EFF8);
 
   static const accent1 = Color(0xFF00A67C);
   static const accent2 = Color(0xFF1F7C65);
@@ -50,6 +51,7 @@ abstract class AppColors {
   static Color secondary3 = isDark ? DarkColors.secondary3 : Color(0xFF150873);
   static Color secondary4 = isDark ? DarkColors.secondary4 : Color(0xFF5D4BD8);
   static Color secondary5 = isDark ? DarkColors.secondary5 : Color(0xFF7D71D8);
+  static Color secondary6 = isDark ? DarkColors.secondary6 : Color(0xFFECEAFC);
 
   static Color accent1 = isDark ? DarkColors.accent1 : Color(0xFF00A67C);
   static Color accent2 = isDark ? DarkColors.accent2 : Color(0xFF1F7C65);

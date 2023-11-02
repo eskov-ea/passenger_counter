@@ -19,6 +19,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
 
+  void goToDate(int year, int month, int day) {
+    final date = DateTime(year, month, day);
+    setState(() {
+      _selectedDay = date;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -36,7 +43,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.only(top: 10),
             padding: EdgeInsets.symmetric(horizontal: 15),
-            child: InputDateToSearchWidget(),
+            child: InputDateToSearchWidget(calendarCallback: goToDate),
           ),
           Container(
             margin: EdgeInsets.only(top: 20),
@@ -59,6 +66,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 });
               },
             ),
+          ),
+          SizedBox(height: 40,),
+          Text("Рейсы",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 32, color: AppColors.textMain),
+          ),
+          SizedBox(height: 10,),
+          Text("Нет запланированных рейсов на выбранную дату",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
           )
         ],
       ),

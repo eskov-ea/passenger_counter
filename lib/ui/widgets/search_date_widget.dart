@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
 
 class InputDateToSearchWidget extends StatefulWidget {
-  const InputDateToSearchWidget({super.key});
+  const InputDateToSearchWidget({
+    required this.calendarCallback,
+    super.key
+  });
+
+  final Function(int year, int month, int day) calendarCallback;
 
   @override
   State<InputDateToSearchWidget> createState() => _InputDateToSearchWidgetState();
@@ -25,6 +30,7 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
   String? monthErrorMessage;
   String? yearErrorMessage;
   bool isError = false;
+  final String errorMessageString = "Введите корректную дату";
 
   void _onNextFieldFocus(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
@@ -51,6 +57,14 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
     setState(() {
       isError = dayErrorMessage == null && monthErrorMessage == null && yearErrorMessage == null ? false : true;
     });
+  }
+
+  void searchByDate() {
+    final int day = int.parse(_dayFieldController.text);
+    final int month = int.parse(_monthFieldController.text);
+    final int year = int.parse(_yearFieldController.text);
+
+    widget.calendarCallback(year, month, day);
   }
 
   @override
@@ -115,6 +129,7 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   focusNode: _monthFieldFocus,
+                  controller: _monthFieldController,
                   style: TextStyle(fontSize: 20, color: AppColors.textMain),
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
@@ -139,7 +154,8 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
                 width: MediaQuery.of(context).size.width * 0.3,
                 child: TextFormField(
                   keyboardType: TextInputType.number,
-                  maxLength: 2,
+                  maxLength: 4,
+                  controller: _yearFieldController,
                   style: TextStyle(fontSize: 20, color: AppColors.textMain),
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
@@ -160,37 +176,42 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
                 ),
               ),
               SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
-              Ink(
-                width: MediaQuery.of(context).size.width * 0.15,
-                height: 50,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: isError ? Color(0x76FFFFFF) : AppColors.textMain,
-                        width: 1
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    color: isError
-                        ? Color(0x22FFFFFF)
-                        : Color(0x76FFFFFF)
-                ),
-                child: InkWell(
-                  highlightColor: AppColors.accent1,
-                  child: Center(
-                    child: Text("OK",
-                      style: TextStyle(fontSize: 20, color: isError ? Color(0x76FFFFFF) : AppColors.textMain),
+              GestureDetector(
+                onTap: searchByDate,
+                child: Ink(
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: isError ? Color(0x76FFFFFF) : AppColors.textMain,
+                          width: 1
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      color: isError
+                          ? Color(0x22FFFFFF)
+                          : Color(0x76FFFFFF)
+                  ),
+                  child: InkWell(
+                    highlightColor: AppColors.accent1,
+                    child: Center(
+                      child: Text("OK",
+                        style: TextStyle(fontSize: 20, color: isError ? Color(0x76FFFFFF) : AppColors.textMain),
+                      ),
                     ),
                   ),
                 ),
               )
             ],
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Text("Error message",
-              textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18, color: AppColors.errorMain),
-            ),
-          )
+          isError
+          ?  Container(
+              width: MediaQuery.of(context).size.width,
+              child: Text(errorMessageString,
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 18, color: AppColors.errorMain),
+              ),
+            )
+          : SizedBox(height: 26,)
         ],
       )
     );

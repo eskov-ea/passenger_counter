@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
+import 'package:pleyona_app/ui/widgets/save_button.dart';
 
 class PassengerAddNewScreen extends StatefulWidget {
   const PassengerAddNewScreen({super.key});
@@ -1019,25 +1020,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                     ),
                   ),
                   SizedBox(height: 30,),
-                  Ink(
-                    width: MediaQuery.of(context).size.width,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      border: Border.all(width: 2, color: AppColors.accent2),
-                      color: AppColors.accent4,
-                    ),
-                    child: InkWell(
-                      onTap: (){},
-                      splashColor: AppColors.accent2,
-                      child: Center(
-                        child: Text(
-                          "Сохранить",
-                          style: TextStyle(fontSize: 24, ),
-                        ),
-                      )
-                    ),
-                  ),
+                  SaveButton(onTap: () => {}),
                   SizedBox(height: 10,)
                 ],
               ),

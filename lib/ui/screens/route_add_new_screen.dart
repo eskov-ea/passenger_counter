@@ -4,6 +4,7 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as d;
 import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/widgets/save_button.dart';
 
 class RouteAddNewScreen extends StatefulWidget {
   const RouteAddNewScreen({super.key});
@@ -13,17 +14,22 @@ class RouteAddNewScreen extends StatefulWidget {
 }
 
 class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
+
+
+  final GlobalKey _globalMainContainerKey = GlobalKey();
   final FocusNode _departureFieldFocus = FocusNode();
   final FocusNode _arrivalFieldFocus = FocusNode();
+  final FocusNode _shipsFieldFocus = FocusNode();
   List<DropdownMenuItem<String>> _departureMenuEntries = [];
   List<DropdownMenuItem<String>> _arrivalMenuEntries = [];
+  List<DropdownMenuItem<String>> _shipsMenuEntries = [];
 
   String? _departureSelection;
   String? _arrivalSelection;
+  String? _shipsSelection;
   bool isDropDownMenuHasError = false;
+  bool isShipsMenuHasError = false;
   String? dropDownMenuErrorMessage;
-  final _titleTextStyle =
-      TextStyle(fontSize: 20, color: AppColors.backgroundMain2);
 
   bool isDepartureSelectionDateFieldError = false;
   DateTime? _departureDateSelection;
@@ -244,6 +250,13 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
           child: Text(value),
         );
       }).toList();
+      _shipsMenuEntries = getShipsOptions()
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList();
     });
     super.initState();
   }
@@ -251,357 +264,415 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        color: AppColors.backgroundNeutral,
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                "Добавить рейс".toUpperCase(),
-                textAlign: TextAlign.center,
-                style: _titleTextStyle,
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          color: AppColors.backgroundNeutral,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 20,
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Отправление",
-              style:
-                  TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-            ),
-            Container(
-              height: 60,
-              child: DropdownButtonFormField(
-                focusNode: _departureFieldFocus,
-                dropdownColor: AppColors.secondary6,
-                isExpanded: true,
-                items: _arrivalMenuEntries,
-                itemHeight: 80,
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Добавить рейс".toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: AppStyles.mainTitleTextStyle,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Отправление",
                 style:
                     TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                onChanged: (String? value) {
-                  _departureFieldFocus.unfocus();
-                  setState(() {
-                    _departureSelection = value;
-                  });
-                  if (_arrivalSelection != null) {
+              ),
+              Container(
+                height: 60,
+                child: DropdownButtonFormField(
+                  focusNode: _departureFieldFocus,
+                  dropdownColor: AppColors.secondary6,
+                  isExpanded: true,
+                  items: _arrivalMenuEntries,
+                  itemHeight: 80,
+                  style:
+                      TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                  onChanged: (String? value) {
+                    _departureFieldFocus.unfocus();
+                    setState(() {
+                      _departureSelection = value;
+                    });
+                    if (_arrivalSelection != null) {
+                      _validateDropDownMenu();
+                    }
+                  },
+                  decoration: InputDecoration(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    fillColor: isDropDownMenuHasError
+                        ? AppColors.errorFieldFillColor
+                        : Colors.transparent,
+                    filled: true,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isDropDownMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1, color: AppColors.backgroundMain5)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isDropDownMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                "Прибытие",
+                style: AppStyles.mainTitleTextStyle,
+              ),
+              Container(
+                height: 60,
+                child: DropdownButtonFormField(
+                  focusNode: _arrivalFieldFocus,
+                  dropdownColor: AppColors.secondary6,
+                  isExpanded: true,
+                  items: _arrivalMenuEntries,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _arrivalSelection = value;
+                    });
+                    _arrivalFieldFocus.unfocus();
                     _validateDropDownMenu();
-                  }
-                },
-                decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                  fillColor: isDropDownMenuHasError
-                      ? AppColors.errorFieldFillColor
-                      : Colors.transparent,
-                  filled: true,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: isDropDownMenuHasError
-                              ? AppColors.errorMain
-                              : AppColors.backgroundMain2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      borderSide: BorderSide(
-                          width: 1, color: AppColors.backgroundMain5)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: isDropDownMenuHasError
-                              ? AppColors.errorMain
-                              : AppColors.backgroundMain2)),
+                  },
+                  itemHeight: 80,
+                  style:
+                      TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                  decoration: InputDecoration(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    fillColor: isDropDownMenuHasError
+                        ? AppColors.errorFieldFillColor
+                        : Colors.transparent,
+                    filled: true,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isDropDownMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1, color: AppColors.backgroundMain5)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isDropDownMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                    focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isDropDownMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              "Прибытие",
-              style: _titleTextStyle,
-            ),
-            Container(
-              height: 60,
-              child: DropdownButtonFormField(
-                focusNode: _arrivalFieldFocus,
-                dropdownColor: AppColors.secondary6,
-                isExpanded: true,
-                items: _arrivalMenuEntries,
-                onChanged: (String? value) {
-                  setState(() {
-                    _arrivalSelection = value;
-                  });
-                  _arrivalFieldFocus.unfocus();
-                  _validateDropDownMenu();
-                },
-                itemHeight: 80,
-                style:
-                    TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                  fillColor: isDropDownMenuHasError
-                      ? AppColors.errorFieldFillColor
-                      : Colors.transparent,
-                  filled: true,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: isDropDownMenuHasError
-                              ? AppColors.errorMain
-                              : AppColors.backgroundMain2)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      borderSide: BorderSide(
-                          width: 1, color: AppColors.backgroundMain5)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: isDropDownMenuHasError
-                              ? AppColors.errorMain
-                              : AppColors.backgroundMain2)),
-                  focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: isDropDownMenuHasError
-                              ? AppColors.errorMain
-                              : AppColors.backgroundMain2)),
+              isDropDownMenuHasError
+                  ? Text(
+                      dropDownMenuErrorMessage!,
+                      style:
+                          TextStyle(fontSize: 16, color: AppColors.errorMain),
+                    )
+                  : SizedBox.shrink(),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Дата и время отправления",
+                style: AppStyles.mainTitleTextStyle,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width - 20,
+                height: 55,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: isDepartureSelectionDateFieldError
+                            ? AppColors.errorMain
+                            : AppColors.backgroundMain2,
+                        width: 1),
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                  color: isDepartureSelectionDateFieldError ? AppColors.errorMain : Colors.transparent,
+                ),
+                child: Center(
+                  child: Text(
+                    _departureDateTimeString != null
+                        ? _departureDateTimeString!
+                        : "",
+                    style: TextStyle(
+                        fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
-            ),
-            isDropDownMenuHasError
-                ? Text(
-                    dropDownMenuErrorMessage!,
-                    style:
-                        TextStyle(fontSize: 16, color: AppColors.errorMain),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Material(
+                    child: Ink(
+                      height: 55,
+                      width: MediaQuery.of(context).size.width * 0.5 - 15,
+                      decoration: BoxDecoration(
+                      border: Border.all(
+                          color: AppColors.backgroundMain2, width: 1),
+                      color: AppColors.backgroundMain2,
+                      borderRadius: BorderRadius.all(Radius.circular(6))),
+                      child: InkWell(
+                        onTap: () {
+                          _datePicker(_onConfirmDepartureDate);
+                        },
+                        splashColor: AppColors.backgroundMain5,
+                        child: Center(
+                          child: Text(
+                            _departureDateSelection == null
+                                ? "Выбрать  дату".toUpperCase()
+                                : "Изменить  дату".toUpperCase(),
+                            style: TextStyle(
+                                fontSize: 18, color: AppColors.textMain),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  Material(
+                    child: Ink(
+                      height: 55,
+                      width: MediaQuery.of(context).size.width * 0.5 - 15,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: AppColors.backgroundMain2, width: 1),
+                          color: AppColors.backgroundMain2,
+                          borderRadius: BorderRadius.all(Radius.circular(6))),
+                      child: InkWell(
+                        onTap: () {
+                          _timePicker(_onConfirmDepartureTime);
+                        },
+                        splashColor: AppColors.backgroundMain5,
+                        child: Center(
+                          child: Text(
+                            _departureDateSelection == null
+                                ? "Выбрать  время".toUpperCase()
+                                : "Изменить  время".toUpperCase(),
+                            style: TextStyle(
+                                fontSize: 18, color: AppColors.textMain),
+                          ),
+                        ),
+                      ),
+                    ),
                   )
-                : SizedBox.shrink(),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Дата и время отправления",
-              style: _titleTextStyle,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width - 20,
-              height: 55,
-              decoration: BoxDecoration(
+                ],
+              ),
+              SizedBox(
+                height: 7,
+              ),
+              isDepartureSelectionDateFieldError
+                  ? Text(
+                "Некорректное время рейса",
+                style:
+                TextStyle(fontSize: 16, color: AppColors.errorMain),
+              )
+                  : SizedBox.shrink(),
+              SizedBox(
+                height: 20,
+              ),
+
+
+              Text(
+                "Дата и время прибытия",
+                style: AppStyles.mainTitleTextStyle,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width - 20,
+                height: 55,
+                decoration: BoxDecoration(
                   border: Border.all(
-                      color: isDepartureSelectionDateFieldError
+                      color: isArrivalSelectionDateFieldError
                           ? AppColors.errorMain
                           : AppColors.backgroundMain2,
                       width: 1),
                   borderRadius: BorderRadius.all(Radius.circular(6)),
-                color: isDepartureSelectionDateFieldError ? AppColors.errorMain : Colors.transparent,
-              ),
-              child: Center(
-                child: Text(
-                  _departureDateTimeString != null
-                      ? _departureDateTimeString!
-                      : "",
-                  style: TextStyle(
-                      fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
+                  color: isArrivalSelectionDateFieldError ? AppColors.errorMain : Colors.transparent,
+                ),
+                child: Center(
+                  child: Text(
+                    _arrivalDateTimeString != null
+                        ? _arrivalDateTimeString!
+                        : "",
+                    style: TextStyle(
+                        fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                Material(
-                  child: Ink(
-                    height: 55,
-                    width: MediaQuery.of(context).size.width * 0.5 - 15,
-                    decoration: BoxDecoration(
-                    border: Border.all(
-                        color: AppColors.backgroundMain2, width: 1),
-                    color: AppColors.backgroundMain2,
-                    borderRadius: BorderRadius.all(Radius.circular(6))),
-                    child: InkWell(
-                      onTap: () {
-                        _datePicker(_onConfirmDepartureDate);
-                      },
-                      splashColor: AppColors.backgroundMain5,
-                      child: Center(
-                        child: Text(
-                          _departureDateSelection == null
-                              ? "Выбрать  дату".toUpperCase()
-                              : "Изменить  дату".toUpperCase(),
-                          style: TextStyle(
-                              fontSize: 18, color: AppColors.textMain),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Material(
+                    child: Ink(
+                      height: 55,
+                      width: MediaQuery.of(context).size.width * 0.5 - 15,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: AppColors.backgroundMain2, width: 1),
+                          color: AppColors.backgroundMain2,
+                          borderRadius: BorderRadius.all(Radius.circular(6))),
+                      child: InkWell(
+                        onTap: () {
+                          _datePicker(_onConfirmArrivalDate);
+                        },
+                        splashColor: AppColors.backgroundMain5,
+                        child: Center(
+                          child: Text(
+                            _arrivalDateSelection == null
+                                ? "Выбрать  дату".toUpperCase()
+                                : "Изменить  дату".toUpperCase(),
+                            style: TextStyle(
+                                fontSize: 18, color: AppColors.textMain),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: 10,),
-                Material(
-                  child: Ink(
-                    height: 55,
-                    width: MediaQuery.of(context).size.width * 0.5 - 15,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: AppColors.backgroundMain2, width: 1),
-                        color: AppColors.backgroundMain2,
-                        borderRadius: BorderRadius.all(Radius.circular(6))),
-                    child: InkWell(
-                      onTap: () {
-                        _timePicker(_onConfirmDepartureTime);
-                      },
-                      splashColor: AppColors.backgroundMain5,
-                      child: Center(
-                        child: Text(
-                          _departureDateSelection == null
-                              ? "Выбрать  время".toUpperCase()
-                              : "Изменить  время".toUpperCase(),
-                          style: TextStyle(
-                              fontSize: 18, color: AppColors.textMain),
+                  SizedBox(width: 10,),
+                  Material(
+                    child: Ink(
+                      height: 55,
+                      width: MediaQuery.of(context).size.width * 0.5 - 15,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: AppColors.backgroundMain2, width: 1),
+                          color: AppColors.backgroundMain2,
+                          borderRadius: BorderRadius.all(Radius.circular(6))),
+                      child: InkWell(
+                        onTap: () {
+                          _timePicker(_onConfirmArrivalTime);
+                        },
+                        splashColor: AppColors.backgroundMain5,
+                        child: Center(
+                          child: Text(
+                            _arrivalDateSelection == null
+                                ? "Выбрать  время".toUpperCase()
+                                : "Изменить  время".toUpperCase(),
+                            style: TextStyle(
+                                fontSize: 18, color: AppColors.textMain),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 7,
-            ),
-            isDepartureSelectionDateFieldError
-                ? Text(
-              "Некорректное время рейса",
-              style:
-              TextStyle(fontSize: 16, color: AppColors.errorMain),
-            )
-                : SizedBox.shrink(),
-            SizedBox(
-              height: 20,
-            ),
-
-
-            Text(
-              "Дата и время прибытия",
-              style: _titleTextStyle,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width - 20,
-              height: 55,
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: isArrivalSelectionDateFieldError
-                        ? AppColors.errorMain
-                        : AppColors.backgroundMain2,
-                    width: 1),
-                borderRadius: BorderRadius.all(Radius.circular(6)),
-                color: isArrivalSelectionDateFieldError ? AppColors.errorMain : Colors.transparent,
+                  )
+                ],
               ),
-              child: Center(
-                child: Text(
-                  _arrivalDateTimeString != null
-                      ? _arrivalDateTimeString!
-                      : "",
-                  style: TextStyle(
-                      fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
+              SizedBox(
+                height: 7,
+              ),
+              isArrivalSelectionDateFieldError
+                  ? Text(
+                "Некорректное время рейса",
+                style:
+                TextStyle(fontSize: 16, color: AppColors.errorMain),
+              )
+                  : SizedBox.shrink(),
+              SizedBox(
+                height: 20,
+              ),
+
+
+              Text(
+                "Выбор судна",
+                style: AppStyles.mainTitleTextStyle,
+              ),
+              Container(
+                height: 60,
+                child: DropdownButtonFormField(
+                  focusNode: _shipsFieldFocus,
+                  dropdownColor: AppColors.secondary6,
+                  isExpanded: true,
+                  items: _shipsMenuEntries,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _shipsSelection = value;
+                    });
+                    _shipsFieldFocus.unfocus();
+                  },
+                  itemHeight: 80,
+                  style:
+                  TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                  decoration: InputDecoration(
+                    contentPadding:
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                    fillColor: isShipsMenuHasError
+                        ? AppColors.errorFieldFillColor
+                        : Colors.transparent,
+                    filled: true,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isShipsMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1, color: AppColors.backgroundMain5)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isShipsMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                    focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: isShipsMenuHasError
+                                ? AppColors.errorMain
+                                : AppColors.backgroundMain2)),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Row(
-              children: [
-                Material(
-                  child: Ink(
-                    height: 55,
-                    width: MediaQuery.of(context).size.width * 0.5 - 15,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: AppColors.backgroundMain2, width: 1),
-                        color: AppColors.backgroundMain2,
-                        borderRadius: BorderRadius.all(Radius.circular(6))),
-                    child: InkWell(
-                      onTap: () {
-                        _datePicker(_onConfirmArrivalDate);
-                      },
-                      splashColor: AppColors.backgroundMain5,
-                      child: Center(
-                        child: Text(
-                          _arrivalDateSelection == null
-                              ? "Выбрать  дату".toUpperCase()
-                              : "Изменить  дату".toUpperCase(),
-                          style: TextStyle(
-                              fontSize: 18, color: AppColors.textMain),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10,),
-                Material(
-                  child: Ink(
-                    height: 55,
-                    width: MediaQuery.of(context).size.width * 0.5 - 15,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: AppColors.backgroundMain2, width: 1),
-                        color: AppColors.backgroundMain2,
-                        borderRadius: BorderRadius.all(Radius.circular(6))),
-                    child: InkWell(
-                      onTap: () {
-                        _timePicker(_onConfirmArrivalTime);
-                      },
-                      splashColor: AppColors.backgroundMain5,
-                      child: Center(
-                        child: Text(
-                          _arrivalDateSelection == null
-                              ? "Выбрать  время".toUpperCase()
-                              : "Изменить  время".toUpperCase(),
-                          style: TextStyle(
-                              fontSize: 18, color: AppColors.textMain),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 7,
-            ),
-            isArrivalSelectionDateFieldError
-                ? Text(
-              "Некорректное время рейса",
-              style:
-              TextStyle(fontSize: 16, color: AppColors.errorMain),
-            )
-                : SizedBox.shrink(),
-            SizedBox(
-              height: 20,
-            ),
-
-
-
-          ],
+              SizedBox(height: 50,),
+              SaveButton(onTap: ()=> {}),
+              SizedBox(height: 10,)
+            ],
+          ),
         ),
-      ),
-    ));
+      )
+    );
   }
 }

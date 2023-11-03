@@ -36,6 +36,18 @@ abstract class DarkColors {
 
   static const errorMain = Color(0xFFC40000);
   static const errorFieldFillColor = Color(0xFFFFEAEA);
+
+  static const suiteAvailableStatus = Color(0xFFDEFFDA);
+  static const suiteNotAvailableStatus = Color(0xFFFFCECE);
+
+  static const suiteLuxuryClass = Color(0xFFFF1616);
+  static const suiteComfortClass = Color(0xFFFFEE3A);
+  static const suiteStandard1stClass = Color(0xFF2FE2FF);
+  static const suiteStandard2ndClass = Color(0xFF59FF21);
+
+  static const suiteEmptyState = Color(0xFFDEFFDA);
+  static const suiteFullyOccupiedState = Color(0xFFFFDFB0);
+  static const suitePartlyOccupiedState = Color(0xFFFFCECE);
 }
 
 abstract class AppColors {
@@ -67,8 +79,26 @@ abstract class AppColors {
 
   static Color errorMain = isDark ? DarkColors.errorMain : Color(0xFFC40000);
   static Color errorFieldFillColor = isDark ? DarkColors.errorFieldFillColor : Color(0xFFFFEAEA);
+
+  static Color suiteAvailableStatus = isDark ? DarkColors.suiteAvailableStatus : Color(0xFFDEFFDA);
+  static Color suiteNotAvailableStatus = isDark ? DarkColors.suiteNotAvailableStatus : Color(0xFFFFCECE);
+
+  static Color suiteLuxuryClass = isDark ? DarkColors.suiteLuxuryClass : Color(0xFFFF1616);
+  static Color suiteComfortClass = isDark ? DarkColors.suiteComfortClass : Color(0xFFFFEE3A);
+  static Color suiteStandard1stClass = isDark ? DarkColors.suiteStandard1stClass : Color(0xFF2FE2FF);
+  static Color suiteStandard2ndClass = isDark ? DarkColors.suiteStandard2ndClass : Color(0xFF59FF21);
+
+  static Color suiteEmptyState = isDark ? DarkColors.suiteEmptyState : Color(0xFFDEFFDA);
+  static Color suiteFullyOccupiedState = isDark ? DarkColors.suiteFullyOccupiedState : Color(0xFFFFDFB0);
+  static Color suitePartlyOccupiedState = isDark ? DarkColors.suitePartlyOccupiedState : Color(0xFFFFCECE);
 }
 
+
+abstract class AppStyles {
+
+  static final mainTitleTextStyle = TextStyle(fontSize: 20, color: AppColors.backgroundMain2);
+
+}
 
 
 

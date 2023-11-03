@@ -5,6 +5,7 @@ import 'package:pleyona_app/ui/screens/calendar_screen.dart';
 import 'package:pleyona_app/ui/screens/homescreen.dart';
 import 'package:pleyona_app/ui/screens/passenger_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/route_add_new_screen.dart';
+import 'package:pleyona_app/ui/screens/suites_manager_screen.dart';
 import 'package:pleyona_app/ui/widgets/side_menu_widget.dart';
 
 
@@ -85,7 +86,7 @@ class _EntryPointState extends State<EntryPoint> with SingleTickerProviderStateM
                   scale: scaleAnimation.value,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 20 : 0)),
-                    child: RouteAddNewScreen()
+                    child: SuitesManagerScreen()
                   )
                 )
               ),

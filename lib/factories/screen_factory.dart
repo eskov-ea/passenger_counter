@@ -3,6 +3,7 @@ import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
 import '../ui/pages/loader_widget.dart';
 import '../ui/screens/auth_screen.dart';
 import '../ui/screens/entry_point.dart';
+import '../ui/screens/passenger_add_new.dart';
 
 
 class ScreenFactory {
@@ -19,6 +20,6 @@ class ScreenFactory {
   }
 
   Widget makePassengerEditingScreen() {
-    return const PassengerAddNewScreen();
+    return const PassengerAddNew();
   }
 }

@@ -5,14 +5,14 @@ import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 
-class PassengerAddNewScreen extends StatefulWidget {
-  const PassengerAddNewScreen({super.key});
+class PersonAddNewScreen extends StatefulWidget {
+  const PersonAddNewScreen({super.key});
 
   @override
-  State<PassengerAddNewScreen> createState() => _PassengerAddNewScreenState();
+  State<PersonAddNewScreen> createState() => _PersonAddNewScreenState();
 }
 
-class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
+class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
   final lastnameFieldKey = GlobalKey<FormFieldState>();
   final firstnameFieldKey = GlobalKey<FormFieldState>();

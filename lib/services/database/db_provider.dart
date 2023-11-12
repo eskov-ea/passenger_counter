@@ -1,4 +1,4 @@
-import 'package:pleyona_app/models/passanger_model.dart';
+import 'package:pleyona_app/models/person_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -43,11 +43,12 @@ class DBProvider {
   }
 
   addPerson(Person p) async {
-    await _database!.transaction((txn) async {
+    final db = await database;
+    await db.transaction((txn) async {
       int id = await txn.rawInsert(
         'INSERT INTO person(firstname, lastname, middlename, birthdate, phone, email, passport, citizenship, status)'
         'VALUES(${p.firstname}, ${p.lastname}, ${p.middlename}, ${p.birthdate}, ${p.phone}, ${p.email}, '
-        '${p.passportSerialNumber}${p.passportNumber}, ${p.citizenship}, ${p.status})'
+        '${p.document}, ${p.citizenship}, ${p.status})'
       );
       return id;
     });

@@ -4,6 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
+import 'package:sqflite/sqflite.dart';
+
+import '../../models/person_model.dart';
+import '../../services/database/db_provider.dart';
 
 class PersonAddNewScreen extends StatefulWidget {
   const PersonAddNewScreen({super.key});
@@ -14,9 +18,9 @@ class PersonAddNewScreen extends StatefulWidget {
 
 class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
-  final lastnameFieldKey = GlobalKey<FormFieldState>();
-  final firstnameFieldKey = GlobalKey<FormFieldState>();
-  final middlenameFieldKey = GlobalKey<FormFieldState>();
+  final _lastnameFieldKey = GlobalKey<FormFieldState>();
+  final _firstnameFieldKey = GlobalKey<FormFieldState>();
+  final _middlenameFieldKey = GlobalKey<FormFieldState>();
 
   final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _firstnameController = TextEditingController();
@@ -24,8 +28,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   final TextEditingController _dayBirthFieldController = TextEditingController();
   final TextEditingController _monthBirthFieldController = TextEditingController();
   final TextEditingController _yearBirthFieldController = TextEditingController();
-  final TextEditingController _passportSerialNumberFieldController = TextEditingController();
-  final TextEditingController _passportNumberFieldController = TextEditingController();
+  final TextEditingController _documentNameFieldController = TextEditingController();
+  final TextEditingController _documentNumberFieldController = TextEditingController();
   final TextEditingController _citizenshipFieldController = TextEditingController();
   final FocusNode _lastnameFocus = FocusNode();
   final FocusNode _firstnameFocus = FocusNode();
@@ -33,8 +37,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   final FocusNode _dayBirthFocus = FocusNode();
   final FocusNode _monthBirthFocus = FocusNode();
   final FocusNode _yearBirthFocus = FocusNode();
-  final FocusNode _passportSerialNumberFocus = FocusNode();
-  final FocusNode _passportNumberFocus = FocusNode();
+  final FocusNode _documentNameFocus = FocusNode();
+  final FocusNode _documentNumberFocus = FocusNode();
   final FocusNode _citizenshipFieldFocus = FocusNode();
   final Color focusedBorderColor = AppColors.backgroundMain4;
 
@@ -46,13 +50,14 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   bool isYearBirthFieldHasError = false;
   bool isDateInputHasError = false;
   bool isPassportSerialNumberFieldHasError = false;
-  bool isPassportNumberFieldHasError = false;
-  bool isPassportInputFieldsHasError = false;
+  bool isDocumentNameFieldHasError = false;
+  bool isDocumentNumberFieldsHasError = false;
 
-  String? passportInputFieldsErrorMessage;
+  String? documentInputFieldsErrorMessage;
 
 
-  String? validateLastnameField(String? lastname) {
+
+  String? _validateLastnameField(String? lastname) {
     if (lastname == null || lastname.trim().isEmpty) {
       setState(() {
         isLastnameFieldHasError = true;
@@ -66,7 +71,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  String? validateFirstnameField(String? firstname) {
+  String? _validateFirstnameField(String? firstname) {
     if (firstname == null || firstname.trim().isEmpty) {
       setState(() {
         isFirstnameFieldHasError = true;
@@ -80,7 +85,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  String? validateMiddlenameField(String? value) {
+  String? _validateMiddlenameField(String? value) {
     if (value == null || value.trim().isEmpty) {
       setState(() {
         isMiddlenameFieldHasError = true;
@@ -131,6 +136,9 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   }
 
   void _validateDateBirthInput() {
+    _validateDayBirthField(_dayBirthFieldController.text);
+    _validateMonthBirthField(_monthBirthFieldController.text);
+    _validateYearBirthField(_yearBirthFieldController.text);
     if (isDayBirthFieldHasError || isMonthBirthFieldHasError || isYearBirthFieldHasError) {
       setState(() {
         isDateInputHasError = true;
@@ -141,18 +149,45 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   }
 
   void _validatePassportFields() {
-    if (_passportSerialNumberFieldController.text.isEmpty || _passportNumberFieldController.text.isEmpty) {
+    if (_documentNameFieldController.text.isEmpty || _documentNumberFieldController.text.isEmpty) {
       setState(() {
-        isPassportSerialNumberFieldHasError = _passportSerialNumberFieldController.text.isEmpty ? true : false;
-        isPassportNumberFieldHasError = _passportNumberFieldController.text.isEmpty ? true : false;
-        passportInputFieldsErrorMessage = "Серия и номер паспорта должны быть заполнены";
+        isPassportSerialNumberFieldHasError = _documentNameFieldController.text.isEmpty ? true : false;
+        isDocumentNameFieldHasError = _documentNumberFieldController.text.isEmpty ? true : false;
+        documentInputFieldsErrorMessage = "Серия и номер паспорта должны быть заполнены";
       });
     } else {
       setState(() {
         isPassportSerialNumberFieldHasError = false;
-        isPassportNumberFieldHasError = false;
-        passportInputFieldsErrorMessage = null;
+        isDocumentNameFieldHasError = false;
+        documentInputFieldsErrorMessage = null;
       });
+    }
+  }
+
+  void _onSave() async {
+    _validateDateBirthInput();
+    _validatePassportFields();
+    _firstnameFieldKey.currentState?.validate();
+    _lastnameFieldKey.currentState?.validate();
+    _middlenameFieldKey.currentState?.validate();
+    if(!isLastnameFieldHasError && !isFirstnameFieldHasError && !isMiddlenameFieldHasError &&
+        !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
+      && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
+      final DBProvider db = DBProvider.db;
+      final newPerson = Person(
+        id: 1,
+        firstname: _firstnameController.text,
+        lastname: _lastnameController.text,
+        middlename: _middlenameController.text,
+        birthdate: _dayBirthFieldController.text,
+        phone: "+79132234418",
+        email: "test@google.com",
+        document: "${_documentNameFieldController.text}/${_documentNumberFieldController.text}",
+        citizenship: _citizenshipFieldController.text,
+        status: ""
+      );
+      final res = await db.addPerson(newPerson);
+      print("RESULT IS:   $res");
     }
   }
 
@@ -279,8 +314,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     _dayBirthFieldController.text.isNotEmpty ||
     _monthBirthFieldController.text.isNotEmpty ||
     _yearBirthFieldController.text.isNotEmpty ||
-    _passportSerialNumberFieldController.text.isNotEmpty ||
-    _passportNumberFieldController.text.isNotEmpty ||
+    _documentNameFieldController.text.isNotEmpty ||
+    _documentNumberFieldController.text.isNotEmpty ||
     _citizenshipFieldController.text.isNotEmpty
     ) {
       return true;
@@ -294,12 +329,12 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   void initState() {
     _lastnameFocus.addListener(() {
       if(!_lastnameFocus.hasFocus) {
-        lastnameFieldKey.currentState?.validate();
+        _lastnameFieldKey.currentState?.validate();
       }
     });
     _firstnameFocus.addListener(() {
       if(!_firstnameFocus.hasFocus) {
-        firstnameFieldKey.currentState?.validate();
+        _firstnameFieldKey.currentState?.validate();
       }
     });
     super.initState();
@@ -319,10 +354,10 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     _monthBirthFocus.dispose();
     _yearBirthFieldController.dispose();
     _yearBirthFocus.dispose();
-    _passportSerialNumberFieldController.dispose();
-    _passportSerialNumberFocus.dispose();
-    _passportNumberFieldController.dispose();
-    _passportNumberFocus.dispose();
+    _documentNameFieldController.dispose();
+    _documentNameFocus.dispose();
+    _documentNumberFieldController.dispose();
+    _documentNumberFocus.dispose();
     _citizenshipFieldController.dispose();
     _citizenshipFieldFocus.dispose();
     super.dispose();
@@ -351,14 +386,14 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   TextFormField(
                     controller: _lastnameController,
                     focusNode: _lastnameFocus,
-                    key: lastnameFieldKey,
-                    validator: validateLastnameField,
+                    key: _lastnameFieldKey,
+                    validator: _validateLastnameField,
                     autovalidateMode: AutovalidateMode.disabled,
                     keyboardType: TextInputType.text,
                     cursorHeight: 25,
                     onEditingComplete: (){
                       _onNextFieldFocus(context, _lastnameFocus, _firstnameFocus);
-                      lastnameFieldKey.currentState?.validate();
+                      _lastnameFieldKey.currentState?.validate();
                     },
                     onTap: () {
                       if(isLastnameFieldHasError) {
@@ -413,14 +448,14 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   TextFormField(
                     controller: _firstnameController,
                     focusNode: _firstnameFocus,
-                    key: firstnameFieldKey,
-                    validator: validateFirstnameField,
+                    key: _firstnameFieldKey,
+                    validator: _validateFirstnameField,
                     autovalidateMode: AutovalidateMode.disabled,
                     keyboardType: TextInputType.text,
                     cursorHeight: 25,
                     onEditingComplete: (){
                       _onNextFieldFocus(context, _firstnameFocus, _middlenameFocus);
-                      firstnameFieldKey.currentState?.validate();
+                      _firstnameFieldKey.currentState?.validate();
                     },
                     onTap: () {
                       if(isFirstnameFieldHasError) {
@@ -475,14 +510,14 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   TextFormField(
                     controller: _middlenameController,
                     focusNode: _middlenameFocus,
-                    key: middlenameFieldKey,
-                    validator: validateMiddlenameField,
+                    key: _middlenameFieldKey,
+                    validator: _validateMiddlenameField,
                     autovalidateMode: AutovalidateMode.disabled,
                     keyboardType: TextInputType.text,
                     cursorHeight: 25,
                     onEditingComplete: (){
                       _onNextFieldFocus(context, _middlenameFocus, _dayBirthFocus);
-                      middlenameFieldKey.currentState?.validate();
+                      _middlenameFieldKey.currentState?.validate();
                     },
                     onTap: () {
                       if(isMiddlenameFieldHasError) {
@@ -541,7 +576,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                         child: TextFormField(
                           controller: _dayBirthFieldController,
                           focusNode: _dayBirthFocus,
-                          validator: validateMiddlenameField,
+                          validator: _validateMiddlenameField,
                           autovalidateMode: AutovalidateMode.disabled,
                           keyboardType: TextInputType.number,
                           cursorHeight: 25,
@@ -611,7 +646,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                         child: TextFormField(
                           controller: _monthBirthFieldController,
                           focusNode: _monthBirthFocus,
-                          validator: validateMiddlenameField,
+                          validator: _validateMiddlenameField,
                           autovalidateMode: AutovalidateMode.disabled,
                           keyboardType: TextInputType.text,
                           cursorHeight: 25,
@@ -681,7 +716,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                         child: TextFormField(
                           controller: _yearBirthFieldController,
                           focusNode: _yearBirthFocus,
-                          validator: validateMiddlenameField,
+                          validator: _validateMiddlenameField,
                           autovalidateMode: AutovalidateMode.disabled,
                           keyboardType: TextInputType.text,
                           cursorHeight: 25,
@@ -689,7 +724,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                             LengthLimitingTextInputFormatter(4)
                           ],
                           onEditingComplete: (){
-                            _onNextFieldFocus(context, _yearBirthFocus, _passportSerialNumberFocus);
+                            _onNextFieldFocus(context, _yearBirthFocus, _documentNameFocus);
                             _validateYearBirthField(_yearBirthFieldController.text);
                             _validateDateBirthInput();
                           },
@@ -764,15 +799,15 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   Row(
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.22,
+                        width: MediaQuery.of(context).size.width * 0.3,
                         child: TextFormField(
-                          controller: _passportSerialNumberFieldController,
-                          focusNode: _passportSerialNumberFocus,
+                          controller: _documentNameFieldController,
+                          focusNode: _documentNameFocus,
                           autovalidateMode: AutovalidateMode.disabled,
                           keyboardType: TextInputType.number,
                           cursorHeight: 25,
                           onEditingComplete: (){
-                            _onNextFieldFocus(context, _passportSerialNumberFocus, _passportNumberFocus);
+                            _onNextFieldFocus(context, _documentNameFocus, _documentNumberFocus);
                             _validatePassportFields();
                           },
                           onTap: () {
@@ -783,8 +818,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                             }
                           },
                           onTapOutside: (event) {
-                            if(_passportSerialNumberFocus.hasFocus) {
-                              _passportSerialNumberFocus.unfocus();
+                            if(_documentNameFocus.hasFocus) {
+                              _documentNameFocus.unfocus();
                             }
                           },
                           cursorColor: Color(0xFF000000),
@@ -819,7 +854,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                                 )
                             ),
                             errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'Серия',
+                            labelText: 'Документ',
                             labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
                             focusColor: AppColors.accent5,
                           ),
@@ -829,27 +864,27 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                         width: MediaQuery.of(context).size.width * 0.05,
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.48,
+                        width: MediaQuery.of(context).size.width * 0.6,
                         child: TextFormField(
-                          controller: _passportNumberFieldController,
-                          focusNode: _passportNumberFocus,
+                          controller: _documentNumberFieldController,
+                          focusNode: _documentNumberFocus,
                           autovalidateMode: AutovalidateMode.disabled,
                           keyboardType: TextInputType.number,
                           cursorHeight: 25,
                           onEditingComplete: (){
-                            _onNextFieldFocus(context, _passportNumberFocus, _citizenshipFieldFocus);
+                            _onNextFieldFocus(context, _documentNumberFocus, _citizenshipFieldFocus);
                             _validatePassportFields();
                           },
                           onTap: () {
-                            if(isPassportNumberFieldHasError) {
+                            if(isDocumentNameFieldHasError) {
                               setState(() {
-                                isPassportNumberFieldHasError = false;
+                                isDocumentNameFieldHasError = false;
                               });
                             }
                           },
                           onTapOutside: (event) {
-                            if(_passportNumberFocus.hasFocus) {
-                              _passportNumberFocus.unfocus();
+                            if(_documentNumberFocus.hasFocus) {
+                              _documentNumberFocus.unfocus();
                             }
                           },
                           cursorColor: Color(0xFF000000),
@@ -857,7 +892,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
                             floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isPassportNumberFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
+                            fillColor: isDocumentNameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
                             filled: true,
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -896,7 +931,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.76,
+                      width: MediaQuery.of(context).size.width,
                       child: TextFormField(
                         controller: _citizenshipFieldController,
                         focusNode: _citizenshipFieldFocus,
@@ -952,7 +987,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width ,
-                    child: Text(passportInputFieldsErrorMessage != null ? passportInputFieldsErrorMessage! : "",
+                    child: Text(documentInputFieldsErrorMessage != null ? documentInputFieldsErrorMessage! : "",
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 14, color: AppColors.errorMain),
                     ),
@@ -1020,7 +1055,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     ),
                   ),
                   SizedBox(height: 30,),
-                  SaveButton(onTap: () => {}),
+                  SaveButton(onTap: _onSave),
                   SizedBox(height: 10,)
                 ],
               ),

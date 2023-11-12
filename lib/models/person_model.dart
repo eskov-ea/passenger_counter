@@ -3,14 +3,12 @@ class Person {
   final String firstname;
   final String lastname;
   final String middlename;
-  final DateTime birthdate;
+  final String birthdate;
   final String phone;
   final String email;
-  final String passportSerialNumber;
-  final String passportNumber;
+  final String document;
   final String citizenship;
   final String status;
-  final String passportScanPath;
 
 
   Person({
@@ -21,11 +19,9 @@ class Person {
     required this.birthdate,
     required this.phone,
     required this.email,
-    required this.passportSerialNumber,
-    required this.passportNumber,
+    required this.document,
     required this.citizenship,
     required this.status,
-    required this.passportScanPath
   });
 
   static Person fromJson(json) =>
@@ -37,11 +33,9 @@ class Person {
         birthdate: json["birthdate"],
         phone: json["phone"],
         email: json["email"],
-        passportSerialNumber: json["passportSerialNumber"],
-        passportNumber: json["passportNumber"],
+        document: json["document"],
         citizenship: json["citizenship"],
         status: json["status"],
-        passportScanPath: json["passportScanPath"]
       );
 
 

@@ -5,6 +5,7 @@ import 'package:pleyona_app/bloc/db_bloc/db_bloc.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_state.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/current_route_status_widget.dart';
+import '../../bloc/db_bloc/db_event.dart';
 import '../../navigation/navigation.dart';
 import '../widgets/passenger_options_sliver.dart';
 
@@ -20,8 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   
   @override
   void initState() {
-    BlocProvider.of<DBBloc>(context).add(event);
-
+    BlocProvider.of<DBBloc>(context).add(InitializeDBEvent());
 
     super.initState();
   }

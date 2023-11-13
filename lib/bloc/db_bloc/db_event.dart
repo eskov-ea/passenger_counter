@@ -5,3 +5,5 @@ class DBEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
+
+class InitializeDBEvent extends DBEvent {}

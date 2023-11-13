@@ -55,7 +55,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   bool isMonthBirthFieldHasError = false;
   bool isYearBirthFieldHasError = false;
   bool isDateInputHasError = false;
-  bool isPassportSerialNumberFieldHasError = false;
+  bool isDocumentNumberFieldHasError = false;
   bool isDocumentNameFieldHasError = false;
   bool isDocumentNumberFieldsHasError = false;
   bool isPhoneFieldsHasError = false;
@@ -159,13 +159,13 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   void _validatePassportFields() {
     if (_documentNameFieldController.text.isEmpty || _documentNumberFieldController.text.isEmpty) {
       setState(() {
-        isPassportSerialNumberFieldHasError = _documentNameFieldController.text.isEmpty ? true : false;
+        isDocumentNumberFieldHasError = _documentNameFieldController.text.isEmpty ? true : false;
         isDocumentNameFieldHasError = _documentNumberFieldController.text.isEmpty ? true : false;
         documentInputFieldsErrorMessage = "Серия и номер паспорта должны быть заполнены";
       });
     } else {
       setState(() {
-        isPassportSerialNumberFieldHasError = false;
+        isDocumentNumberFieldHasError = false;
         isDocumentNameFieldHasError = false;
         documentInputFieldsErrorMessage = null;
       });
@@ -293,7 +293,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
               },
             ),
             TextButton(
-              child: const Text('Сохранить'),
+              child: const Text('Сохранить черновик'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -823,9 +823,9 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                             _validatePassportFields();
                           },
                           onTap: () {
-                            if(isPassportSerialNumberFieldHasError) {
+                            if(isDocumentNameFieldHasError) {
                               setState(() {
-                                isPassportSerialNumberFieldHasError = false;
+                                isDocumentNameFieldHasError = false;
                               });
                             }
                           },
@@ -839,7 +839,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
                             floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isPassportSerialNumberFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
+                            fillColor: isDocumentNumberFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
                             filled: true,
                             focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),

@@ -7,6 +7,8 @@ abstract class MainNavigationRouteNames {
   static const authScreen = '/auth';
   static const homeScreen = '/home_screen';
   static const passengerEditingScreen = '/passenger_editing_screen';
+  static const addPersonScreen = '/add_person_screen';
+  static const allPersonsScreen = '/all_persons_screen';
 }
 
 class MainNavigation {
@@ -18,12 +20,41 @@ class MainNavigation {
     MainNavigationRouteNames.homeScreen: (_) => _screenFactory.makeHomeScreen()
   };
 
+
   Route<Object> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case MainNavigationRouteNames.passengerEditingScreen:
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.passengerEditingScreen),
           pageBuilder: (BuildContext context, _, __) => _screenFactory.makePassengerEditingScreen(),
+          transitionsBuilder: (context, Animation<double> animation,
+              Animation<double> secondaryAnimation, Widget child) {
+            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 700),
+        );
+      case MainNavigationRouteNames.addPersonScreen:
+        return PageRouteBuilder(
+          settings: const RouteSettings(name: MainNavigationRouteNames.addPersonScreen),
+          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAddPersonScreen(),
+          transitionsBuilder: (context, Animation<double> animation,
+              Animation<double> secondaryAnimation, Widget child) {
+            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 700),
+        );
+      case MainNavigationRouteNames.allPersonsScreen:
+        return PageRouteBuilder(
+          settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),
+          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAllPersonsScreen(),
           transitionsBuilder: (context, Animation<double> animation,
               Animation<double> secondaryAnimation, Widget child) {
             final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));

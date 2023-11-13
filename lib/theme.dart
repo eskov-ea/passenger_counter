@@ -96,7 +96,8 @@ abstract class AppColors {
 
 abstract class AppStyles {
 
-  static final mainTitleTextStyle = TextStyle(fontSize: 20, color: AppColors.backgroundMain2);
+  static const mainTitleTextStyle = TextStyle(fontSize: 34, color: Color(0xFF000000), fontWeight: FontWeight.w600);
+  static final submainTitleTextStyle = TextStyle(fontSize: 20, color: AppColors.backgroundMain2);
 
 }
 

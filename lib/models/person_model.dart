@@ -8,7 +8,9 @@ class Person {
   final String email;
   final String document;
   final String citizenship;
-  final String status;
+  final String? status;
+  final String createdAt;
+  final String updatedAt;
 
 
   Person({
@@ -22,6 +24,8 @@ class Person {
     required this.document,
     required this.citizenship,
     required this.status,
+    required this.createdAt,
+    required this.updatedAt
   });
 
   static Person fromJson(json) =>
@@ -36,6 +40,8 @@ class Person {
         document: json["document"],
         citizenship: json["citizenship"],
         status: json["status"],
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
       );
 
 

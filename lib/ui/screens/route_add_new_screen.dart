@@ -282,7 +282,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
                 child: Text(
                   "Добавить рейс".toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: AppStyles.mainTitleTextStyle,
+                  style: AppStyles.submainTitleTextStyle,
                 ),
               ),
               SizedBox(
@@ -345,7 +345,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
               ),
               Text(
                 "Прибытие",
-                style: AppStyles.mainTitleTextStyle,
+                style: AppStyles.submainTitleTextStyle,
               ),
               Container(
                 height: 60,
@@ -411,7 +411,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
               ),
               Text(
                 "Дата и время отправления",
-                style: AppStyles.mainTitleTextStyle,
+                style: AppStyles.submainTitleTextStyle,
               ),
               Container(
                 width: MediaQuery.of(context).size.width - 20,
@@ -512,7 +512,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
 
               Text(
                 "Дата и время прибытия",
-                style: AppStyles.mainTitleTextStyle,
+                style: AppStyles.submainTitleTextStyle,
               ),
               Container(
                 width: MediaQuery.of(context).size.width - 20,
@@ -613,7 +613,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
 
               Text(
                 "Выбор судна",
-                style: AppStyles.mainTitleTextStyle,
+                style: AppStyles.submainTitleTextStyle,
               ),
               Container(
                 height: 60,

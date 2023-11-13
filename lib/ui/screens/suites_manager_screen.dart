@@ -29,7 +29,7 @@ class _SuitesManagerScreenState extends State<SuitesManagerScreen> {
                 child: Text(
                   "Назначить каюты на рейс".toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: AppStyles.mainTitleTextStyle,
+                  style: AppStyles.submainTitleTextStyle,
                 ),
               ),
               SizedBox(

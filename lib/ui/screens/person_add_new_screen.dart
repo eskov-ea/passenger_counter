@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
-import 'package:sqflite/sqflite.dart';
-
+import 'package:pleyona_app/ui/widgets/scan_button.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 
@@ -18,9 +17,12 @@ class PersonAddNewScreen extends StatefulWidget {
 
 class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
+  final DBProvider _db = DBProvider.db;
+
   final _lastnameFieldKey = GlobalKey<FormFieldState>();
   final _firstnameFieldKey = GlobalKey<FormFieldState>();
   final _middlenameFieldKey = GlobalKey<FormFieldState>();
+  final _phoneFieldKey = GlobalKey<FormFieldState>();
 
   final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _firstnameController = TextEditingController();
@@ -31,6 +33,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   final TextEditingController _documentNameFieldController = TextEditingController();
   final TextEditingController _documentNumberFieldController = TextEditingController();
   final TextEditingController _citizenshipFieldController = TextEditingController();
+  final TextEditingController _phoneFieldController = TextEditingController();
+  final TextEditingController _emailFieldController = TextEditingController();
   final FocusNode _lastnameFocus = FocusNode();
   final FocusNode _firstnameFocus = FocusNode();
   final FocusNode _middlenameFocus = FocusNode();
@@ -40,6 +44,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   final FocusNode _documentNameFocus = FocusNode();
   final FocusNode _documentNumberFocus = FocusNode();
   final FocusNode _citizenshipFieldFocus = FocusNode();
+  final FocusNode _phoneFieldFocus = FocusNode();
+  final FocusNode _emailFieldFocus = FocusNode();
   final Color focusedBorderColor = AppColors.backgroundMain4;
 
   bool isLastnameFieldHasError = false;
@@ -52,6 +58,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   bool isPassportSerialNumberFieldHasError = false;
   bool isDocumentNameFieldHasError = false;
   bool isDocumentNumberFieldsHasError = false;
+  bool isPhoneFieldsHasError = false;
+  bool isEmailFieldsHasError = false;
 
   String? documentInputFieldsErrorMessage;
 
@@ -173,23 +181,25 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     if(!isLastnameFieldHasError && !isFirstnameFieldHasError && !isMiddlenameFieldHasError &&
         !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
       && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
-      final DBProvider db = DBProvider.db;
       final newPerson = Person(
-        id: 1,
+        id: 0,
         firstname: _firstnameController.text,
         lastname: _lastnameController.text,
         middlename: _middlenameController.text,
-        birthdate: _dayBirthFieldController.text,
-        phone: "+79132234418",
-        email: "test@google.com",
+        birthdate: "${_yearBirthFieldController.text}-${_monthBirthFieldController.text}-${_dayBirthFieldController.text}",
+        phone: _phoneFieldController.text,
+        email: _emailFieldController.text,
         document: "${_documentNameFieldController.text}/${_documentNumberFieldController.text}",
         citizenship: _citizenshipFieldController.text,
-        status: ""
+        status: null,
+        createdAt: dateFormatter(DateTime.now()),
+        updatedAt: dateFormatter(DateTime.now())
       );
-      final res = await db.addPerson(newPerson);
-      print("RESULT IS:   $res");
+      final res = await _db.addPerson(newPerson);
     }
   }
+
+
 
   void _openAddingDocOptionDialog() {
     showModalBottomSheet(
@@ -383,6 +393,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
               child: Column(
                 children: [
                   SizedBox(height: 100,),
+                  ScanButton(),
+                  SizedBox(height: 5,),
                   TextFormField(
                     controller: _lastnameController,
                     focusNode: _lastnameFocus,
@@ -992,10 +1004,151 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                       style: TextStyle(fontSize: 14, color: AppColors.errorMain),
                     ),
                   ),
+                  SizedBox(height: 15,),
+                  Container(
+                    width: MediaQuery.of(context).size.width ,
+                    padding: EdgeInsets.only(bottom: 15),
+                    child: Text("Контактные данные",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: TextFormField(
+                          controller: _phoneFieldController,
+                          focusNode: _phoneFieldFocus,
+                          autovalidateMode: AutovalidateMode.disabled,
+                          keyboardType: TextInputType.phone,
+                          cursorHeight: 25,
+                          onEditingComplete: (){
+                            _onNextFieldFocus(context, _phoneFieldFocus, _emailFieldFocus);
+                            _validatePassportFields();
+                          },
+                          onTap: () {
+                            if(isPhoneFieldsHasError) {
+                              setState(() {
+                                isPhoneFieldsHasError = false;
+                              });
+                            }
+                          },
+                          onTapOutside: (event) {
+                            if(_phoneFieldFocus.hasFocus) {
+                              _phoneFieldFocus.unfocus();
+                            }
+                          },
+                          cursorColor: Color(0xFF000000),
+                          style: const TextStyle(fontSize: 18, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                            fillColor: isPhoneFieldsHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
+                            filled: true,
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: focusedBorderColor
+                                )
+                            ),
+                            enabledBorder:  OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: AppColors.backgroundMain2
+                                )
+                            ),
+                            errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: AppColors.errorMain
+                                )
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: AppColors.errorMain
+                                )
+                            ),
+                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
+                            labelText: 'Телефон',
+                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                            focusColor: AppColors.accent5,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.05,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: TextFormField(
+                          controller: _emailFieldController,
+                          focusNode: _emailFieldFocus,
+                          autovalidateMode: AutovalidateMode.disabled,
+                          keyboardType: TextInputType.emailAddress,
+                          cursorHeight: 25,
+                          onEditingComplete: (){
+                            // _onNextFieldFocus(context, _emailFieldFocus, _citizenshipFieldFocus);
+                            _validatePassportFields();
+                          },
+                          onTap: () {
+                            if(isEmailFieldsHasError) {
+                              setState(() {
+                                isEmailFieldsHasError = false;
+                              });
+                            }
+                          },
+                          onTapOutside: (event) {
+                            if(_emailFieldFocus.hasFocus) {
+                              _emailFieldFocus.unfocus();
+                            }
+                          },
+                          cursorColor: Color(0xFF000000),
+                          style: const TextStyle(fontSize: 18, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                            fillColor: isEmailFieldsHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
+                            filled: true,
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: focusedBorderColor
+                                )
+                            ),
+                            enabledBorder:  OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: AppColors.backgroundMain2
+                                )
+                            ),
+                            errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: AppColors.errorMain
+                                )
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                borderSide: BorderSide(
+                                    color: AppColors.errorMain
+                                )
+                            ),
+                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
+                            labelText: 'Email',
+                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                            focusColor: AppColors.accent5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15,),
                   Container(
                     width: MediaQuery.of(context).size.width ,
                     padding: EdgeInsets.only(bottom: 15, top: 15),
-                    child: Text("Прикрепить фото паспорта",
+                    child: Text("Прикрепить фото пассажира",
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
                     ),

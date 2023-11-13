@@ -1,6 +1,42 @@
+import 'package:intl/intl.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+
+
+String dateFormatter(DateTime date) {
+  return "${date.day}.${date.month}.${date.year}";
+}
+final Map<String, String> tables = {
+  "person" :
+  'CREATE TABLE person (id INTEGER PRIMARY KEY AUTOINCREMENT, '
+      'firstname varchar(255) DEFAULT NULL, '
+      'lastname varchar(255) DEFAULT NULL, '
+      'middlename varchar(255) DEFAULT NULL, '
+      'birthdate varchar(16) DEFAULT NULL, '
+      'phone varchar(100) DEFAULT NULL, '
+      'email varchar(160) DEFAULT NULL, '
+      'document varchar(255) DEFAULT NULL, '
+      'citizenship varchar(100) DEFAULT NULL, '
+      'status TINYINT(1) DEFAULT NULL, '
+      'created_at DATE DEFAULT NULL, '
+      'updated_at DATE DEFAULT NULL, '
+      'deleted_at DATE DEFAULT NULL)'
+};
+
+
+class DBTable {
+  final String name;
+  const DBTable({required this.name});
+  static DBTable fromJson(json) => DBTable(name: json["name"]);
+}
+bool checkIfTableExists(List<DBTable> existingTables, String searchingTableName) {
+  final res = existingTables.where((el) =>
+      el.name == searchingTableName
+  );
+  return res.isEmpty ?  false : true;
+}
+
 
 
 class DBProvider {
@@ -22,35 +58,57 @@ class DBProvider {
     String path = join(databasesPath, 'pleyona.db');
     return await openDatabase(path, version: 1,
       onCreate: (Database db, int version) async {
-        await db.execute(
-          'CREATE TABLE person (id INTEGER PRIMARY KEY AUTOINCREMENT, '
-          'firstname varchar(255) DEFAULT NULL, '
-          'lastname varchar(255) DEFAULT NULL, '
-          'middlename varchar(255) DEFAULT NULL,'
-          'birthdate varchar(16) DEFAULT NULL,'
-          'phone varchar(100) DEFAULT NULL,'
-          'email varchar(160) DEFAULT NULL,'
-          'passport varchar(255) DEFAULT NULL,'
-          'citizenship varchar(100) DEFAULT NULL,'
-          'status TINYINT(1) DEFAULT NULL,'
-          'created_at DATE DEFAULT (datetime(${DateTime.now()})),'
-          'updated_at DATE DEFAULT (datetime(${DateTime.now()})),'
-          'deleted_at DATE DEFAULT NULL)'
-        );
+        await createTables(db);
       },
-      onOpen: (db) {  }
+      onOpen: (db) async {
+        final List<Object> rawTables = await db.rawQuery('SELECT * FROM sqlite_master');
+        final List<DBTable> existingTables = rawTables.map((el) => DBTable.fromJson(el)).toList();
+        tables.forEach((k, sql) async {
+          if ( !checkIfTableExists(existingTables, k) ) {
+            await db.execute(sql);
+            print("TABLE CREATED ::::::");
+          }
+        });
+      }
     );
   }
 
-  addPerson(Person p) async {
+  Future<void> createTables(Database db) async {
+    try {
+      tables.forEach((key, sql) async {
+        await db.execute(sql);
+      });
+    } catch (err) {
+      print("ERROR:DBProvider:73:: $err");
+    }
+  }
+
+  Future<int> addPerson(Person p) async {
     final db = await database;
-    await db.transaction((txn) async {
+    return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-        'INSERT INTO person(firstname, lastname, middlename, birthdate, phone, email, passport, citizenship, status)'
-        'VALUES(${p.firstname}, ${p.lastname}, ${p.middlename}, ${p.birthdate}, ${p.phone}, ${p.email}, '
-        '${p.document}, ${p.citizenship}, ${p.status})'
+        'INSERT INTO person(firstname, lastname, middlename, birthdate, phone, email, document, citizenship, status, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [p.firstname, p.lastname, p.middlename, p.birthdate, p.phone, p.email, p.document, p.citizenship, p.status, p.createdAt, p.updatedAt]
       );
       return id;
     });
   }
+
+  Future<List<Object>> getPersons() async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+        'SELECT * FROM person'
+      );
+      print(res);
+      return res;
+    });
+  }
+
+  Future<void> DeveloperModeClearPersonTable() async {
+    final db = await initDB();
+    await db.execute("DROP TABLE IF EXISTS person");
+  }
+
+
 }

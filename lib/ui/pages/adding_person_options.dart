@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/widgets/person_card.dart';
+import 'package:pleyona_app/ui/widgets/person_card_brief.dart';
+import 'package:pleyona_app/ui/widgets/person_card_fullsize.dart';
 
 import '../../models/person_model.dart';
 
@@ -28,10 +29,15 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
     return SafeArea(
       child: Scaffold(
         body: Container(
-          color: AppColors.accent5,
-          // width: MediaQuery.of(context).size.width,
+          color: AppColors.cardColor4,
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: PersonCard(person: widget.newPerson),
+          child: ListView.builder(
+            itemCount: 4,
+            itemBuilder: (context, index) {
+              return PersonCardFullSize(person: widget.newPerson);
+            }
+          ),
         )
       ),
     );

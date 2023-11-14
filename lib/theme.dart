@@ -48,6 +48,12 @@ abstract class DarkColors {
   static const suiteEmptyState = Color(0xFFDEFFDA);
   static const suiteFullyOccupiedState = Color(0xFFFFDFB0);
   static const suitePartlyOccupiedState = Color(0xFFFFCECE);
+
+
+  static const cardColor1 = Color(0x80FFE7E7);
+  static const cardColor2 = Color(0xBFCFD6FC);
+  static const cardColor3 = Color(0xFFFFF7F7);
+  static const cardColor4 = Color(0xFFBFC5FF);
 }
 
 abstract class AppColors {
@@ -91,6 +97,12 @@ abstract class AppColors {
   static Color suiteEmptyState = isDark ? DarkColors.suiteEmptyState : Color(0xFFDEFFDA);
   static Color suiteFullyOccupiedState = isDark ? DarkColors.suiteFullyOccupiedState : Color(0xFFFFDFB0);
   static Color suitePartlyOccupiedState = isDark ? DarkColors.suitePartlyOccupiedState : Color(0xFFFFCECE);
+
+
+  static Color cardColor1 = isDark ? DarkColors.cardColor1 : Color(0x80FFE7E7);
+  static Color cardColor2 = isDark ? DarkColors.cardColor2 : Color(0x80CFD6FC);
+  static Color cardColor3 = isDark ? DarkColors.cardColor3 : Color(0xFFFFF7F7);
+  static Color cardColor4 = isDark ? DarkColors.cardColor4 : Color(0xFFEAEDFF);
 }
 
 
@@ -98,6 +110,9 @@ abstract class AppStyles {
 
   static const mainTitleTextStyle = TextStyle(fontSize: 34, color: Color(0xFF000000), fontWeight: FontWeight.w600);
   static final submainTitleTextStyle = TextStyle(fontSize: 20, color: AppColors.backgroundMain2);
+
+  static const secondaryTextStyle = TextStyle(fontSize: 16, color: Color(0xFF242424));
+  static const secondaryHalfTextStyle = TextStyle(fontSize: 12, color: Color(0xFF242424));
 
 }
 

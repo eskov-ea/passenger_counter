@@ -105,6 +105,20 @@ class DBProvider {
     });
   }
 
+  Future findPerson({
+    required String lastname, String? firstname, String? middlename, String? birthdate
+  }) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      String sql = "SELECT * FROM person WHERE lastname = '$lastname'";
+      if (firstname != null) sql += ", firstname = '$firstname'";
+      if (middlename != null) sql += ", firstname = '$middlename'";
+      if (birthdate != null) sql += ", firstname = '$birthdate'";
+
+      return await txn.rawQuery(sql);
+    });
+  }
+
   Future<void> DeveloperModeClearPersonTable() async {
     final db = await initDB();
     await db.execute("DROP TABLE IF EXISTS person");

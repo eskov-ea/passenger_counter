@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/widgets/scanner.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 
 class ScanButton extends StatelessWidget {
   const ScanButton({
+    required this.setStateCallback,
+    required this.allowedFormat,
     super.key
   });
 
-  // final Function() onTap;
+  final Function(Barcode) setStateCallback;
+  final List<BarcodeFormat> allowedFormat;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +27,12 @@ class ScanButton extends StatelessWidget {
           color: AppColors.backgroundMain5,
         ),
         child: InkWell(
-            onTap: () {   },
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                MainNavigationRouteNames.scannerScreen,
+                arguments: ScannerScreenArguments(setStateCallback: setStateCallback, allowedFormat: allowedFormat)
+              );
+            },
             splashColor: AppColors.backgroundMain4,
             child: Center(
               child: RichText(

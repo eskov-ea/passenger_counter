@@ -1,5 +1,5 @@
 class Person {
-  final int id;
+  final String id;
   final String firstname;
   final String lastname;
   final String middlename;
@@ -42,6 +42,22 @@ class Person {
         status: json["status"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
+      );
+
+  static Person fromQRCode(json) =>
+      Person(
+        id: "",
+        firstname: json["firstname"],
+        lastname: json["lastname"],
+        middlename: json["middlename"],
+        birthdate: json["birth_date"],
+        phone: json["phone"],
+        email: json["email"],
+        document: json["document"],
+        citizenship: json["citizenship"],
+        status: "",
+        createdAt: "",
+        updatedAt: ""
       );
 
 

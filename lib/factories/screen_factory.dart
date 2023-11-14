@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pleyona_app/ui/screens/all_persons_screen.dart';
 import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
+import 'package:pleyona_app/ui/widgets/scanner.dart';
+import '../ui/pages/adding_person_options.dart';
 import '../ui/pages/loader_widget.dart';
 import '../ui/screens/auth_screen.dart';
 import '../ui/screens/entry_point.dart';
@@ -30,5 +32,13 @@ class ScreenFactory {
 
   Widget makeAllPersonsScreen() {
     return const AllPersonsScreen();
+  }
+
+  Widget makeScannerScreen(ScannerScreenArguments arguments) {
+    return Scanner(setStateCallback: arguments.setStateCallback, allowedFormat: arguments.allowedFormat);
+  }
+
+  Widget makeAddingPersonOptionsPage(AddingPersonOptionsArguments arguments) {
+    return AddingPersonOptions(newPerson: arguments.newPerson, persons: arguments.persons);
   }
 }

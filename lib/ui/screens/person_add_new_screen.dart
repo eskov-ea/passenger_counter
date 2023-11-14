@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/pages/adding_person_options.dart';
 import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/scan_button.dart';
+import 'package:pleyona_app/ui/widgets/scanner.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 
@@ -64,6 +70,13 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   String? documentInputFieldsErrorMessage;
 
 
+  ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
+  final List<BarcodeFormat> allowedScanFormat = [BarcodeFormat.qrcode];
+
+  void setQRResult(Barcode value) {
+      qrResult.value = value;
+  }
+
 
   String? _validateLastnameField(String? lastname) {
     if (lastname == null || lastname.trim().isEmpty) {
@@ -94,6 +107,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   }
 
   String? _validateMiddlenameField(String? value) {
+    print("_validateMiddlenameField");
     if (value == null || value.trim().isEmpty) {
       setState(() {
         isMiddlenameFieldHasError = true;
@@ -144,6 +158,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   }
 
   void _validateDateBirthInput() {
+    print("_validateDateBirthInput");
     _validateDayBirthField(_dayBirthFieldController.text);
     _validateMonthBirthField(_monthBirthFieldController.text);
     _validateYearBirthField(_yearBirthFieldController.text);
@@ -161,7 +176,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       setState(() {
         isDocumentNumberFieldHasError = _documentNameFieldController.text.isEmpty ? true : false;
         isDocumentNameFieldHasError = _documentNumberFieldController.text.isEmpty ? true : false;
-        documentInputFieldsErrorMessage = "Серия и номер паспорта должны быть заполнены";
+        documentInputFieldsErrorMessage = "Название документа и его номер должны быть заполнены";
       });
     } else {
       setState(() {
@@ -182,7 +197,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
       && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
       final newPerson = Person(
-        id: 0,
+        id: "",
         firstname: _firstnameController.text,
         lastname: _lastnameController.text,
         middlename: _middlenameController.text,
@@ -195,7 +210,12 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         createdAt: dateFormatter(DateTime.now()),
         updatedAt: dateFormatter(DateTime.now())
       );
-      final res = await _db.addPerson(newPerson);
+      // final ress = await _db.findPerson(lastname: newPerson.lastname);
+      // print("RESS::::   $ress");
+      // final res = await _db.addPerson(newPerson);
+      Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,
+        arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: [])
+      );
     }
   }
 
@@ -310,6 +330,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     );
   }
 
+
   void _onNextFieldFocus(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
@@ -347,7 +368,42 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         _firstnameFieldKey.currentState?.validate();
       }
     });
+    _middlenameFocus.addListener(() {
+      if(!_middlenameFocus.hasFocus) {
+        _middlenameFieldKey.currentState?.validate();
+      }
+    });
+    qrResult.addListener(() {
+      if (qrResult.value?.code != null) {
+        final qr = qrResult.value!.code!;
+        final person = Person.fromQRCode(json.decode(qr));
+        _fillInputsWithQRCodeData(person);
+      }
+    });
     super.initState();
+  }
+
+  void _fillInputsWithQRCodeData(Person p) {
+    final doc = p.document.split(" ");
+    final bDate = p.birthdate.split("-");
+
+    _firstnameController.text = p.firstname;
+    _lastnameController.text = p.lastname;
+    _middlenameController.text = p.middlename;
+    _yearBirthFieldController.text = bDate[0];
+    _monthBirthFieldController.text = bDate[1];
+    _dayBirthFieldController.text = bDate[2];
+    _documentNameFieldController.text = doc[0];
+    _documentNumberFieldController.text = doc[1];
+    _citizenshipFieldController.text = p.citizenship;
+    _phoneFieldController.text = p.phone;
+    _emailFieldController.text = p.email;
+
+    _validateDateBirthInput();
+    _validatePassportFields();
+    _firstnameFieldKey.currentState?.validate();
+    _lastnameFieldKey.currentState?.validate();
+    _middlenameFieldKey.currentState?.validate();
   }
 
   @override
@@ -393,7 +449,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
               child: Column(
                 children: [
                   SizedBox(height: 100,),
-                  ScanButton(),
+                  ScanButton(setStateCallback: setQRResult, allowedFormat: allowedScanFormat,),
                   SizedBox(height: 5,),
                   TextFormField(
                     controller: _lastnameController,
@@ -422,7 +478,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     cursorColor: Color(0xFF000000),
                     style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 30),
+                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       fillColor: isLastnameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
                       filled: true,
@@ -484,7 +540,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     cursorColor: Color(0xFF000000),
                     style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 30),
+                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       fillColor: isFirstnameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
                       filled: true,
@@ -540,13 +596,14 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     },
                     onTapOutside: (event) {
                       if(_middlenameFocus.hasFocus) {
+                        _middlenameFieldKey.currentState?.validate();
                         _middlenameFocus.unfocus();
                       }
                     },
                     cursorColor: Color(0xFF000000),
                     style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 30),
+                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       fillColor: isMiddlenameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
                       filled: true,
@@ -598,7 +655,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                           onEditingComplete: (){
                             _onNextFieldFocus(context, _dayBirthFocus, _monthBirthFocus);
                             _validateDayBirthField(_dayBirthFieldController.text);
-                            // _validateDateBirthInput();
                           },
                           onTap: () {
                             if(isDayBirthFieldHasError) {
@@ -809,6 +865,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.3,
@@ -871,9 +928,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                             focusColor: AppColors.accent5,
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.05,
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.6,
@@ -961,7 +1015,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                         cursorColor: Color(0xFF000000),
                         style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
                         decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 30),
+                          contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                           fillColor: AppColors.textMain,
                           filled: true,
@@ -1014,6 +1068,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.45,
@@ -1076,9 +1131,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                             focusColor: AppColors.accent5,
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.05,
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.45,

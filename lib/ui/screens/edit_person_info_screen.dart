@@ -14,14 +14,19 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 
-class PersonAddNewScreen extends StatefulWidget {
-  const PersonAddNewScreen({super.key});
+class EditPersonInfoScreen extends StatefulWidget {
+
+  final Person person;
+  const EditPersonInfoScreen({
+    required this.person,
+    super.key
+  });
 
   @override
-  State<PersonAddNewScreen> createState() => _PersonAddNewScreenState();
+  State<EditPersonInfoScreen> createState() => _EditPersonInfoScreenState();
 }
 
-class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
+class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
 
   final DBProvider _db = DBProvider.db;
 
@@ -68,14 +73,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   bool isEmailFieldsHasError = false;
 
   String? documentInputFieldsErrorMessage;
+  bool isEditingMode = false;
 
-
-  ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
-  final List<BarcodeFormat> allowedScanFormat = [BarcodeFormat.qrcode];
-
-  void setQRResult(Barcode value) {
-      qrResult.value = value;
-  }
 
 
   String? _validateLastnameField(String? lastname) {
@@ -158,7 +157,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   }
 
   void _validateDateBirthInput() {
-    print("_validateDateBirthInput");
     _validateDayBirthField(_dayBirthFieldController.text);
     _validateMonthBirthField(_monthBirthFieldController.text);
     _validateYearBirthField(_yearBirthFieldController.text);
@@ -196,34 +194,34 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     if(!isLastnameFieldHasError && !isFirstnameFieldHasError && !isMiddlenameFieldHasError &&
         !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
       && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
-      final newPerson = Person(
-        id: "",
-        firstname: _firstnameController.text,
-        lastname: _lastnameController.text,
-        middlename: _middlenameController.text,
-        birthdate: "${_yearBirthFieldController.text}-${_monthBirthFieldController.text}-${_dayBirthFieldController.text}",
-        phone: _phoneFieldController.text,
-        email: _emailFieldController.text,
-        document: "${_documentNameFieldController.text}/${_documentNumberFieldController.text}",
-        citizenship: _citizenshipFieldController.text,
-        status: null,
-        createdAt: dateFormatter(DateTime.now()),
-        updatedAt: dateFormatter(DateTime.now())
-      );
-      final rawResult = await _db.findPerson(lastname: newPerson.lastname);
-      final List<Person> persons = rawResult.map((el) => Person.fromJson(el)).toList();
-      if (persons.isEmpty) {
-        await _db.addPerson(newPerson);
-        // TODO: handle error
-        Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
-          arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: MainNavigationRouteNames.homeScreen,
-          person: newPerson)
-        );
-      } else {
-        Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,
-          arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: persons)
-        );
-      }
+      // final newPerson = Person(
+      //   id: "",
+      //   firstname: _firstnameController.text,
+      //   lastname: _lastnameController.text,
+      //   middlename: _middlenameController.text,
+      //   birthdate: "${_yearBirthFieldController.text}-${_monthBirthFieldController.text}-${_dayBirthFieldController.text}",
+      //   phone: _phoneFieldController.text,
+      //   email: _emailFieldController.text,
+      //   document: "${_documentNameFieldController.text}/${_documentNumberFieldController.text}",
+      //   citizenship: _citizenshipFieldController.text,
+      //   status: null,
+      //   createdAt: ,
+      //   updatedAt: dateFormatter(DateTime.now())
+      // );
+      // final rawResult = await _db.findPerson(lastname: newPerson.lastname);
+      // final List<Person> persons = rawResult.map((el) => Person.fromJson(el)).toList();
+      // if (persons.isEmpty) {
+      //   await _db.addPerson(newPerson);
+      //   // TODO: handle error
+      //   Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
+      //     arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: MainNavigationRouteNames.homeScreen,
+      //     person: newPerson)
+      //   );
+      // } else {
+      //   Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,
+      //     arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: persons)
+      //   );
+      // }
     }
   }
 
@@ -366,6 +364,19 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   
   @override
   void initState() {
+    final List<String> birth = widget.person.birthdate.split('-');
+    final String doc = widget.person.document.split(',').last;
+    _lastnameController.text = widget.person.lastname;
+    _firstnameController.text = widget.person.firstname;
+    _middlenameController.text = widget.person.middlename;
+    _dayBirthFieldController.text = birth[2];
+    _monthBirthFieldController.text = birth[1];
+    _yearBirthFieldController.text = birth[2];
+    _documentNameFieldController.text = doc.split('/').first;
+    _documentNumberFieldController.text = doc.split('/').last;
+    _phoneFieldController.text = widget.person.phone;
+    _emailFieldController.text = widget.person.email;
+
     _lastnameFocus.addListener(() {
       if(!_lastnameFocus.hasFocus) {
         _lastnameFieldKey.currentState?.validate();
@@ -381,37 +392,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         _middlenameFieldKey.currentState?.validate();
       }
     });
-    qrResult.addListener(() {
-      if (qrResult.value?.code != null) {
-        final qr = qrResult.value!.code!;
-        final person = Person.fromQRCode(json.decode(qr));
-        _fillInputsWithQRCodeData(person);
-      }
-    });
     super.initState();
-  }
-
-  void _fillInputsWithQRCodeData(Person p) {
-    final doc = p.document.split(" ");
-    final bDate = p.birthdate.split("-");
-
-    _firstnameController.text = p.firstname;
-    _lastnameController.text = p.lastname;
-    _middlenameController.text = p.middlename;
-    _yearBirthFieldController.text = bDate[0];
-    _monthBirthFieldController.text = bDate[1];
-    _dayBirthFieldController.text = bDate[2];
-    _documentNameFieldController.text = doc[0];
-    _documentNumberFieldController.text = doc[1];
-    _citizenshipFieldController.text = p.citizenship;
-    _phoneFieldController.text = p.phone;
-    _emailFieldController.text = p.email;
-
-    _validateDateBirthInput();
-    _validatePassportFields();
-    _firstnameFieldKey.currentState?.validate();
-    _lastnameFieldKey.currentState?.validate();
-    _middlenameFieldKey.currentState?.validate();
   }
 
   @override
@@ -457,8 +438,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
               child: Column(
                 children: [
                   SizedBox(height: 100,),
-                  ScanButton(setStateCallback: setQRResult, allowedFormat: allowedScanFormat,),
-                  SizedBox(height: 5,),
                   TextFormField(
                     controller: _lastnameController,
                     focusNode: _lastnameFocus,
@@ -490,18 +469,18 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       fillColor: isLastnameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
                       filled: true,
-                      focusedBorder: OutlineInputBorder(
+                      focusedBorder: isEditingMode ? OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(
                             color: focusedBorderColor
                         )
-                      ),
-                      enabledBorder:  OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                        borderSide: BorderSide(
-                            color: AppColors.backgroundMain2
-                        )
-                      ),
+                      ) : InputBorder.none,
+                      enabledBorder:  isEditingMode ? OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(
+                              color: focusedBorderColor
+                          )
+                      ) : InputBorder.none,
                       errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           borderSide: BorderSide(
@@ -1278,4 +1257,12 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       ),
     );
   }
+}
+
+class EditPersonScreenArguments {
+  final Person person;
+
+  const EditPersonScreenArguments({
+    required this.person
+  });
 }

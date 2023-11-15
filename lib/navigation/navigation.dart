@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/factories/screen_factory.dart';
+import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/scanner.dart';
 
 import '../ui/pages/adding_person_options.dart';
+import '../ui/screens/edit_person_info_screen.dart';
 
 
 abstract class MainNavigationRouteNames {
@@ -12,9 +14,11 @@ abstract class MainNavigationRouteNames {
   static const homeScreen = '/home_screen';
   static const passengerEditingScreen = '/home_screen/passenger_editing_screen';
   static const addPersonScreen = '/home_screen/add_person_screen';
+  static const editPersonInfoScreen = '/home_screen/edit_person_screen';
   static const allPersonsScreen = '/home_screen/all_persons_screen';
   static const scannerScreen = '/scanner';
   static const personOptionsScreen = '/add_person_options';
+  static const successInfoScreen = '/success_info';
 }
 
 
@@ -92,6 +96,36 @@ class MainNavigation {
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.scannerScreen),
           pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAddingPersonOptionsPage(arguments),
+          transitionsBuilder: (context, Animation<double> animation,
+              Animation<double> secondaryAnimation, Widget child) {
+            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 700),
+        );
+      case MainNavigationRouteNames.successInfoScreen:
+        final arguments = settings.arguments as InfoScreenArguments;
+        return PageRouteBuilder(
+          settings: const RouteSettings(name: MainNavigationRouteNames.successInfoScreen),
+          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeSuccessInfoScreen(arguments),
+          transitionsBuilder: (context, Animation<double> animation,
+              Animation<double> secondaryAnimation, Widget child) {
+            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 700),
+        );
+      case MainNavigationRouteNames.editPersonInfoScreen:
+        final arguments = settings.arguments as EditPersonScreenArguments;
+        return PageRouteBuilder(
+          settings: const RouteSettings(name: MainNavigationRouteNames.successInfoScreen),
+          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeEditPersonInfoScreen(arguments),
           transitionsBuilder: (context, Animation<double> animation,
               Animation<double> secondaryAnimation, Widget child) {
             final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));

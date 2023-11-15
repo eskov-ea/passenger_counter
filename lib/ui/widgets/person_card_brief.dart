@@ -5,8 +5,10 @@ import 'package:pleyona_app/theme.dart';
 
 class PersonCardBrief extends StatelessWidget {
   final Person person;
+  final Function(Person) onTap;
   const PersonCardBrief({
     required this.person,
+    required this.onTap,
     super.key
   });
 
@@ -17,11 +19,11 @@ class PersonCardBrief extends StatelessWidget {
     final String personName = "${person.lastname} ${person.firstname} ${person.middlename}";
 
     return GestureDetector(
-      onTap: () { print("[ PERSON CARD ]:::: $personName"); },
+      onTap: () { onTap(person); },
       child: Container(
         margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        height: 120,
+        height: 130,
         decoration: BoxDecoration(
           color: AppColors.textMain,
           borderRadius: BorderRadius.all(Radius.circular(10))
@@ -54,13 +56,13 @@ class PersonCardBrief extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                     child: Text(person.birthdate,
-                      style: AppStyles.submainTitleTextStyle,
+                      style: AppStyles.secondaryTextStyle,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                     child: Text(person.phone,
-                      style: AppStyles.submainTitleTextStyle,
+                      style: AppStyles.secondaryTextStyle,
                     ),
                   ),
                 ],

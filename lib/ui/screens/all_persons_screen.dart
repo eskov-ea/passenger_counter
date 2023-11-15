@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/models/person_model.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/edit_person_info_screen.dart';
+import 'package:pleyona_app/ui/widgets/person_card_brief.dart';
 
 import '../../services/database/db_provider.dart';
 
@@ -23,6 +26,12 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
     setState(() {
       persons = rawPersons.map((el) => Person.fromJson(el)).toList();
     });
+  }
+
+  void navigateToEditScreen(Person person) {
+    Navigator.of(context).pushNamed(MainNavigationRouteNames.editPersonInfoScreen,
+      arguments: EditPersonScreenArguments(person: person)
+    );
   }
 
 
@@ -53,11 +62,7 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
                 child: ListView.builder(
                   itemCount: persons.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      child: Text("${persons[index].lastname} ${persons[index].firstname} ${persons[index].middlename}"
-
-                      )
-                    );
+                    return PersonCardBrief(person: persons[index], onTap: navigateToEditScreen);
                 }
                 ),
               )

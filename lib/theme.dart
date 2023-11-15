@@ -54,6 +54,7 @@ abstract class DarkColors {
   static const cardColor2 = Color(0xBFCFD6FC);
   static const cardColor3 = Color(0xFFFFF7F7);
   static const cardColor4 = Color(0xFFBFC5FF);
+  static const cardColor5 = Color(0xFFA4C5EF);
 }
 
 abstract class AppColors {
@@ -103,6 +104,7 @@ abstract class AppColors {
   static Color cardColor2 = isDark ? DarkColors.cardColor2 : Color(0x80CFD6FC);
   static Color cardColor3 = isDark ? DarkColors.cardColor3 : Color(0xFFFFF7F7);
   static Color cardColor4 = isDark ? DarkColors.cardColor4 : Color(0xFFEAEDFF);
+  static Color cardColor5 = isDark ? DarkColors.cardColor5 : Color(0xFFA4C5EF);
 }
 
 

@@ -667,7 +667,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
                 ),
               ),
               SizedBox(height: 50,),
-              SaveButton(onTap: ()=> {}),
+              SaveButton(onTap: ()=> {}, label: "Сохранить"),
               SizedBox(height: 10,)
             ],
           ),

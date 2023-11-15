@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pleyona_app/ui/screens/all_persons_screen.dart';
 import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
+import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/scanner.dart';
 import '../ui/pages/adding_person_options.dart';
 import '../ui/pages/loader_widget.dart';
 import '../ui/screens/auth_screen.dart';
+import '../ui/screens/edit_person_info_screen.dart';
 import '../ui/screens/entry_point.dart';
 import '../ui/screens/passenger_add_new.dart';
 
@@ -40,5 +42,13 @@ class ScreenFactory {
 
   Widget makeAddingPersonOptionsPage(AddingPersonOptionsArguments arguments) {
     return AddingPersonOptions(newPerson: arguments.newPerson, persons: arguments.persons);
+  }
+
+  Widget makeSuccessInfoScreen(InfoScreenArguments arguments) {
+    return SuccessInfoScreen(message: arguments.message, routeName: arguments.routeName, person: arguments.person,);
+  }
+
+  Widget makeEditPersonInfoScreen(EditPersonScreenArguments arguments) {
+    return EditPersonInfoScreen(person: arguments.person,);
   }
 }

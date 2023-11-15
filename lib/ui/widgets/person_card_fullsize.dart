@@ -19,12 +19,12 @@ class PersonCardFullSize extends StatelessWidget {
     return GestureDetector(
       onTap: () { print("[ PERSON CARD ]:::: $personName"); },
       child: Container(
-        margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+        margin: const EdgeInsets.only(top: 10,),
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
         height: 200,
         decoration: BoxDecoration(
-            color: AppColors.textMain,
-            borderRadius: BorderRadius.all(Radius.circular(10))
+          color: AppColors.textMain,
+          borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,9 +54,7 @@ class PersonCardFullSize extends StatelessWidget {
               ),
             ),
             SizedBox(width: 10,),
-            Container(
-                width: MediaQuery.of(context).size.width - 150 - 50,
-                height: 200,
+            Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,6 +64,7 @@ class PersonCardFullSize extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                       child: Text(personName,
                         style: AppStyles.submainTitleTextStyle,
+                        maxLines: 2,
                       ),
                     ),
                     Padding(
@@ -76,8 +75,12 @@ class PersonCardFullSize extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                      child: Text(person.document,
-                        style: AppStyles.submainTitleTextStyle,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(person.document,
+                          style: AppStyles.submainTitleTextStyle,
+                          maxLines: 1,
+                        ),
                       )
                     ),
                     Padding(

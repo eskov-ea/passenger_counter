@@ -30,7 +30,7 @@ class Person {
 
   static Person fromJson(json) =>
       Person(
-        id: json["id"],
+        id: json["id"].toString(),
         firstname: json["firstname"],
         lastname: json["lastname"],
         middlename: json["middlename"],

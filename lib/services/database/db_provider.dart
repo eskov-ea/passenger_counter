@@ -105,7 +105,7 @@ class DBProvider {
     });
   }
 
-  Future findPerson({
+  Future<List<Map<String, Object?>>> findPerson({
     required String lastname, String? firstname, String? middlename, String? birthdate
   }) async {
     final db = await database;
@@ -116,6 +116,17 @@ class DBProvider {
       if (birthdate != null) sql += ", firstname = '$birthdate'";
 
       return await txn.rawQuery(sql);
+    });
+  }
+
+  Future updatePerson({
+    required String id, required String document, required String phone, required String email
+  }) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      String sql = "UPDATE person SET phone = '$phone', document = '$document', email = '$email' WHERE id = '$id'";
+      // String sql = "UPDATE person SET phone = '$phone', document = '$document', email = '$email' WHERE id = '$id'";
+      return await txn.rawUpdate(sql);
     });
   }
 

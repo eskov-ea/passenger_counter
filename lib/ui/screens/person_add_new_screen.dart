@@ -14,6 +14,9 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 
+
+enum PersonClass { regular, staff, vip }
+
 class PersonAddNewScreen extends StatefulWidget {
   const PersonAddNewScreen({super.key});
 
@@ -222,6 +225,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   void _onSave() async {
     _validateDateBirthInput();
     _validatePassportFields();
+    _validateGenderInput();
     _firstnameFieldKey.currentState?.validate();
     _lastnameFieldKey.currentState?.validate();
     _middlenameFieldKey.currentState?.validate();
@@ -233,11 +237,13 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         firstname: _firstnameController.text,
         lastname: _lastnameController.text,
         middlename: _middlenameController.text,
+        gender: isMaleChecked ? "МУЖ" : "ЖЕН" ,
         birthdate: "${_yearBirthFieldController.text}-${_monthBirthFieldController.text}-${_dayBirthFieldController.text}",
         phone: _phoneFieldController.text,
         email: _emailFieldController.text,
         document: "${_documentNameFieldController.text}/${_documentNumberFieldController.text}",
         citizenship: _citizenshipFieldController.text,
+        personClass: ,
         status: null,
         createdAt: dateFormatter(DateTime.now()),
         updatedAt: dateFormatter(DateTime.now())
@@ -958,6 +964,13 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                       )
                     ],
                   ),
+                  isGenderFieldHasError ? Container(
+                    width: MediaQuery.of(context).size.width ,
+                    child: Text("Выберите пол персоны",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 14, color: AppColors.errorMain),
+                    ),
+                  ) : const SizedBox.shrink(),
                   SizedBox(height: 20,),
                   Container(
                     width: MediaQuery.of(context).size.width ,

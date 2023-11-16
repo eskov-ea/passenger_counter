@@ -9,9 +9,9 @@ String dateFormatter(DateTime date) {
 }
 final Map<String, String> tables = {
   "person_class_list" :
-  '''CREATE TABLE person_class_list('
+  'CREATE TABLE person_class_list('
         'person_class varchar(20) PRIMARY KEY NOT NULL, '
-        'seq INTEGER );''',
+        'seq INTEGER );',
 
   "person" :
   'CREATE TABLE person (id INTEGER PRIMARY KEY AUTOINCREMENT, '

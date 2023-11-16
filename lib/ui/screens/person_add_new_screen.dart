@@ -52,6 +52,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   final FocusNode _citizenshipFieldFocus = FocusNode();
   final FocusNode _phoneFieldFocus = FocusNode();
   final FocusNode _emailFieldFocus = FocusNode();
+  final FocusNode _genderFieldFocus = FocusNode();
   final Color focusedBorderColor = AppColors.backgroundMain4;
 
   bool isLastnameFieldHasError = false;
@@ -66,6 +67,10 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   bool isDocumentNumberFieldsHasError = false;
   bool isPhoneFieldsHasError = false;
   bool isEmailFieldsHasError = false;
+  bool isGenderFieldHasError = false;
+
+  bool isMaleChecked = false;
+  bool isFemaleChecked = false;
 
   String? documentInputFieldsErrorMessage;
 
@@ -171,6 +176,18 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
+  void _validateGenderInput() {
+    if (!isMaleChecked && !isFemaleChecked) {
+      setState(() {
+        isGenderFieldHasError = true;
+      });
+    } else {
+      setState(() {
+        isGenderFieldHasError = false;
+      });
+    }
+  }
+
   void _validatePassportFields() {
     if (_documentNameFieldController.text.isEmpty || _documentNumberFieldController.text.isEmpty) {
       setState(() {
@@ -185,6 +202,21 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         documentInputFieldsErrorMessage = null;
       });
     }
+  }
+
+  void _onCheckboxChecked(bool? value) {
+    if (value == null) {
+      _validateGenderInput();
+      return;
+    }
+    setState(() {
+      isMaleChecked = false;
+      isFemaleChecked = false;
+
+      isMaleChecked = value;
+    });
+    _validateGenderInput();
+    if (value)  _onNextFieldFocus(context, _genderFieldFocus, _documentNameFocus);
   }
 
   void _onSave() async {
@@ -862,6 +894,69 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 14, color: AppColors.errorMain),
                     ),
+                  ),
+                  SizedBox(height: 15,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        height: 48,
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(bottom: 3),
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1, color: AppColors.backgroundMain2),
+                          color: isGenderFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Text("Пол:",
+                          style: TextStyle(fontSize: 22, color: AppColors.backgroundMain2, decoration: TextDecoration.none),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Container(
+                        width: 150,
+                        child: Row(
+                          children: [
+                            Checkbox(
+                                value: isMaleChecked,
+                                fillColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
+                                side: BorderSide.none,
+
+                                splashRadius: 20.0,
+                                onChanged: _onCheckboxChecked
+                            ),
+                            Text("Мужской",
+                              style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 150,
+                        child: Row(
+                          children: [
+                            Checkbox(
+                                value: isFemaleChecked,
+                                fillColor: MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus),
+                                checkColor: AppColors.errorMain,
+                                side: BorderSide.none,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    isMaleChecked = false;
+                                    isFemaleChecked = false;
+
+                                    isFemaleChecked = value!;
+                                  });
+                                }
+                            ),
+                            Text("Женский",
+                              style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(height: 20,),
                   Container(

@@ -5,7 +5,7 @@ import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/scanner.dart';
 
 import '../ui/pages/adding_person_options.dart';
-import '../ui/screens/edit_person_info_screen.dart';
+import '../ui/screens/person_edit_info_screen.dart';
 
 
 abstract class MainNavigationRouteNames {

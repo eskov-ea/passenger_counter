@@ -6,7 +6,7 @@ import 'package:pleyona_app/ui/widgets/scanner.dart';
 import '../ui/pages/adding_person_options.dart';
 import '../ui/pages/loader_widget.dart';
 import '../ui/screens/auth_screen.dart';
-import '../ui/screens/edit_person_info_screen.dart';
+import '../ui/screens/person_edit_info_screen.dart';
 import '../ui/screens/entry_point.dart';
 import '../ui/screens/passenger_add_new.dart';
 

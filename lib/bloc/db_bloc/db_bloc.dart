@@ -22,6 +22,7 @@ class DBBloc extends Bloc<DBEvent, DBState> {
   }
 
   _onInitializeDBEvent(InitializeDBEvent event, Emitter<DBState> emit) async {
+    print("[ DATABASE INITIALIZE]::: ");
     if( state is NotInitializedDBState) {
       _dbProvider = DBProvider.db;
       await _dbProvider.database;

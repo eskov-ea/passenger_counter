@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
+import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 
 
@@ -60,8 +61,10 @@ class PassengerOptionsSliver extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pushNamed(MainNavigationRouteNames.passengerEditingScreen);
+                onTap: () async {
+                  final db = await DBProvider.db;
+                  await db.DeveloperModeClearPersonTable();
+                  print("TABLE DELETE::::");
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),

@@ -6,6 +6,7 @@ import 'package:pleyona_app/ui/screens/person_edit_info_screen.dart';
 import 'package:pleyona_app/ui/screens/homescreen.dart';
 import 'package:pleyona_app/ui/screens/passenger_add_new.dart';
 import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
+import 'package:pleyona_app/ui/screens/person_search_screen.dart';
 import 'package:pleyona_app/ui/screens/route_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/suites_manager_screen.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_field_widget.dart';

@@ -10,7 +10,7 @@ class Person {
   final String document;
   final String citizenship;
   final String personClass;
-  final String? status;
+  final String? comment;
   final String createdAt;
   final String updatedAt;
 
@@ -27,7 +27,7 @@ class Person {
     required this.document,
     required this.citizenship,
     required this.personClass,
-    required this.status,
+    required this.comment,
     required this.createdAt,
     required this.updatedAt
   });
@@ -45,7 +45,7 @@ class Person {
         document: json["document"],
         citizenship: json["citizenship"],
         personClass: json["class_person"],
-        status: json["status"],
+        comment: json["comment"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
       );
@@ -63,10 +63,16 @@ class Person {
         document: json["document"],
         citizenship: json["citizenship"],
         personClass: json["class_person"],
-        status: "",
+        comment: "",
         createdAt: "",
         updatedAt: ""
       );
 
-
+    @override
+    String toString() {
+      return "Instance Person [ firstname: $firstname, lastname: $lastname, middlename: $middlename,"
+          " gender: $gender, birthdate: $birthdate, phone: $phone, "
+          "email: $email, document: $document, citizenship: $citizenship, "
+          "person class: $personClass, comment: $comment, created at: $createdAt, updated at: $updatedAt";
+    }
   }

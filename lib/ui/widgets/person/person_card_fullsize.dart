@@ -89,10 +89,10 @@ class PersonCardFullSize extends StatelessWidget {
                         style: AppStyles.secondaryTextStyle,
                       ),
                     ),
-                    person.status != null
+                    person.comment != null
                     ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                      child: Text(person.status!,
+                      child: Text(person.comment!,
                         style: AppStyles.secondaryHalfTextStyle,
                         maxLines: 2,
                       ),

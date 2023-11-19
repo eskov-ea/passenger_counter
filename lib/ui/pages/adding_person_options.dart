@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/widgets/person_card_brief.dart';
-import 'package:pleyona_app/ui/widgets/person_card_fullsize.dart';
+import 'package:pleyona_app/ui/widgets/person/person_card_brief.dart';
+import 'package:pleyona_app/ui/widgets/person/person_card_fullsize.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import '../../models/person_model.dart';
 import '../../navigation/navigation.dart';

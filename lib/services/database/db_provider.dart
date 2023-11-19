@@ -20,6 +20,7 @@ final Map<String, String> tables = {
       'middlename varchar(255) DEFAULT NULL, '
       'gender varchar(6) DEFAULT "" NOT NULL, '
       'birthdate varchar(16) DEFAULT NULL, '
+      'document varchar(255) DEFAULT NULL, '
       'phone varchar(100) DEFAULT NULL, '
       'email varchar(160) DEFAULT NULL, '
       'photo text DEFAULT "", '
@@ -95,25 +96,25 @@ class DBProvider {
     final db = await database;
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-        'INSERT INTO person(firstname, lastname, middlename, birthdate, phone, email, document, citizenship, status, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [p.firstname, p.lastname, p.middlename, p.birthdate, p.phone, p.email, p.document, p.citizenship, p.status, p.createdAt, p.updatedAt]
+        'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, document, citizenship, class_person, comment, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.document, p.citizenship, p.personClass, p.comment, p.createdAt, p.updatedAt]
       );
       return id;
     });
   }
 
-  Future<List<Object>> getPersons() async {
+  Future<List<Person>> getPersons() async {
     final db = await database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
         'SELECT * FROM person'
       );
       print(res);
-      return res;
+      return res.map((el) => Person.fromJson(el)).toList();
     });
   }
 
-  Future<List<Map<String, Object?>>> findPerson({
+  Future<List<Person>> findPerson({
     required String lastname, String? firstname, String? middlename, String? birthdate
   }) async {
     final db = await database;
@@ -123,7 +124,8 @@ class DBProvider {
       if (middlename != null) sql += ", firstname = '$middlename'";
       if (birthdate != null) sql += ", firstname = '$birthdate'";
 
-      return await txn.rawQuery(sql);
+      final res = await txn.rawQuery(sql);
+      return res.map((el) => Person.fromJson(el)).toList();
     });
   }
 

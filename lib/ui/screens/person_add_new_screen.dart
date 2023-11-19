@@ -8,11 +8,15 @@ import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/pages/adding_person_options.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
+import 'package:pleyona_app/ui/widgets/person/adding_person_additional_info_block.dart';
+import 'package:pleyona_app/ui/widgets/person/adding_person_contact_info_block.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/scan_button.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
+import '../widgets/person/adding_person_document_info_block.dart';
+import '../widgets/person/adding_person_general_info_block.dart';
 
 
 enum PersonClass { regular, staff, vip }
@@ -28,34 +32,39 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
   final DBProvider _db = DBProvider.db;
 
-  final _lastnameFieldKey = GlobalKey<FormFieldState>();
-  final _firstnameFieldKey = GlobalKey<FormFieldState>();
-  final _middlenameFieldKey = GlobalKey<FormFieldState>();
+  final lastnameFieldKey = GlobalKey<FormFieldState>();
+  final firstnameFieldKey = GlobalKey<FormFieldState>();
+  final middlenameFieldKey = GlobalKey<FormFieldState>();
+  final documentNameFieldKey = GlobalKey<FormFieldState>();
+  final documentNumberFieldKey = GlobalKey<FormFieldState>();
   final _phoneFieldKey = GlobalKey<FormFieldState>();
 
-  final TextEditingController _lastnameController = TextEditingController();
-  final TextEditingController _firstnameController = TextEditingController();
-  final TextEditingController _middlenameController = TextEditingController();
-  final TextEditingController _dayBirthFieldController = TextEditingController();
-  final TextEditingController _monthBirthFieldController = TextEditingController();
-  final TextEditingController _yearBirthFieldController = TextEditingController();
-  final TextEditingController _documentNameFieldController = TextEditingController();
-  final TextEditingController _documentNumberFieldController = TextEditingController();
-  final TextEditingController _citizenshipFieldController = TextEditingController();
-  final TextEditingController _phoneFieldController = TextEditingController();
-  final TextEditingController _emailFieldController = TextEditingController();
-  final FocusNode _lastnameFocus = FocusNode();
-  final FocusNode _firstnameFocus = FocusNode();
-  final FocusNode _middlenameFocus = FocusNode();
-  final FocusNode _dayBirthFocus = FocusNode();
-  final FocusNode _monthBirthFocus = FocusNode();
-  final FocusNode _yearBirthFocus = FocusNode();
-  final FocusNode _documentNameFocus = FocusNode();
-  final FocusNode _documentNumberFocus = FocusNode();
-  final FocusNode _citizenshipFieldFocus = FocusNode();
-  final FocusNode _phoneFieldFocus = FocusNode();
-  final FocusNode _emailFieldFocus = FocusNode();
-  final FocusNode _genderFieldFocus = FocusNode();
+  final TextEditingController lastnameController = TextEditingController();
+  final TextEditingController firstnameController = TextEditingController();
+  final TextEditingController middlenameController = TextEditingController();
+  final TextEditingController dayBirthFieldController = TextEditingController();
+  final TextEditingController monthBirthFieldController = TextEditingController();
+  final TextEditingController yearBirthFieldController = TextEditingController();
+  final TextEditingController documentNameFieldController = TextEditingController();
+  final TextEditingController documentNumberFieldController = TextEditingController();
+  final TextEditingController citizenshipFieldController = TextEditingController();
+  final TextEditingController phoneFieldController = TextEditingController();
+  final TextEditingController emailFieldController = TextEditingController();
+  final TextEditingController personClassDropdownController = TextEditingController();
+  final TextEditingController commentTextController = TextEditingController();
+  final FocusNode lastnameFocus = FocusNode();
+  final FocusNode firstnameFocus = FocusNode();
+  final FocusNode middlenameFocus = FocusNode();
+  final FocusNode dayBirthFieldFocus = FocusNode();
+  final FocusNode monthBirthFieldFocus = FocusNode();
+  final FocusNode yearBirthFieldFocus = FocusNode();
+  final FocusNode documentNameFieldFocus = FocusNode();
+  final FocusNode documentNumberFieldFocus = FocusNode();
+  final FocusNode citizenshipFieldFocus = FocusNode();
+  final FocusNode phoneFieldFocus = FocusNode();
+  final FocusNode emailFieldFocus = FocusNode();
+  final FocusNode genderCheckboxFieldFocus = FocusNode();
+  final FocusNode commentFieldFocus = FocusNode();
   final Color focusedBorderColor = AppColors.backgroundMain4;
 
   bool isLastnameFieldHasError = false;
@@ -65,17 +74,19 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   bool isMonthBirthFieldHasError = false;
   bool isYearBirthFieldHasError = false;
   bool isDateInputHasError = false;
+  bool isGenderFieldHasError = false;
   bool isDocumentNumberFieldHasError = false;
   bool isDocumentNameFieldHasError = false;
   bool isDocumentNumberFieldsHasError = false;
   bool isPhoneFieldsHasError = false;
   bool isEmailFieldsHasError = false;
-  bool isGenderFieldHasError = false;
 
   bool isMaleChecked = false;
   bool isFemaleChecked = false;
 
   String? documentInputFieldsErrorMessage;
+
+  late final List<DropdownMenuEntry<String>> personClassList;
 
 
   ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
@@ -86,7 +97,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   }
 
 
-  String? _validateLastnameField(String? lastname) {
+  String? validateLastnameField(String? lastname) {
     if (lastname == null || lastname.trim().isEmpty) {
       setState(() {
         isLastnameFieldHasError = true;
@@ -100,7 +111,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  String? _validateFirstnameField(String? firstname) {
+  String? validateFirstnameField(String? firstname) {
     if (firstname == null || firstname.trim().isEmpty) {
       setState(() {
         isFirstnameFieldHasError = true;
@@ -114,7 +125,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  String? _validateMiddlenameField(String? value) {
+  String? validateMiddlenameField(String? value) {
     print("_validateMiddlenameField");
     if (value == null || value.trim().isEmpty) {
       setState(() {
@@ -129,7 +140,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  void _validateDayBirthField(String? value) {
+  void validateDayBirthField(String? value) {
     if (value == null || value.trim().isEmpty || int.parse(value) > 31) {
       setState(() {
         isDayBirthFieldHasError = true;
@@ -141,7 +152,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  void _validateMonthBirthField(String? value) {
+  void validateMonthBirthField(String? value) {
     if (value == null || value.trim().isEmpty || int.parse(value) > 12) {
       setState(() {
         isMonthBirthFieldHasError = true;
@@ -153,7 +164,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  void _validateYearBirthField(String? value) {
+  void validateYearBirthField(String? value) {
     if (value == null || value.trim().isEmpty || int.parse(value) > DateTime.now().year || int.parse(value) < 1920) {
       setState(() {
         isYearBirthFieldHasError = true;
@@ -165,11 +176,10 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  void _validateDateBirthInput() {
-    print("_validateDateBirthInput");
-    _validateDayBirthField(_dayBirthFieldController.text);
-    _validateMonthBirthField(_monthBirthFieldController.text);
-    _validateYearBirthField(_yearBirthFieldController.text);
+  void validateDateBirthInput() {
+    validateDayBirthField(dayBirthFieldController.text);
+    validateMonthBirthField(monthBirthFieldController.text);
+    validateYearBirthField(yearBirthFieldController.text);
     if (isDayBirthFieldHasError || isMonthBirthFieldHasError || isYearBirthFieldHasError) {
       setState(() {
         isDateInputHasError = true;
@@ -179,7 +189,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  void _validateGenderInput() {
+  void validateGenderInput() {
     if (!isMaleChecked && !isFemaleChecked) {
       setState(() {
         isGenderFieldHasError = true;
@@ -191,11 +201,17 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  void _validatePassportFields() {
-    if (_documentNameFieldController.text.isEmpty || _documentNumberFieldController.text.isEmpty) {
+  void validateDocumentNameField() {
+    setState(() {
+      isDocumentNameFieldHasError = documentNameFieldController.text.trim() == "" ? true : false;
+    });
+  }
+
+  void validateDocumentFields() {
+    if (documentNameFieldController.text.isEmpty || documentNumberFieldController.text.isEmpty) {
       setState(() {
-        isDocumentNumberFieldHasError = _documentNameFieldController.text.isEmpty ? true : false;
-        isDocumentNameFieldHasError = _documentNumberFieldController.text.isEmpty ? true : false;
+        isDocumentNumberFieldHasError = documentNameFieldController.text.isEmpty ? true : false;
+        isDocumentNameFieldHasError = documentNumberFieldController.text.isEmpty ? true : false;
         documentInputFieldsErrorMessage = "Название документа и его номер должны быть заполнены";
       });
     } else {
@@ -207,9 +223,49 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  void _onCheckboxChecked(bool? value) {
+  void setFieldErrorValue(String fieldName, bool value) {
+    switch (fieldName) {
+      case "lastname":
+        setState(() {
+          isLastnameFieldHasError = value;
+        });
+        break;
+      case "firstname":
+        setState(() {
+          isFirstnameFieldHasError = value;
+        });
+        break;
+      case "middlename":
+        setState(() {
+          isMiddlenameFieldHasError = value;
+        });
+        break;
+      case "day":
+        setState(() {
+          isDayBirthFieldHasError = value;
+        });
+        break;
+      case "month":
+        setState(() {
+          isMonthBirthFieldHasError = value;
+        });
+        break;
+      case "year":
+        setState(() {
+          isYearBirthFieldHasError = value;
+        });
+        break;
+      default:
+        break;
+    }
+    setState(() {
+      isLastnameFieldHasError = value;
+    });
+  }
+
+  void onCheckboxChecked(bool? value) {
     if (value == null) {
-      _validateGenderInput();
+      validateGenderInput();
       return;
     }
     setState(() {
@@ -218,38 +274,37 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
       isMaleChecked = value;
     });
-    _validateGenderInput();
-    if (value)  _onNextFieldFocus(context, _genderFieldFocus, _documentNameFocus);
+    validateGenderInput();
+    if (value)  onNextFieldFocus(context, genderCheckboxFieldFocus, documentNameFieldFocus);
   }
 
   void _onSave() async {
-    _validateDateBirthInput();
-    _validatePassportFields();
-    _validateGenderInput();
-    _firstnameFieldKey.currentState?.validate();
-    _lastnameFieldKey.currentState?.validate();
-    _middlenameFieldKey.currentState?.validate();
+    validateDateBirthInput();
+    validateDocumentFields();
+    validateGenderInput();
+    firstnameFieldKey.currentState?.validate();
+    lastnameFieldKey.currentState?.validate();
+    middlenameFieldKey.currentState?.validate();
     if(!isLastnameFieldHasError && !isFirstnameFieldHasError && !isMiddlenameFieldHasError &&
         !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
       && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
       final newPerson = Person(
         id: "",
-        firstname: _firstnameController.text,
-        lastname: _lastnameController.text,
-        middlename: _middlenameController.text,
+        firstname: firstnameController.text,
+        lastname: lastnameController.text,
+        middlename: middlenameController.text,
         gender: isMaleChecked ? "МУЖ" : "ЖЕН" ,
-        birthdate: "${_yearBirthFieldController.text}-${_monthBirthFieldController.text}-${_dayBirthFieldController.text}",
-        phone: _phoneFieldController.text,
-        email: _emailFieldController.text,
-        document: "${_documentNameFieldController.text}/${_documentNumberFieldController.text}",
-        citizenship: _citizenshipFieldController.text,
-        personClass: ,
-        status: null,
+        birthdate: "${yearBirthFieldController.text}-${monthBirthFieldController.text}-${dayBirthFieldController.text}",
+        phone: phoneFieldController.text,
+        email: emailFieldController.text,
+        document: "${documentNameFieldController.text}/${documentNumberFieldController.text}",
+        citizenship: citizenshipFieldController.text,
+        personClass: "Regular",
+        comment: null,
         createdAt: dateFormatter(DateTime.now()),
         updatedAt: dateFormatter(DateTime.now())
       );
-      final rawResult = await _db.findPerson(lastname: newPerson.lastname);
-      final List<Person> persons = rawResult.map((el) => Person.fromJson(el)).toList();
+      final persons = await _db.findPerson(lastname: newPerson.lastname);
       if (persons.isEmpty) {
         await _db.addPerson(newPerson);
         // TODO: handle error
@@ -265,7 +320,14 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-
+  Widget blockTitle(String message) => Container(
+    width: MediaQuery.of(context).size.width ,
+    padding: const EdgeInsets.only(bottom: 15),
+    child: Text(message,
+      textAlign: TextAlign.start,
+      style: const TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
+    ),
+  );
 
   void _openAddingDocOptionDialog() {
     showModalBottomSheet(
@@ -377,7 +439,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   }
 
 
-  void _onNextFieldFocus(
+  void onNextFieldFocus(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
@@ -385,15 +447,15 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
   bool _checkForUnsavedChanges() {
     if (
-    _lastnameController.text.isNotEmpty ||
-    _firstnameController.text.isNotEmpty ||
-    _middlenameController.text.isNotEmpty ||
-    _dayBirthFieldController.text.isNotEmpty ||
-    _monthBirthFieldController.text.isNotEmpty ||
-    _yearBirthFieldController.text.isNotEmpty ||
-    _documentNameFieldController.text.isNotEmpty ||
-    _documentNumberFieldController.text.isNotEmpty ||
-    _citizenshipFieldController.text.isNotEmpty
+    lastnameController.text.isNotEmpty ||
+    firstnameController.text.isNotEmpty ||
+    middlenameController.text.isNotEmpty ||
+    dayBirthFieldController.text.isNotEmpty ||
+    monthBirthFieldController.text.isNotEmpty ||
+    yearBirthFieldController.text.isNotEmpty ||
+    documentNameFieldController.text.isNotEmpty ||
+    documentNumberFieldController.text.isNotEmpty ||
+    citizenshipFieldController.text.isNotEmpty
     ) {
       return true;
     } else {
@@ -404,19 +466,48 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   
   @override
   void initState() {
-    _lastnameFocus.addListener(() {
-      if(!_lastnameFocus.hasFocus) {
-        _lastnameFieldKey.currentState?.validate();
+    lastnameFocus.addListener(() {
+      if(!lastnameFocus.hasFocus) {
+        lastnameFieldKey.currentState?.validate();
       }
     });
-    _firstnameFocus.addListener(() {
-      if(!_firstnameFocus.hasFocus) {
-        _firstnameFieldKey.currentState?.validate();
+    firstnameFocus.addListener(() {
+      if(!firstnameFocus.hasFocus) {
+        firstnameFieldKey.currentState?.validate();
       }
     });
-    _middlenameFocus.addListener(() {
-      if(!_middlenameFocus.hasFocus) {
-        _middlenameFieldKey.currentState?.validate();
+    middlenameFocus.addListener(() {
+      if(!middlenameFocus.hasFocus) {
+        middlenameFieldKey.currentState?.validate();
+      }
+    });
+    dayBirthFieldFocus.addListener(() {
+      if(!dayBirthFieldFocus.hasFocus) {
+        setState(() {
+          isDayBirthFieldHasError = dayBirthFieldController.text.trim() == "" ? true : false;
+        });
+      }
+    });
+    monthBirthFieldFocus.addListener(() {
+      if(!monthBirthFieldFocus.hasFocus) {
+        setState(() {
+          isMonthBirthFieldHasError = monthBirthFieldController.text.trim() == "" ? true : false;
+        });
+      }
+    });
+    yearBirthFieldFocus.addListener(() {
+      if(!yearBirthFieldFocus.hasFocus) {
+        validateDateBirthInput();
+      }
+    });
+    documentNameFieldFocus.addListener(() {
+      if(!documentNameFieldFocus.hasFocus) {
+        validateDocumentNameField();
+      }
+    });
+    documentNumberFieldFocus.addListener(() {
+      if(!documentNumberFieldFocus.hasFocus) {
+        validateDocumentFields();
       }
     });
     qrResult.addListener(() {
@@ -426,6 +517,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         _fillInputsWithQRCodeData(person);
       }
     });
+    personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
     super.initState();
   }
 
@@ -433,45 +525,45 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     final doc = p.document.split(" ");
     final bDate = p.birthdate.split("-");
 
-    _firstnameController.text = p.firstname;
-    _lastnameController.text = p.lastname;
-    _middlenameController.text = p.middlename;
-    _yearBirthFieldController.text = bDate[0];
-    _monthBirthFieldController.text = bDate[1];
-    _dayBirthFieldController.text = bDate[2];
-    _documentNameFieldController.text = doc[0];
-    _documentNumberFieldController.text = doc[1];
-    _citizenshipFieldController.text = p.citizenship;
-    _phoneFieldController.text = p.phone;
-    _emailFieldController.text = p.email;
+    firstnameController.text = p.firstname;
+    lastnameController.text = p.lastname;
+    middlenameController.text = p.middlename;
+    yearBirthFieldController.text = bDate[0];
+    monthBirthFieldController.text = bDate[1];
+    dayBirthFieldController.text = bDate[2];
+    documentNameFieldController.text = doc[0];
+    documentNumberFieldController.text = doc[1];
+    citizenshipFieldController.text = p.citizenship;
+    phoneFieldController.text = p.phone;
+    emailFieldController.text = p.email;
 
-    _validateDateBirthInput();
-    _validatePassportFields();
-    _firstnameFieldKey.currentState?.validate();
-    _lastnameFieldKey.currentState?.validate();
-    _middlenameFieldKey.currentState?.validate();
+    validateDateBirthInput();
+    validateDocumentFields();
+    firstnameFieldKey.currentState?.validate();
+    lastnameFieldKey.currentState?.validate();
+    middlenameFieldKey.currentState?.validate();
   }
 
   @override
   void dispose() {
-    _lastnameController.dispose();
-    _lastnameFocus.dispose();
-    _firstnameController.dispose();
-    _firstnameFocus.dispose();
-    _middlenameController.dispose();
-    _middlenameFocus.dispose();
-    _dayBirthFieldController.dispose();
-    _dayBirthFocus.dispose();
-    _monthBirthFieldController.dispose();
-    _monthBirthFocus.dispose();
-    _yearBirthFieldController.dispose();
-    _yearBirthFocus.dispose();
-    _documentNameFieldController.dispose();
-    _documentNameFocus.dispose();
-    _documentNumberFieldController.dispose();
-    _documentNumberFocus.dispose();
-    _citizenshipFieldController.dispose();
-    _citizenshipFieldFocus.dispose();
+    lastnameController.dispose();
+    lastnameFocus.dispose();
+    firstnameController.dispose();
+    firstnameFocus.dispose();
+    middlenameController.dispose();
+    middlenameFocus.dispose();
+    dayBirthFieldController.dispose();
+    dayBirthFieldFocus.dispose();
+    monthBirthFieldController.dispose();
+    monthBirthFieldFocus.dispose();
+    yearBirthFieldController.dispose();
+    yearBirthFieldFocus.dispose();
+    documentNameFieldController.dispose();
+    documentNameFieldFocus.dispose();
+    documentNumberFieldController.dispose();
+    documentNumberFieldFocus.dispose();
+    citizenshipFieldController.dispose();
+    citizenshipFieldFocus.dispose();
     super.dispose();
   }
 
@@ -497,822 +589,87 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   SizedBox(height: 100,),
                   ScanButton(setStateCallback: setQRResult, allowedFormat: allowedScanFormat,),
                   SizedBox(height: 5,),
-                  TextFormField(
-                    controller: _lastnameController,
-                    focusNode: _lastnameFocus,
-                    key: _lastnameFieldKey,
-                    validator: _validateLastnameField,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    keyboardType: TextInputType.text,
-                    cursorHeight: 25,
-                    onEditingComplete: (){
-                      _onNextFieldFocus(context, _lastnameFocus, _firstnameFocus);
-                      _lastnameFieldKey.currentState?.validate();
-                    },
-                    onTap: () {
-                      if(isLastnameFieldHasError) {
-                        setState(() {
-                          isLastnameFieldHasError = false;
-                        });
-                      }
-                    },
-                    onTapOutside: (event) {
-                      if(_lastnameFocus.hasFocus) {
-                        _lastnameFocus.unfocus();
-                      }
-                    },
-                    cursorColor: Color(0xFF000000),
-                    style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      fillColor: isLastnameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                      filled: true,
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                        borderSide: BorderSide(
-                            color: focusedBorderColor
-                        )
-                      ),
-                      enabledBorder:  OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                        borderSide: BorderSide(
-                            color: AppColors.backgroundMain2
-                        )
-                      ),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.errorMain
-                          )
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.errorMain
-                          )
-                      ),
-                      errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                      labelText: 'Фамилия',
-                      labelStyle: TextStyle(fontSize: 22, color: AppColors.backgroundMain2),
-                      focusColor: AppColors.accent5,
-                    ),
+                  blockTitle("Основная информация"),
+                  PersonGeneralInfoBlock(
+                    lastnameFieldKey: lastnameFieldKey,
+                    firstnameFieldKey: firstnameFieldKey,
+                    middlenameFieldKey: middlenameFieldKey,
+                    lastnameController: lastnameController,
+                    firstnameController: firstnameController,
+                    middlenameController: middlenameController,
+                    dayBirthFieldController: dayBirthFieldController,
+                    monthBirthFieldController: monthBirthFieldController,
+                    yearBirthFieldController: yearBirthFieldController,
+                    personClassDropdownController: personClassDropdownController,
+                    lastnameFocus: lastnameFocus,
+                    firstnameFocus: firstnameFocus,
+                    middlenameFocus: middlenameFocus,
+                    dayBirthFieldFocus: dayBirthFieldFocus,
+                    monthBirthFieldFocus: monthBirthFieldFocus,
+                    yearBirthFieldFocus: yearBirthFieldFocus,
+                    genderCheckboxFieldFocus: genderCheckboxFieldFocus,
+                    validateLastnameField: validateLastnameField,
+                    validateFirstnameField: validateFirstnameField,
+                    validateMiddlenameField: validateMiddlenameField,
+                    validateDayBirthField: validateDayBirthField,
+                    validateMonthBirthField: validateMonthBirthField,
+                    validateYearBirthField: validateYearBirthField,
+                    isLastnameFieldHasError: isLastnameFieldHasError,
+                    isFirstnameFieldHasError: isFirstnameFieldHasError,
+                    isMiddlenameFieldHasError: isMiddlenameFieldHasError,
+                    isDayBirthFieldHasError: isDayBirthFieldHasError,
+                    isMonthBirthFieldHasError: isMonthBirthFieldHasError,
+                    isYearBirthFieldHasError: isYearBirthFieldHasError,
+                    isDateInputHasError: isDateInputHasError,
+                    isGenderFieldHasError: isGenderFieldHasError,
+                    isMaleChecked: isMaleChecked,
+                    isFemaleChecked: isFemaleChecked,
+                    personClassList: personClassList,
+                    onNextFieldFocus: onNextFieldFocus, setFieldErrorValue: setFieldErrorValue,
+                    focusedBorderColor: focusedBorderColor,
+                    validateDateBirthInput: validateDateBirthInput,
+                    onCheckboxChecked: onCheckboxChecked
                   ),
-                  SizedBox(height: 15,),
-                  TextFormField(
-                    controller: _firstnameController,
-                    focusNode: _firstnameFocus,
-                    key: _firstnameFieldKey,
-                    validator: _validateFirstnameField,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    keyboardType: TextInputType.text,
-                    cursorHeight: 25,
-                    onEditingComplete: (){
-                      _onNextFieldFocus(context, _firstnameFocus, _middlenameFocus);
-                      _firstnameFieldKey.currentState?.validate();
-                    },
-                    onTap: () {
-                      if(isFirstnameFieldHasError) {
-                        setState(() {
-                          isFirstnameFieldHasError = false;
-                        });
-                      }
-                    },
-                    onTapOutside: (event) {
-                      if(_firstnameFocus.hasFocus) {
-                        _firstnameFocus.unfocus();
-                      }
-                    },
-                    cursorColor: Color(0xFF000000),
-                    style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      fillColor: isFirstnameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                      filled: true,
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: focusedBorderColor
-                          )
-                      ),
-                      enabledBorder:  OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.backgroundMain2
-                          )
-                      ),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.errorMain
-                          )
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.errorMain
-                          )
-                      ),
-                      errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                      labelText: 'Имя',
-                      labelStyle: TextStyle(fontSize: 22, color: AppColors.backgroundMain2),
-                      focusColor: AppColors.accent5,
-                    ),
-                  ),
-                  SizedBox(height: 15,),
-                  TextFormField(
-                    controller: _middlenameController,
-                    focusNode: _middlenameFocus,
-                    key: _middlenameFieldKey,
-                    validator: _validateMiddlenameField,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    keyboardType: TextInputType.text,
-                    cursorHeight: 25,
-                    onEditingComplete: (){
-                      _onNextFieldFocus(context, _middlenameFocus, _dayBirthFocus);
-                      _middlenameFieldKey.currentState?.validate();
-                    },
-                    onTap: () {
-                      if(isMiddlenameFieldHasError) {
-                        setState(() {
-                          isMiddlenameFieldHasError = false;
-                        });
-                      }
-                    },
-                    onTapOutside: (event) {
-                      if(_middlenameFocus.hasFocus) {
-                        _middlenameFieldKey.currentState?.validate();
-                        _middlenameFocus.unfocus();
-                      }
-                    },
-                    cursorColor: Color(0xFF000000),
-                    style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      fillColor: isMiddlenameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                      filled: true,
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: focusedBorderColor
-                          )
-                      ),
-                      enabledBorder:  OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.backgroundMain2
-                          )
-                      ),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.errorMain
-                          )
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          borderSide: BorderSide(
-                              color: AppColors.errorMain
-                          )
-                      ),
-                      errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                      labelText: 'Отчество',
-                      labelStyle: TextStyle(fontSize: 22, color: AppColors.backgroundMain2),
-                      focusColor: AppColors.accent5,
-                    ),
-                  ),
-                  SizedBox(height: 15,),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.2,
-                        child: TextFormField(
-                          controller: _dayBirthFieldController,
-                          focusNode: _dayBirthFocus,
-                          validator: _validateMiddlenameField,
-                          autovalidateMode: AutovalidateMode.disabled,
-                          keyboardType: TextInputType.number,
-                          cursorHeight: 25,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(2)
-                          ],
-                          onEditingComplete: (){
-                            _onNextFieldFocus(context, _dayBirthFocus, _monthBirthFocus);
-                            _validateDayBirthField(_dayBirthFieldController.text);
-                          },
-                          onTap: () {
-                            if(isDayBirthFieldHasError) {
-                              setState(() {
-                                isDayBirthFieldHasError = false;
-                              });
-                            }
-                          },
-                          onTapOutside: (event) {
-                            if(_dayBirthFocus.hasFocus) {
-                              _dayBirthFocus.unfocus();
-                            }
-                          },
-                          cursorColor: Color(0xFF000000),
-                          style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isDayBirthFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: focusedBorderColor
-                                )
-                            ),
-                            enabledBorder:  OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.backgroundMain2
-                                )
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'День',
-                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            focusColor: AppColors.accent5,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.22,
-                        child: TextFormField(
-                          controller: _monthBirthFieldController,
-                          focusNode: _monthBirthFocus,
-                          validator: _validateMiddlenameField,
-                          autovalidateMode: AutovalidateMode.disabled,
-                          keyboardType: TextInputType.text,
-                          cursorHeight: 25,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(2)
-                          ],
-                          onEditingComplete: (){
-                            _onNextFieldFocus(context, _monthBirthFocus, _yearBirthFocus);
-                            _validateMonthBirthField(_monthBirthFieldController.text);
-                            // _validateDateBirthInput();
-                          },
-                          onTap: () {
-                            if(isMonthBirthFieldHasError) {
-                              setState(() {
-                                isMonthBirthFieldHasError = false;
-                              });
-                            }
-                          },
-                          onTapOutside: (event) {
-                            if(_monthBirthFocus.hasFocus) {
-                              _monthBirthFocus.unfocus();
-                            }
-                          },
-                          cursorColor: Color(0xFF000000),
-                          style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isMonthBirthFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: focusedBorderColor
-                                )
-                            ),
-                            enabledBorder:  OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.backgroundMain2
-                                )
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'Месяц',
-                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            focusColor: AppColors.accent5,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.22,
-                        child: TextFormField(
-                          controller: _yearBirthFieldController,
-                          focusNode: _yearBirthFocus,
-                          validator: _validateMiddlenameField,
-                          autovalidateMode: AutovalidateMode.disabled,
-                          keyboardType: TextInputType.text,
-                          cursorHeight: 25,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(4)
-                          ],
-                          onEditingComplete: (){
-                            _onNextFieldFocus(context, _yearBirthFocus, _documentNameFocus);
-                            _validateYearBirthField(_yearBirthFieldController.text);
-                            _validateDateBirthInput();
-                          },
-                          onTap: () {
-                            if(isYearBirthFieldHasError) {
-                              setState(() {
-                                isYearBirthFieldHasError = false;
-                              });
-                            }
-                          },
-                          onTapOutside: (event) {
-                            if(_yearBirthFocus.hasFocus) {
-                              _yearBirthFocus.unfocus();
-                            }
-                          },
-                          cursorColor: Color(0xFF000000),
-                          style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isYearBirthFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: focusedBorderColor
-                                )
-                            ),
-                            enabledBorder:  OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.backgroundMain2
-                                )
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'Год',
-                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            focusColor: AppColors.accent5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width ,
-                    child: Text(isDateInputHasError ? "Некорректная дата рождения" : "",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 14, color: AppColors.errorMain),
-                    ),
-                  ),
-                  SizedBox(height: 15,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.2,
-                        height: 48,
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(bottom: 3),
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 1, color: AppColors.backgroundMain2),
-                          color: isGenderFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Text("Пол:",
-                          style: TextStyle(fontSize: 22, color: AppColors.backgroundMain2, decoration: TextDecoration.none),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Container(
-                        width: 150,
-                        child: Row(
-                          children: [
-                            Checkbox(
-                                value: isMaleChecked,
-                                fillColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
-                                side: BorderSide.none,
 
-                                splashRadius: 20.0,
-                                onChanged: _onCheckboxChecked
-                            ),
-                            Text("Мужской",
-                              style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 150,
-                        child: Row(
-                          children: [
-                            Checkbox(
-                                value: isFemaleChecked,
-                                fillColor: MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus),
-                                checkColor: AppColors.errorMain,
-                                side: BorderSide.none,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    isMaleChecked = false;
-                                    isFemaleChecked = false;
-
-                                    isFemaleChecked = value!;
-                                  });
-                                }
-                            ),
-                            Text("Женский",
-                              style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  isGenderFieldHasError ? Container(
-                    width: MediaQuery.of(context).size.width ,
-                    child: Text("Выберите пол персоны",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 14, color: AppColors.errorMain),
-                    ),
-                  ) : const SizedBox.shrink(),
                   SizedBox(height: 20,),
-                  Container(
-                    width: MediaQuery.of(context).size.width ,
-                    padding: EdgeInsets.only(bottom: 15),
-                    child: Text("Серия и номер паспорта",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
-                    ),
+                  blockTitle("Название и номер документа"),
+                  PersonDocumentInfoBlock(
+                    documentNameFieldKey: documentNameFieldKey,
+                    documentNumberFieldKey: documentNumberFieldKey,
+                    documentNameFieldController: documentNameFieldController,
+                    documentNumberFieldController: documentNumberFieldController,
+                    citizenshipFieldController: citizenshipFieldController,
+                    documentNameFieldFocus: documentNameFieldFocus,
+                    documentNumberFieldFocus: documentNumberFieldFocus,
+                    citizenshipFieldFocus: citizenshipFieldFocus,
+                    validateDocumentFields: validateDocumentFields,
+                    validateDocumentNameField: validateDocumentNameField,
+                    isDocumentNumberFieldHasError: isDocumentNumberFieldHasError,
+                    isDocumentNameFieldHasError: isDocumentNameFieldHasError,
+                    onNextFieldFocus: onNextFieldFocus,
+                    setFieldErrorValue: setFieldErrorValue,
+                    focusedBorderColor: focusedBorderColor,
+                    documentInputFieldsErrorMessage: documentInputFieldsErrorMessage
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        child: TextFormField(
-                          controller: _documentNameFieldController,
-                          focusNode: _documentNameFocus,
-                          autovalidateMode: AutovalidateMode.disabled,
-                          keyboardType: TextInputType.number,
-                          cursorHeight: 25,
-                          onEditingComplete: (){
-                            _onNextFieldFocus(context, _documentNameFocus, _documentNumberFocus);
-                            _validatePassportFields();
-                          },
-                          onTap: () {
-                            if(isDocumentNameFieldHasError) {
-                              setState(() {
-                                isDocumentNameFieldHasError = false;
-                              });
-                            }
-                          },
-                          onTapOutside: (event) {
-                            if(_documentNameFocus.hasFocus) {
-                              _documentNameFocus.unfocus();
-                            }
-                          },
-                          cursorColor: Color(0xFF000000),
-                          style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isDocumentNumberFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: focusedBorderColor
-                                )
-                            ),
-                            enabledBorder:  OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.backgroundMain2
-                                )
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'Документ',
-                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            focusColor: AppColors.accent5,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        child: TextFormField(
-                          controller: _documentNumberFieldController,
-                          focusNode: _documentNumberFocus,
-                          autovalidateMode: AutovalidateMode.disabled,
-                          keyboardType: TextInputType.number,
-                          cursorHeight: 25,
-                          onEditingComplete: (){
-                            _onNextFieldFocus(context, _documentNumberFocus, _citizenshipFieldFocus);
-                            _validatePassportFields();
-                          },
-                          onTap: () {
-                            if(isDocumentNameFieldHasError) {
-                              setState(() {
-                                isDocumentNameFieldHasError = false;
-                              });
-                            }
-                          },
-                          onTapOutside: (event) {
-                            if(_documentNumberFocus.hasFocus) {
-                              _documentNumberFocus.unfocus();
-                            }
-                          },
-                          cursorColor: Color(0xFF000000),
-                          style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isDocumentNameFieldHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: focusedBorderColor
-                                )
-                            ),
-                            enabledBorder:  OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.backgroundMain2
-                                )
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'Номер',
-                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            focusColor: AppColors.accent5,
-                          ),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 15,),
+                  blockTitle("Контактные данные"),
+                  PersonContactInfoBlock(
+                    phoneFieldController: phoneFieldController,
+                    emailFieldController: emailFieldController,
+                    phoneFieldFocus: phoneFieldFocus,
+                    emailFieldFocus: emailFieldFocus,
+                    onNextFieldFocus: onNextFieldFocus,
+                    focusedBorderColor: focusedBorderColor
                   ),
+
+
                   SizedBox(height: 15,),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: TextFormField(
-                        controller: _citizenshipFieldController,
-                        focusNode: _citizenshipFieldFocus,
-                        autovalidateMode: AutovalidateMode.disabled,
-                        keyboardType: TextInputType.text,
-                        cursorHeight: 25,
-                        onEditingComplete: (){
-                          _citizenshipFieldFocus.unfocus();
-                        },
-                        onTapOutside: (event) {
-                          if(_citizenshipFieldFocus.hasFocus) {
-                            _citizenshipFieldFocus.unfocus();
-                          }
-                        },
-                        cursorColor: Color(0xFF000000),
-                        style: const TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
-                          floatingLabelBehavior: FloatingLabelBehavior.auto,
-                          fillColor: AppColors.textMain,
-                          filled: true,
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                              borderSide: BorderSide(
-                                  color: focusedBorderColor
-                              )
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                              borderSide: BorderSide(
-                                  color: AppColors.backgroundMain2
-                              )
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                              borderSide: BorderSide(
-                                  color: AppColors.errorMain
-                              )
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                              borderSide: BorderSide(
-                                  color: AppColors.errorMain
-                              )
-                          ),
-                          errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                          labelText: 'Гражданство',
-                          labelStyle: TextStyle(fontSize: 22, color: AppColors.backgroundMain2),
-                          focusColor: AppColors.accent5,
-                        ),
-                      ),
-                    ),
+                  blockTitle("Дополнительно"),
+                  PersonAdditionalInfoBlock(
+                    commentTextController: commentTextController,
+                    commentFieldFocus: commentFieldFocus,
+                    focusedBorderColor: focusedBorderColor
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width ,
-                    child: Text(documentInputFieldsErrorMessage != null ? documentInputFieldsErrorMessage! : "",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 14, color: AppColors.errorMain),
-                    ),
-                  ),
-                  SizedBox(height: 15,),
-                  Container(
-                    width: MediaQuery.of(context).size.width ,
-                    padding: EdgeInsets.only(bottom: 15),
-                    child: Text("Контактные данные",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: TextFormField(
-                          controller: _phoneFieldController,
-                          focusNode: _phoneFieldFocus,
-                          autovalidateMode: AutovalidateMode.disabled,
-                          keyboardType: TextInputType.phone,
-                          cursorHeight: 25,
-                          onEditingComplete: (){
-                            _onNextFieldFocus(context, _phoneFieldFocus, _emailFieldFocus);
-                            _validatePassportFields();
-                          },
-                          onTap: () {
-                            if(isPhoneFieldsHasError) {
-                              setState(() {
-                                isPhoneFieldsHasError = false;
-                              });
-                            }
-                          },
-                          onTapOutside: (event) {
-                            if(_phoneFieldFocus.hasFocus) {
-                              _phoneFieldFocus.unfocus();
-                            }
-                          },
-                          cursorColor: Color(0xFF000000),
-                          style: const TextStyle(fontSize: 18, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isPhoneFieldsHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: focusedBorderColor
-                                )
-                            ),
-                            enabledBorder:  OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.backgroundMain2
-                                )
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'Телефон',
-                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            focusColor: AppColors.accent5,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: TextFormField(
-                          controller: _emailFieldController,
-                          focusNode: _emailFieldFocus,
-                          autovalidateMode: AutovalidateMode.disabled,
-                          keyboardType: TextInputType.emailAddress,
-                          cursorHeight: 25,
-                          onEditingComplete: (){
-                            // _onNextFieldFocus(context, _emailFieldFocus, _citizenshipFieldFocus);
-                            _validatePassportFields();
-                          },
-                          onTap: () {
-                            if(isEmailFieldsHasError) {
-                              setState(() {
-                                isEmailFieldsHasError = false;
-                              });
-                            }
-                          },
-                          onTapOutside: (event) {
-                            if(_emailFieldFocus.hasFocus) {
-                              _emailFieldFocus.unfocus();
-                            }
-                          },
-                          cursorColor: Color(0xFF000000),
-                          style: const TextStyle(fontSize: 18, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            fillColor: isEmailFieldsHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: focusedBorderColor
-                                )
-                            ),
-                            enabledBorder:  OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.backgroundMain2
-                                )
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide(
-                                    color: AppColors.errorMain
-                                )
-                            ),
-                            errorStyle: TextStyle(fontSize: 16, height: 0.3),
-                            labelText: 'Email',
-                            labelStyle: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
-                            focusColor: AppColors.accent5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15,),
                   Container(
                     width: MediaQuery.of(context).size.width ,
                     padding: EdgeInsets.only(bottom: 15, top: 15),

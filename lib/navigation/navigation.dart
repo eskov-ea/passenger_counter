@@ -6,6 +6,7 @@ import 'package:pleyona_app/ui/widgets/scanner.dart';
 
 import '../ui/pages/adding_person_options.dart';
 import '../ui/screens/person_edit_info_screen.dart';
+import '../ui/screens/person_search_screen.dart';
 
 
 abstract class MainNavigationRouteNames {
@@ -19,6 +20,7 @@ abstract class MainNavigationRouteNames {
   static const scannerScreen = '/scanner';
   static const personOptionsScreen = '/add_person_options';
   static const successInfoScreen = '/success_info';
+  static const searchPersonScreen = '/search_person_screen';
 }
 
 
@@ -134,6 +136,21 @@ class MainNavigation {
               child: child,
             );
           },
+          transitionDuration: Duration(milliseconds: 700),
+        );
+      case MainNavigationRouteNames.searchPersonScreen:
+        final arguments = settings.arguments as SearchPersonScreenArguments;
+        return PageRouteBuilder(
+          settings: const RouteSettings(name: MainNavigationRouteNames.searchPersonScreen),
+          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeSearchPersonScreen(arguments),
+          // transitionsBuilder: (context, Animation<double> animation,
+          //     Animation<double> secondaryAnimation, Widget child) {
+          //   final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
+          //   return SlideTransition(
+          //     position: animation.drive(tween),
+          //     child: child,
+          //   );
+          // },
           transitionDuration: Duration(milliseconds: 700),
         );
       default:

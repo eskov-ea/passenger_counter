@@ -12,10 +12,14 @@ import '../screens/camera_screen.dart';
 class CameraViewWidget extends StatefulWidget {
   const CameraViewWidget({
     this.width = 200,
+    required this.setPhotoResult,
+    required this.personBase64Image,
     super.key
   });
 
   final double width;
+  final Function(String) setPhotoResult;
+  final String? personBase64Image;
 
   @override
   State<CameraViewWidget> createState() => _CameraViewWidgetState();
@@ -23,16 +27,9 @@ class CameraViewWidget extends StatefulWidget {
 
 class _CameraViewWidgetState extends State<CameraViewWidget> {
   final double aspectRatio = 1.3;
-  String? personBase64Image;
-
-  void setPhotoResult(String base64) {
-    setState(() {
-      personBase64Image = base64;
-    });
-  }
 
   void _openCamera(BuildContext context ,List<CameraDescription> cameras, CameraController controller) async {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CameraScreen(cameras: cameras, controller: controller, setPhotoResult: setPhotoResult)));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CameraScreen(cameras: cameras, controller: controller, setPhotoResult: widget.setPhotoResult)));
   }
 
   @override
@@ -47,7 +44,7 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
   Widget _cameraView() {
     return BlocBuilder<CameraBloc, CameraState>(builder: (context, state) {
       if (state is InitializedCameraState) {
-        if (personBase64Image == null) {
+        if (widget.personBase64Image == null) {
           return GestureDetector(
             onTap: () {
               _openCamera(context, state.cameras!, state.controller!);
@@ -104,7 +101,7 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
                       decoration: BoxDecoration(
                         border: Border.all(width: 3, color: Colors.black),
                       ),
-                      child: Image.memory(base64Decode(personBase64Image!)),
+                      child: Image.memory(base64Decode(widget.personBase64Image!)),
                     ),
                   ),
                   Container(

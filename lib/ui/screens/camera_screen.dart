@@ -130,9 +130,9 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
     }
 
     if (state == AppLifecycleState.inactive) {
-      cameraController.dispose();
+      // cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      _initializeCameraController(cameraController.description);
+      // _initializeCameraController(cameraController.description);
     }
   }
 

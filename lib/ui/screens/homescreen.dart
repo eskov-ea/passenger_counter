@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     BlocProvider.of<DBBloc>(context).add(InitializeDBEvent());
-    BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
 
     super.initState();
   }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/pages/adding_person_options.dart';
@@ -13,6 +14,8 @@ import 'package:pleyona_app/ui/widgets/person/adding_person_contact_info_block.d
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/scan_button.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import '../../bloc/camera_bloc/camera_bloc.dart';
+import '../../bloc/camera_bloc/camera_event.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 import '../widgets/person/adding_person_document_info_block.dart';
@@ -92,6 +95,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
   ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
   final List<BarcodeFormat> allowedScanFormat = [BarcodeFormat.qrcode];
+  String? personBase64Image;
 
   void setQRResult(Barcode value) {
       qrResult.value = value;
@@ -317,6 +321,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         citizenship: citizenshipFieldController.text,
         personClass: "Regular",
         comment: null,
+        photo: personBase64Image ?? "",
         createdAt: dateFormatter(DateTime.now()),
         updatedAt: dateFormatter(DateTime.now())
       );
@@ -415,6 +420,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   
   @override
   void initState() {
+    BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
     lastnameFocus.addListener(() {
       if(!lastnameFocus.hasFocus) {
         lastnameFieldKey.currentState?.validate();
@@ -470,6 +476,12 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     super.initState();
   }
 
+  void setPhotoResult(String base64) {
+    setState(() {
+      personBase64Image = base64;
+    });
+  }
+
   void _fillInputsWithQRCodeData(Person p) {
     final doc = p.document.split(" ");
     final bDate = p.birthdate.split("-");
@@ -520,6 +532,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        BlocProvider.of<CameraBloc>(context).add(DisposeCameraEvent());
         if (_checkForUnsavedChanges()) {
           _openOnPopGuardAlert();
           return false;
@@ -536,7 +549,9 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 10,),
-                  PersonAddingPhotoScanOptionsWidget(onQRScanResultCallback: setQRResult, allowedFormat: allowedScanFormat),
+                  PersonAddingPhotoScanOptionsWidget(onQRScanResultCallback: setQRResult,
+                    allowedFormat: allowedScanFormat, setPhotoResult: setPhotoResult,
+                    personBase64Image: personBase64Image ),
                   const SizedBox(height: 5,),
                   blockTitle("Основная информация"),
                   PersonGeneralInfoBlock(

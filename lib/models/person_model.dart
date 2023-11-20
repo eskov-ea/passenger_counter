@@ -11,6 +11,7 @@ class Person {
   final String citizenship;
   final String personClass;
   final String? comment;
+  final String photo;
   final String createdAt;
   final String updatedAt;
 
@@ -28,6 +29,7 @@ class Person {
     required this.citizenship,
     required this.personClass,
     required this.comment,
+    required this.photo,
     required this.createdAt,
     required this.updatedAt
   });
@@ -46,6 +48,7 @@ class Person {
         citizenship: json["citizenship"],
         personClass: json["class_person"],
         comment: json["comment"],
+        photo: json["photo"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
       );
@@ -64,6 +67,7 @@ class Person {
         citizenship: json["citizenship"],
         personClass: json["class_person"],
         comment: "",
+        photo: "",
         createdAt: "",
         updatedAt: ""
       );

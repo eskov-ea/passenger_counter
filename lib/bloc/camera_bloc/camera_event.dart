@@ -6,3 +6,4 @@ class CameraEvent extends Equatable {
 }
 
 class InitializeCameraEvent extends CameraEvent {}
+class DisposeCameraEvent extends CameraEvent {}

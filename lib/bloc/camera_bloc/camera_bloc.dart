@@ -6,8 +6,11 @@ import 'camera_state.dart';
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
   CameraBloc(): super(const NotInitializedCameraState(cameras: null, controller: null)) {
     on<CameraEvent>((event, emit) async {
+      print("CameraEvent:::::  $event");
       if (event is InitializeCameraEvent) {
         await onInitializeCamera(event, emit);
+      } else if (event is DisposeCameraEvent) {
+        await onDisposeCameraEvent(event, emit);
       }
     });
   }
@@ -32,5 +35,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       }
       emit(ErrorCameraState(cameras: null, controller: null, message: e.toString()));
     }
+  }
+
+  Future<void> onDisposeCameraEvent(DisposeCameraEvent event, Emitter emit) async {
+    await state.controller?.dispose();
+    emit(const NotInitializedCameraState(cameras: null, controller: null));
   }
 }

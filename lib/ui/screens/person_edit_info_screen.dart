@@ -1,17 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/pages/adding_person_options.dart';
-import 'package:pleyona_app/ui/screens/success_info_screen.dart';
-import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_field_widget.dart';
-import 'package:pleyona_app/ui/widgets/save_button.dart';
-import 'package:pleyona_app/ui/widgets/scan_button.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 

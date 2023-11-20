@@ -8,11 +8,15 @@ class PersonAddingPhotoScanOptionsWidget extends StatelessWidget {
   const PersonAddingPhotoScanOptionsWidget({
     required this.onQRScanResultCallback,
     required this.allowedFormat,
+    required this.setPhotoResult,
+    required this.personBase64Image,
     super.key
   });
 
   final Function(Barcode) onQRScanResultCallback;
+  final Function(String) setPhotoResult;
   final List<BarcodeFormat>  allowedFormat;
+  final String?  personBase64Image;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,9 @@ class PersonAddingPhotoScanOptionsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          CameraViewWidget(width: MediaQuery.of(context).size.width / 5 * 2 - 20),
+          CameraViewWidget(setPhotoResult: setPhotoResult,
+            personBase64Image: personBase64Image,
+            width: MediaQuery.of(context).size.width / 5 * 2 - 20),
           ScanButton(onQRScanResultCallback: onQRScanResultCallback, allowedFormat: allowedFormat,
             width: MediaQuery.of(context).size.width / 5 * 3 - 20, height: 150,
           )

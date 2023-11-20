@@ -46,7 +46,8 @@ class PersonGeneralInfoBlock extends StatelessWidget {
     required this.setFieldErrorValue,
     required this.focusedBorderColor,
     required this.validateDateBirthInput,
-    required this.onCheckboxChecked,
+    required this.onCheckboxMaleChecked,
+    required this.onCheckboxFemaleChecked,
     Key? key
   }) : super(key: key);
 
@@ -93,7 +94,8 @@ class PersonGeneralInfoBlock extends StatelessWidget {
   final Function(BuildContext, FocusNode, FocusNode) onNextFieldFocus;
   final Function(String, bool) setFieldErrorValue;
   final Function() validateDateBirthInput;
-  final Function(bool? value) onCheckboxChecked;
+  final Function(bool? value) onCheckboxMaleChecked;
+  final Function(bool? value) onCheckboxFemaleChecked;
   final List<DropdownMenuEntry<String>> personClassList;
 
   @override
@@ -494,7 +496,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
           ),
           SizedBox(height: 15,),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
                 width: MediaQuery.of(context).size.width * 0.2,
@@ -512,7 +514,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 150,
+                width: MediaQuery.of(context).size.width * 0.4 -10,
                 child: Row(
                   children: [
                     Checkbox(
@@ -521,16 +523,16 @@ class PersonGeneralInfoBlock extends StatelessWidget {
                         side: BorderSide.none,
                         focusNode: genderCheckboxFieldFocus,
                         splashRadius: 20.0,
-                        onChanged: onCheckboxChecked
+                        onChanged: onCheckboxMaleChecked
                     ),
                     Text("Мужчина",
-                      style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                      style: TextStyle(fontSize: 18, color: AppColors.backgroundMain2),
                     )
                   ],
                 ),
               ),
               Container(
-                width: 150,
+                width: MediaQuery.of(context).size.width * 0.4 -10,
                 child: Row(
                   children: [
                     Checkbox(
@@ -538,10 +540,10 @@ class PersonGeneralInfoBlock extends StatelessWidget {
                         fillColor: MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus),
                         checkColor: AppColors.errorMain,
                         side: BorderSide.none,
-                        onChanged: onCheckboxChecked
+                        onChanged: onCheckboxFemaleChecked
                     ),
                     Text("Женщина",
-                      style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                      style: TextStyle(fontSize: 18, color: AppColors.backgroundMain2),
                     )
                   ],
                 ),

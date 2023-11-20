@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/auth_bloc/auth_bloc.dart';
+import 'package:pleyona_app/bloc/camera_bloc/camera_bloc.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_bloc.dart';
 import 'package:pleyona_app/view_models/auth_view_cubit/auth_view_cubit.dart';
 import 'package:pleyona_app/view_models/auth_view_cubit/auth_view_cubit_state.dart';
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) =>
           DBBloc()
+        ),
+        BlocProvider(create: (context) =>
+          CameraBloc()
         )
       ],
       child: MaterialApp(

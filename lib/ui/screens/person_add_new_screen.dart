@@ -17,6 +17,7 @@ import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 import '../widgets/person/adding_person_document_info_block.dart';
 import '../widgets/person/adding_person_general_info_block.dart';
+import '../widgets/person/adding_person_photo_scan_btns.dart';
 
 
 enum PersonClass { regular, staff, vip }
@@ -263,7 +264,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     });
   }
 
-  void onCheckboxChecked(bool? value) {
+  void onCheckboxMaleChecked(bool? value) {
     if (value == null) {
       validateGenderInput();
       return;
@@ -275,6 +276,21 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       isMaleChecked = value;
     });
     validateGenderInput();
+    if (value)  onNextFieldFocus(context, genderCheckboxFieldFocus, documentNameFieldFocus);
+  }
+
+  void onCheckboxFemaleChecked(bool? value) {
+    if (value == null) {
+      validateGenderInput();
+      return;
+    }
+    setState(() {
+      isMaleChecked = false;
+      isFemaleChecked = false;
+      isGenderFieldHasError = false;
+
+      isFemaleChecked = value;
+    });
     if (value)  onNextFieldFocus(context, genderCheckboxFieldFocus, documentNameFieldFocus);
   }
 
@@ -329,73 +345,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     ),
   );
 
-  void _openAddingDocOptionDialog() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          height: 220,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(12)
-            ),
-            color: AppColors.textMain
-          ),
-          child: Column(
-            children: [
-              SizedBox(height: 10,),
-              Expanded(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  child: Text("Добавьте страницы паспорта пассажира с основной информацией и пропиской",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: AppColors.textFaded),
-                  ),
-                )
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 60,
-                margin: EdgeInsets.only(top: 20),
-                child: ElevatedButton(
-                  onPressed: (){},
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain4),
-                    overlayColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12))
-                    )),
-                  ),
-                  child: Text("Открыть камеру",
-                    style: TextStyle(fontSize: 24, color: AppColors.textMain),
-                  ),
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 60,
-                margin: EdgeInsets.only(top: 5, bottom: 5),
-                child: ElevatedButton(
-                  onPressed: (){},
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain4),
-                    overlayColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12))
-                    )),
-                  ),
-                  child: Text("Выбрать из галереи",
-                    style: TextStyle(fontSize: 24, color: AppColors.textMain),
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-      }
-    );
-  }
 
   Future<void> _openOnPopGuardAlert() async {
     return showDialog<void>(
@@ -582,13 +531,13 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         child: Scaffold(
           backgroundColor: AppColors.backgroundNeutral,
           body: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 100,),
-                  ScanButton(setStateCallback: setQRResult, allowedFormat: allowedScanFormat,),
-                  SizedBox(height: 5,),
+                  const SizedBox(height: 10,),
+                  PersonAddingPhotoScanOptionsWidget(onQRScanResultCallback: setQRResult, allowedFormat: allowedScanFormat),
+                  const SizedBox(height: 5,),
                   blockTitle("Основная информация"),
                   PersonGeneralInfoBlock(
                     lastnameFieldKey: lastnameFieldKey,
@@ -628,10 +577,11 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     onNextFieldFocus: onNextFieldFocus, setFieldErrorValue: setFieldErrorValue,
                     focusedBorderColor: focusedBorderColor,
                     validateDateBirthInput: validateDateBirthInput,
-                    onCheckboxChecked: onCheckboxChecked
+                    onCheckboxMaleChecked: onCheckboxMaleChecked,
+                    onCheckboxFemaleChecked: onCheckboxFemaleChecked
                   ),
 
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   blockTitle("Название и номер документа"),
                   PersonDocumentInfoBlock(
                     documentNameFieldKey: documentNameFieldKey,
@@ -663,78 +613,16 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                   ),
 
 
-                  SizedBox(height: 15,),
+                  const SizedBox(height: 15,),
                   blockTitle("Дополнительно"),
                   PersonAdditionalInfoBlock(
                     commentTextController: commentTextController,
                     commentFieldFocus: commentFieldFocus,
                     focusedBorderColor: focusedBorderColor
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width ,
-                    padding: EdgeInsets.only(bottom: 15, top: 15),
-                    child: Text("Прикрепить фото пассажира",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.75 - 20,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          border: Border.all(width: 1, color: AppColors.backgroundMain2),
-                          color: AppColors.textMain,
-                        ),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children: [
-                                AddedDocumentIconWidget(),
-                                AddedDocumentIconWidget(),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.05
-                      ),
-                      Ink(
-                        width: MediaQuery.of(context).size.width * 0.2,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          border: Border.all(width: 1, color: AppColors.backgroundMain2),
-                          color: AppColors.textMain,
-                        ),
-                        child: InkWell(
-                          onTap: _openAddingDocOptionDialog,
-                          splashColor: AppColors.backgroundMain5,
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          child: Icon(
-                            Icons.add,
-                            color: AppColors.backgroundMain2,
-                            size: 32,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width ,
-                    child: Text("Не прикреплено ни одного документа",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 14, color: Color(0x99000000)),
-                    ),
-                  ),
-                  SizedBox(height: 30,),
+                  const SizedBox(height: 10,),
                   SaveButton(onTap: _onSave, label: "Сохранить"),
-                  SizedBox(height: 10,)
+                  const SizedBox(height: 10,)
                 ],
               ),
             ),

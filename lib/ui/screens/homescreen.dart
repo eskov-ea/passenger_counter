@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pleyona_app/bloc/camera_bloc/camera_bloc.dart';
+import 'package:pleyona_app/bloc/camera_bloc/camera_event.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_bloc.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_state.dart';
 import 'package:pleyona_app/theme.dart';
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     BlocProvider.of<DBBloc>(context).add(InitializeDBEvent());
+    BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
 
     super.initState();
   }

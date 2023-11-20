@@ -7,20 +7,24 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ScanButton extends StatelessWidget {
   const ScanButton({
-    required this.setStateCallback,
+    required this.onQRScanResultCallback,
     required this.allowedFormat,
+    this.height = 60,
+    this.width = 300,
     super.key
   });
 
-  final Function(Barcode) setStateCallback;
+  final Function(Barcode) onQRScanResultCallback;
   final List<BarcodeFormat> allowedFormat;
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       child: Ink(
-        width: MediaQuery.of(context).size.width,
-        height: 60,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(6)),
           border: Border.all(width: 2, color: AppColors.accent2),
@@ -30,7 +34,7 @@ class ScanButton extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pushNamed(
                 MainNavigationRouteNames.scannerScreen,
-                arguments: ScannerScreenArguments(setStateCallback: setStateCallback, allowedFormat: allowedFormat)
+                arguments: ScannerScreenArguments(setStateCallback: onQRScanResultCallback, allowedFormat: allowedFormat)
               );
             },
             splashColor: AppColors.backgroundMain4,

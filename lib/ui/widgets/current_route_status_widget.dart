@@ -18,7 +18,7 @@ class _CurrentRouteStatusWidgetState extends State<CurrentRouteStatusWidget> {
       height: 300,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: AppColors.backgroundMain2,
+        color: AppColors.backgroundMainCard,
         borderRadius: BorderRadius.all(Radius.circular(20))
       ),
       child: Column(

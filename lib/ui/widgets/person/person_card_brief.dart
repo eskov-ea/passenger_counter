@@ -28,7 +28,7 @@ class PersonCardBrief extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         height: 130,
         decoration: BoxDecoration(
-          color: AppColors.textMain,
+          color: Color(0xCCFFFFFF),
           borderRadius: BorderRadius.all(Radius.circular(10))
         ),
         child: Row(

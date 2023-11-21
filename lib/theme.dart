@@ -58,6 +58,9 @@ abstract class DarkColors {
 }
 
 abstract class AppColors {
+  static Color transparent = const Color(0xFFFFFF);
+  static Color backgroundMainCard = const Color(0xED274D7E);
+
   static Color backgroundMain1 = isDark ? DarkColors.backgroundMain1 : Color(0xFF0E51A7);
   static Color backgroundMain2 = isDark ? DarkColors.backgroundMain2 : Color(0xFF274D7E);
   static Color backgroundMain3 = isDark ? DarkColors.backgroundMain3 : Color(0xFF05326D);

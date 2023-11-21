@@ -12,6 +12,8 @@ import 'package:pleyona_app/ui/screens/suites_manager_screen.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_field_widget.dart';
 import 'package:pleyona_app/ui/widgets/side_menu_widget.dart';
 
+import '../widgets/theme_background.dart';
+
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -68,35 +70,39 @@ class _EntryPointState extends State<EntryPoint> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundMain3,
+      backgroundColor: Color(0xFFD6E6FD),
       extendBody: true,
       body: SafeArea(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              AnimatedPositioned(
-                duration: Duration(milliseconds: 180),
-                curve: Curves.fastOutSlowIn,
-                width: 288,
-                left: isMenuOpen ? 0 : -288,
-                height: MediaQuery.of(context).size.height,
-                child: SideMenu(currentPageName: pageName, showMenu: toggleMenu)
-              ),
-              Transform.translate(
-                offset: Offset(animation.value * 288, 0),
-                child: Transform.scale(
-                  scale: scaleAnimation.value,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 20 : 0)),
-                    child: HomeScreen()
+        child: ThemeBackgroundWidget(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: Duration(milliseconds: 180),
+                  curve: Curves.fastOutSlowIn,
+                  width: 288,
+                  left: isMenuOpen ? 0 : -288,
+                  height: MediaQuery.of(context).size.height,
+                  child: SideMenu(currentPageName: pageName, showMenu: toggleMenu)
+                ),
+                Transform.translate(
+                  offset: Offset(animation.value * 288, 0),
+                  child: Transform.scale(
+                    scale: scaleAnimation.value,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 20 : 0)),
+                      child: const ThemeBackgroundWidget(
+                        child: HomeScreen(),
+                      )
+                    )
                   )
-                )
-              ),
-              // isMenuOpen ? SideMenu(currentPageName: pageName, showMenu: toggleMenu) : SizedBox.shrink(),
-              SideMenuBurger(isMenuOpen: isMenuOpen, toggleMenu: toggleMenu),
-            ],
+                ),
+                // isMenuOpen ? SideMenu(currentPageName: pageName, showMenu: toggleMenu) : SizedBox.shrink(),
+                SideMenuBurger(isMenuOpen: isMenuOpen, toggleMenu: toggleMenu),
+              ],
+            ),
           ),
         ),
       ),

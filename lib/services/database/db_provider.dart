@@ -8,12 +8,12 @@ String dateFormatter(DateTime date) {
   return "${date.day}.${date.month}.${date.year}";
 }
 final Map<String, String> tables = {
-  "person_class_list" :
+  'person_class_list' :
   'CREATE TABLE person_class_list('
         'person_class varchar(20) PRIMARY KEY NOT NULL, '
         'seq INTEGER );',
 
-  "person" :
+  'person' :
   'CREATE TABLE person (id INTEGER PRIMARY KEY AUTOINCREMENT, '
       'firstname varchar(255) DEFAULT NULL, '
       'lastname varchar(255) DEFAULT NULL, '
@@ -31,6 +31,14 @@ final Map<String, String> tables = {
       'updated_at DATE DEFAULT NULL, '
       'deleted_at DATE DEFAULT NULL );',
 
+  'person_documents' :
+  'CREATE TABLE person_documents ( id INTEGER PRIMARY KEY AUTOINCREMENT, '
+      'name varchar(255) DEFAULT NULL, '
+      'description varchar(255) DEFAULT NULL, '
+      'id_person INTEGER DEFAULT "0" NOT NULL, '
+      'created_at DATE DEFAULT (datetime("now","localtime")), '
+      'updated_at DATE DEFAULT (datetime("now","localtime")), '
+      'deleted_at DATE DEFAULT NULL);'
 };
 
 
@@ -137,6 +145,19 @@ class DBProvider {
       String sql = "UPDATE person SET phone = '$phone', document = '$document', email = '$email' WHERE id = '$id'";
       // String sql = "UPDATE person SET phone = '$phone', document = '$document', email = '$email' WHERE id = '$id'";
       return await txn.rawUpdate(sql);
+    });
+  }
+
+  /// DOCUMENTS//
+
+  Future<int> addDocument({required int personId, required Person p}) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      int id = await txn.rawInsert(
+        'INSERT INTO person(name, description, id_person) VALUES(?, ?, ?)',
+        [p.document, p.document, personId]
+      );
+      return id;
     });
   }
 

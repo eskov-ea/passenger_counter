@@ -5,6 +5,7 @@ import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/person_edit_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_brief.dart';
+import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
 import '../../services/database/db_provider.dart';
 
@@ -48,25 +49,27 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundNeutral,
       body: SafeArea(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            children: [
-              const SizedBox(height: 70,),
-              const Text("Все персоны",
-                style: AppStyles.mainTitleTextStyle,
-              ),
-              const SizedBox(height: 20,),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: persons.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return PersonCardBrief(person: persons[index], onTap: navigateToEditScreen);
-                }
+        child: ThemeBackgroundWidget(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: [
+                const SizedBox(height: 70,),
+                const Text("Все персоны",
+                  style: AppStyles.mainTitleTextStyle,
                 ),
-              )
-            ],
+                const SizedBox(height: 20,),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: persons.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return PersonCardBrief(person: persons[index], onTap: navigateToEditScreen);
+                  }
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

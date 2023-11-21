@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      color: AppColors.backgroundNeutral,
+      // color: AppColors.backgroundNeutral,
       child: BlocBuilder<DBBloc, DBState>(
         builder: (context, state) {
           if (state is InitializedDBState) {
@@ -58,7 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: SizedBox(
                               height: 30,
                               child: Text("Все пассажиры",
-                                style: TextStyle(fontSize: 16, color: AppColors.secondary5),
+                                style: TextStyle(fontSize: 16, decoration: TextDecoration.underline),
+
                               ),
                             ),
                           )

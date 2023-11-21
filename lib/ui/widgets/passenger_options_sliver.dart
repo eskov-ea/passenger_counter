@@ -8,12 +8,12 @@ import 'package:pleyona_app/theme.dart';
 class PassengerOptionsSliver extends StatelessWidget {
   PassengerOptionsSliver({super.key});
 
-  final Color cardColor = AppColors.backgroundMain2;
+  final Color cardColor = AppColors.backgroundMainCard;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.backgroundNeutral,
+      color: AppColors.transparent,
       child: Container(
         height: 200,
         child: ListView(

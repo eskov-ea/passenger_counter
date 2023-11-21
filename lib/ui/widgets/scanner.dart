@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/widgets/theme_background.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 
@@ -72,39 +74,88 @@ class _ScannerState extends State<Scanner> {
 
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 70,),
-              Expanded(
-                child: QRView(
-                  key: qrKey,
-                  overlay: QrScannerOverlayShape(
-                      borderColor: Colors.red,
-                      borderRadius: 10,
-                      borderLength: 30,
-                      borderWidth: 10,
-                      cutOutSize: scanArea),
-                  formatsAllowed: widget.allowedFormat,
-                  onQRViewCreated: _onQRViewCreated,
-                  onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+        body: ThemeBackgroundWidget(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Column(
+              children: [
+                const SizedBox(height: 70,),
+                Expanded(
+                  child: QRView(
+                    key: qrKey,
+                    overlay: QrScannerOverlayShape(
+                        borderColor: Colors.red,
+                        borderRadius: 10,
+                        borderLength: 30,
+                        borderWidth: 10,
+                        cutOutSize: scanArea),
+                    formatsAllowed: widget.allowedFormat,
+                    onQRViewCreated: _onQRViewCreated,
+                    onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10,),
-              Container(
-                width: MediaQuery.of(context).size.width - 20,
-                height: 300,
-                child: Column(
-                  children: [
-
-                  ],
+                const SizedBox(height: 10,),
+                Container(
+                  width: MediaQuery.of(context).size.width - 20,
+                  height: 200,
+                  child: Text("Чтобы считать данные пассажира с QR-кода, наведите камеру на QR-код. Код должен быть читаем и освещение должно быть достаточным для распознования, в противном случае вы можете использовать фонарик камеры.",
+                    style: TextStyle(fontSize: 20, height: 1),
+                    textAlign: TextAlign.justify,
+                  )
                 ),
-              ),
-
-            ],
+                const SizedBox(height: 10,),
+                Material(
+                  color: AppColors.transparent,
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    child: Ink(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0x4DFFFFFF),
+                        ),
+                        child: FutureBuilder(
+                          future: controller?.getFlashStatus(),
+                          builder: (context, snapshot) {
+                            return InkWell(
+                              onTap: () async {
+                                await controller?.toggleFlash();
+                                setState(() {});
+                              },
+                              customBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(64)
+                              ),
+                              splashColor: AppColors.cardColor3,
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0x80FFFFFF)
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all(13),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                      border: Border.all(width: 3, color: AppColors.backgroundMain2),
+                                      color: Color(0x8CFFFFFF)
+                                  ),
+                                  child: snapshot.data == null
+                                    ? Image.asset("assets/icons/no-flash.png")
+                                    : Image.asset(
+                                      snapshot.data! ? "assets/icons/flash.png" : "assets/icons/no-flash.png"
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        )),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

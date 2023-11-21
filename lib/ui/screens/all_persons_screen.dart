@@ -45,10 +45,10 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundNeutral,
-        body: Container(
+    return Scaffold(
+      backgroundColor: AppColors.backgroundNeutral,
+      body: SafeArea(
+        child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Column(

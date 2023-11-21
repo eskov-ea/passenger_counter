@@ -532,6 +532,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        print("WillPopScope");
         BlocProvider.of<CameraBloc>(context).add(DisposeCameraEvent());
         if (_checkForUnsavedChanges()) {
           _openOnPopGuardAlert();
@@ -540,10 +541,10 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
           return true;
         }
       },
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: AppColors.backgroundNeutral,
-          body: Container(
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundNeutral,
+        body: SafeArea(
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: SingleChildScrollView(
               child: Column(
@@ -642,7 +643,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
               ),
             ),
           ),
-        )
+        ),
       ),
     );
   }

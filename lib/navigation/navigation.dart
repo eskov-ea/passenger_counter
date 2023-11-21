@@ -53,7 +53,10 @@ class MainNavigation {
           transitionDuration: Duration(milliseconds: 700),
         );
       case MainNavigationRouteNames.addPersonScreen:
-        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeAddPersonScreen());
+        return CupertinoPageRoute(
+          settings: const RouteSettings(name: MainNavigationRouteNames.addPersonScreen),
+          builder: (BuildContext context) => _screenFactory.makeAddPersonScreen()
+        );
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.addPersonScreen),
 
@@ -71,7 +74,6 @@ class MainNavigation {
       case MainNavigationRouteNames.allPersonsScreen:
         settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen);
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeAllPersonsScreen());
-
       case MainNavigationRouteNames.scannerScreen:
         final arguments = settings.arguments as ScannerScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeScannerScreen(arguments));

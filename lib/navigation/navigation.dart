@@ -21,6 +21,7 @@ abstract class MainNavigationRouteNames {
   static const personOptionsScreen = '/add_person_options';
   static const successInfoScreen = '/success_info';
   static const searchPersonScreen = '/search_person_screen';
+  static const test = '/test';
 }
 
 
@@ -65,6 +66,8 @@ class MainNavigation {
           transitionDuration: Duration(milliseconds: 700),
         );
       case MainNavigationRouteNames.allPersonsScreen:
+        settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen);
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeAllPersonsScreen());
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),
           pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAllPersonsScreen(),
@@ -153,6 +156,8 @@ class MainNavigation {
           // },
           transitionDuration: Duration(milliseconds: 700),
         );
+      case MainNavigationRouteNames.test:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeHomeScreen());
       default:
         const widget = Center(child: Text('Ошибка навигации между страницами приложения', style: TextStyle(color: Colors.black87, fontSize: 16),));
         return MaterialPageRoute(builder: (_) => widget);

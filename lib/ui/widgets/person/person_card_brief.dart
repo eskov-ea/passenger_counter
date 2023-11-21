@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/theme.dart';
@@ -17,6 +19,7 @@ class PersonCardBrief extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final String personName = "${person.lastname} ${person.firstname} ${person.middlename}";
+    print("person::::: ${person.photo.trim() == "" }");
 
     return GestureDetector(
       onTap: () { onTap(person); },
@@ -31,13 +34,17 @@ class PersonCardBrief extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 80,
-              height: 120,
-              child: Image.asset("assets/images/no_avatar.png",
+            person.photo != ""
+              ? Image.memory(base64Decode(person.photo),
                 fit: BoxFit.cover,
+                width: 80,
+                height: 120,
+              )
+              : Image.asset("assets/images/no_avatar.png",
+                fit: BoxFit.cover,
+                width: 80,
+                height: 120,
               ),
-            ),
             SizedBox(width: 10,),
             Container(
               width: MediaQuery.of(context).size.width - 100 - 50,

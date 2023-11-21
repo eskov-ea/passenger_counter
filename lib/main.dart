@@ -6,8 +6,8 @@ import 'package:pleyona_app/bloc/db_bloc/db_bloc.dart';
 import 'package:pleyona_app/view_models/auth_view_cubit/auth_view_cubit.dart';
 import 'package:pleyona_app/view_models/auth_view_cubit/auth_view_cubit_state.dart';
 import 'package:pleyona_app/view_models/loader_view_cubit/loader_view_cubit.dart';
-
 import 'navigation/navigation.dart';
+
 
 void main() {
   runApp(const MyApp());

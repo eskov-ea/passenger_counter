@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pleyona_app/globals.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_field_widget.dart';
 import '../../models/person_model.dart';
@@ -288,16 +291,16 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     phone = widget.person.phone;
     citizenship = widget.person.citizenship;
     final List<String> birth = widget.person.birthdate.split('-');
-    final String doc = widget.person.document.split(',').last;
-    // lastname = widget.person.lastname;
-    // middlename = widget.person.middlename;
-    // _dayBirthFieldController.text = birth[2];
-    // _monthBirthFieldController.text = birth[1];
-    // _yearBirthFieldController.text = birth[2];
-    // _documentNameFieldController.text = doc.split('/').first;
-    // _documentNumberFieldController.text = doc.split('/').last;
-    // _phoneFieldController.text = widget.person.phone;
-    // _emailFieldController.text = widget.person.email;
+    final List<Widget> docs = widget.person.document.split(GlobalVariables.documentSeparator).map((doc) =>
+      SizedBox(
+          height: lastnameHasError ? 70 : 50,
+          width: MediaQuery.of(context).size.width - 20,
+          child: EditableTextFieldWidget(
+            label: "Фамилия", value: lastname, valueSetter: lastnameSetter, error: lastnameHasError,
+            errorSetter: lastnameErrorSetter, validator: validateLastnameField, errorMessage: lastnameErrorMessage,
+          )
+      ),
+    ).toList();
 
     super.initState();
   }
@@ -490,21 +493,23 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 100,),
+                  SizedBox(height: 50,),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         height: 130,
-                        alignment: Alignment.topCenter,
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        child: widget.person.phone != ""
-                          ? SizedBox.shrink()
+                        alignment: Alignment.centerLeft,
+                        width: MediaQuery.of(context).size.width * 0.3 - 10,
+                        child: widget.person.photo != ""
+                          ? Image.memory(base64Decode(widget.person.photo),
+                          fit: BoxFit.cover
+                        )
                           : Image.asset("assets/images/no_avatar.png"),
                       ),
                       Container(
                         height: 130,
-                        width: MediaQuery.of(context).size.width * 0.7 - 20,
+                        width: MediaQuery.of(context).size.width * 0.7 - 10,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

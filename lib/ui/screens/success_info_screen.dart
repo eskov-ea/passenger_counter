@@ -36,12 +36,11 @@ class SuccessInfoScreen extends StatelessWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(12))
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 50),
-                          child: Text(message)),
+                        padding: const EdgeInsets.only(left: 10, right: 10, top: 80, bottom: 10),
+                        child: Text(message)),
                       PersonCardFullSize(person: person),
                       ElevatedButton(
                         onPressed: () {

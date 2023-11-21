@@ -23,10 +23,10 @@ final Map<String, String> tables = {
       'document varchar(255) DEFAULT NULL, '
       'phone varchar(100) DEFAULT NULL, '
       'email varchar(160) DEFAULT NULL, '
-      'photo text DEFAULT "", '
+      'photo text DEFAULT " ", '
       'citizenship varchar(100) DEFAULT NULL, '
       'class_person varchar(20) DEFAULT "Regular" REFERENCES person_class_list(person_class), '
-      'comment text DEFAULT "", '
+      'comment text DEFAULT " ", '
       'created_at DATE DEFAULT NULL, '
       'updated_at DATE DEFAULT NULL, '
       'deleted_at DATE DEFAULT NULL );',
@@ -96,8 +96,8 @@ class DBProvider {
     final db = await database;
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-        'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, document, citizenship, class_person, comment, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.document, p.citizenship, p.personClass, p.comment, p.createdAt, p.updatedAt]
+        'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, document, citizenship, class_person, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.document, p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
       );
       return id;
     });

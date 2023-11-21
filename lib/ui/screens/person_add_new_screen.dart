@@ -320,7 +320,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         document: "${documentNameFieldController.text}/${documentNumberFieldController.text}",
         citizenship: citizenshipFieldController.text,
         personClass: "Regular",
-        comment: null,
+        comment: commentTextController.text,
         photo: personBase64Image ?? "",
         createdAt: dateFormatter(DateTime.now()),
         updatedAt: dateFormatter(DateTime.now())

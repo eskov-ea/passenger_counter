@@ -35,9 +35,9 @@ final Map<String, String> tables = {
   'CREATE TABLE person_documents ( id INTEGER PRIMARY KEY AUTOINCREMENT, '
       'name varchar(255) DEFAULT NULL, '
       'description varchar(255) DEFAULT NULL, '
-      'id_person INTEGER DEFAULT "0" NOT NULL, '
-      'created_at DATE DEFAULT (datetime("now","localtime")), '
-      'updated_at DATE DEFAULT (datetime("now","localtime")), '
+      'id_person INTEGER DEFAULT 0 NOT NULL, '
+      'created_at DATE DEFAULT CURRENT_DATE), '
+      'updated_at DATE DEFAULT CURRENT_DATE), '
       'deleted_at DATE DEFAULT NULL);'
 };
 
@@ -105,7 +105,7 @@ class DBProvider {
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
         'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, document, citizenship, class_person, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.document, p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
+        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, "p.document", p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
       );
       return id;
     });
@@ -138,11 +138,11 @@ class DBProvider {
   }
 
   Future updatePerson({
-    required String id, required String document, required String phone, required String email
+    required int id, required String phone, required String email
   }) async {
     final db = await database;
     return await db.transaction((txn) async {
-      String sql = "UPDATE person SET phone = '$phone', document = '$document', email = '$email' WHERE id = '$id'";
+      String sql = "UPDATE person SET phone = '$phone', email = '$email' WHERE id = '$id'";
       // String sql = "UPDATE person SET phone = '$phone', document = '$document', email = '$email' WHERE id = '$id'";
       return await txn.rawUpdate(sql);
     });
@@ -150,14 +150,37 @@ class DBProvider {
 
   /// DOCUMENTS//
 
-  Future<int> addDocument({required int personId, required Person p}) async {
+  Future<int> addDocument({required PersonDocument document}) async {
     final db = await database;
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-        'INSERT INTO person(name, description, id_person) VALUES(?, ?, ?)',
-        [p.document, p.document, personId]
+        'INSERT INTO person_documents(name, description, id_person) VALUES(?, ?, ?)',
+        [document.name, document.description, document.personId]
       );
       return id;
+    });
+  }
+
+  Future<List<PersonDocument>> getPersonDocuments({required int personId}) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM person_documents WHERE id_person= "$personId"'
+      );
+      print(res);
+      return res.map((el) => PersonDocument.fromJson(el)).toList();
+    });
+  }
+
+  Future<List<PersonDocument>> findPersonDocument({
+    required String name, required String number
+  }) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      String sql = "SELECT * FROM person_documents WHERE name = '$name', description = '$number';";
+
+      final res = await txn.rawQuery(sql);
+      return res.map((el) => PersonDocument.fromJson(el)).toList();
     });
   }
 

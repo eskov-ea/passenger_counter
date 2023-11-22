@@ -19,7 +19,6 @@ class PersonCardBrief extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final String personName = "${person.lastname} ${person.firstname} ${person.middlename}";
-    print("person::::: ${person.photo.trim() == "" }");
 
     return GestureDetector(
       onTap: () { onTap(person); },

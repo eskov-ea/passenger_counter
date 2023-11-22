@@ -5,9 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pleyona_app/globals.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/widgets/editable_text_field_widget.dart';
+import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
+import 'package:pleyona_app/ui/widgets/editable_text_fields/editable_text_field_widget.dart';
+import 'package:pleyona_app/ui/widgets/save_button.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
+import '../widgets/editable_text_fields/editable_birthdate_field_widget.dart';
+import '../widgets/editable_text_fields/editable_comment_text_field.dart';
+import '../widgets/editable_text_fields/editable_document_field_widget.dart';
 
 class EditPersonInfoScreen extends StatefulWidget {
 
@@ -37,6 +42,10 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   bool isDocumentNumberFieldsHasError = false;
   bool isPhoneFieldsHasError = false;
   bool isEmailFieldsHasError = false;
+  final TextEditingController personClassDropdownController = TextEditingController();
+  late final List<DropdownMenuEntry<String>> personClassList;
+  final FocusNode commentFieldFocus = FocusNode();
+  final TextEditingController commentTextController = TextEditingController();
 
   String? documentInputFieldsErrorMessage;
   bool isEditingMode = false;
@@ -145,6 +154,44 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
         !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
       && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
 
+    }
+  }
+
+  void onCheckboxMaleChecked(bool? value) {
+    if (value == null) {
+      validateGenderInput();
+      return;
+    }
+    setState(() {
+      isMaleChecked = false;
+      isFemaleChecked = false;
+
+      isMaleChecked = value;
+    });
+    validateGenderInput();
+  }
+  void onCheckboxFemaleChecked(bool? value) {
+    if (value == null) {
+      validateGenderInput();
+      return;
+    }
+    setState(() {
+      isMaleChecked = false;
+      isFemaleChecked = false;
+
+      isFemaleChecked = value;
+    });
+    validateGenderInput();
+  }
+  void validateGenderInput() {
+    if (!isMaleChecked && !isFemaleChecked) {
+      setState(() {
+        isGenderFieldHasError = true;
+      });
+    } else {
+      setState(() {
+        isGenderFieldHasError = false;
+      });
     }
   }
 
@@ -285,24 +332,63 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     firstname = widget.person.firstname;
     lastname = widget.person.lastname;
     middlename = widget.person.middlename;
-    document = widget.person.document;
     email = widget.person.email;
-    birthdate = widget.person.birthdate;
+    birthdateDay = widget.person.birthdate.split("-")[2];
+    birthdateMonth = widget.person.birthdate.split("-")[1];
+    birthdateYear = widget.person.birthdate.split("-")[0];
     phone = widget.person.phone;
     citizenship = widget.person.citizenship;
+    comment = widget.person.comment ?? "";
     final List<String> birth = widget.person.birthdate.split('-');
-    final List<Widget> docs = widget.person.document.split(GlobalVariables.documentSeparator).map((doc) =>
-      SizedBox(
-          height: lastnameHasError ? 70 : 50,
-          width: MediaQuery.of(context).size.width - 20,
-          child: EditableTextFieldWidget(
-            label: "Фамилия", value: lastname, valueSetter: lastnameSetter, error: lastnameHasError,
-            errorSetter: lastnameErrorSetter, validator: validateLastnameField, errorMessage: lastnameErrorMessage,
-          )
-      ),
-    ).toList();
+    int i =0;
+    DBProvider.db.getPersonDocuments(personId: widget.person.id).then((documents) {
+      EditableDocuments = documents.map((doc) {
+        ++i;
+        String documentNumber = doc.description;
+        String documentName = doc.name;
+        void setDocName(String value) {
+          setState(() {
+            documentName = value;
+          });
+        }
+        void setDocNumber(String value) {
+          setState(() {
+            documentNumber = value;
+          });
+        }
+        bool isDocHasError = true;
+        return SizedBox(
+            height: 68,
+            width: MediaQuery.of(context).size.width - 20,
+            child: EditableDocumentTextFieldWidget(
+              label: "Документ $i", valueName: documentName, valueNumber: documentNumber,
+              valueNameSetter: setDocName, valueNumberSetter: setDocNumber,
+            )
+        );
+      }).toList();
+      setState(() {
+
+      });
+    });
+    personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
 
     super.initState();
+  }
+
+  void checkIfPersonHasChanges() {
+    if(
+      firstname != widget.person.firstname ||
+      lastname != widget.person.lastname ||
+      middlename != widget.person.middlename
+    ) {
+      setState(() {
+        hasPersonChanges = true;
+      });
+    } else {
+      setState(() {
+        hasPersonChanges = false;
+      });
+    }
   }
 
   @override
@@ -313,25 +399,44 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   late String firstname;
   late String lastname;
   late String middlename;
-  late String document;
+  late String documentNumber;
   late String email;
-  late String birthdate;
+  late String birthdateDay;
+  late String birthdateMonth;
+  late String birthdateYear;
   late String phone;
   late String citizenship;
+  late String comment;
+  late final List<PersonDocument> personDocuments;
+  late final List<Widget> EditableDocuments;
+  bool isFemaleChecked = false;
+  bool isMaleChecked = true;
+  bool hasPersonChanges = false;
 
   void firstnameSetter(String value) {
     setState(() {
       firstname = value;
     });
+    checkIfPersonHasChanges();
   }
   void emailSetter(String value) {
     setState(() {
       email = value;
     });
   }
-  void birthdateSetter(String value) {
+  void birthdateDaySetter(String value) {
     setState(() {
-      birthdate = value;
+      birthdateDay = value;
+    });
+  }
+  void birthdateMonthSetter(String value) {
+    setState(() {
+      birthdateMonth = value;
+    });
+  }
+  void birthdateYearSetter(String value) {
+    setState(() {
+      birthdateYear = value;
     });
   }
   void phoneSetter(String value) {
@@ -343,20 +448,27 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     setState(() {
       lastname = value;
     });
+    checkIfPersonHasChanges();
   }
   void middlenameSetter(String value) {
     setState(() {
       middlename = value;
     });
+    checkIfPersonHasChanges();
   }
   void documentSetter(String value) {
     setState(() {
-      document = value;
+      documentNumber = value;
     });
   }
   void citizenshipSetter(String value) {
     setState(() {
       citizenship = value;
+    });
+  }
+  void commentSetter(String value) {
+    setState(() {
+      comment = value;
     });
   }
 
@@ -368,6 +480,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   bool phoneHasError = false;
   bool documentHasError = false;
   bool citizenshipHasError = false;
+  bool isGenderFieldHasError = false;
   String? firstnameErrorMessage;
   String? lastnameErrorMessage;
   String? middlenameErrorMessage;
@@ -418,56 +531,33 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     });
   }
 
-  void validateFirstnameField() {
+  bool validateFirstnameField() {
+    print(":::: ${firstname.trim().isEmpty}");
     if (firstname.trim().isEmpty) {
-      setState(() {
-        firstnameHasError = true;
-        firstnameErrorMessage = "Поле не может быть пустым";
-      });
+      return true;
     } else {
-      setState(() {
-        firstnameHasError = false;
-        firstnameErrorMessage = null;
-      });
+      return false;
     }
   }
-  void validateEmailField() {
-    setState(() {
-      emailHasError = false;
-      emailErrorMessage = null;
-    });
+
+  bool validateBirthdateField() {
+    return true;
   }
-  void validateBirthdateField() {
-    setState(() {
-      birthdateHasError = false;
-      birthdateErrorMessage = null;
-    });
+  bool validateLastnameField() {
+    if (lastname.trim().isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
-  void validatePhoneField() {
-    setState(() {
-      phoneHasError = false;
-      phoneErrorMessage = null;
-    });
-  }
-  void validateLastnameField() {
-    setState(() {
-      lastnameHasError = false;
-      lastnameErrorMessage = null;
-    });
-  }
-  void validateMiddlenameField() {
-    setState(() {
-      middlenameHasError = false;
-      middlenameErrorMessage = null;
-    });
+  bool validateMiddlenameField() {
+    if (middlename.trim().isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
   void validateDocumentField() {
-    setState(() {
-      documentHasError = false;
-      documentErrorMessage = null;
-    });
-  }
-  void validateCitizenshipField() {
     setState(() {
       documentHasError = false;
       documentErrorMessage = null;
@@ -515,15 +605,54 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                           children: [
                             EditableTextFieldWidget(
                               label: "Телефон", value: phone, valueSetter: phoneSetter, error: phoneHasError, small: true,
-                              errorSetter: phoneErrorSetter, validator: validatePhoneField, errorMessage: phoneErrorMessage,
+                              errorSetter: phoneErrorSetter, errorMessage: phoneErrorMessage,
                               inputType: TextInputType.phone,
                             ),
                             SizedBox(height: 10,),
                             EditableTextFieldWidget(
                               label: "Email", value: email, valueSetter: emailSetter, error: emailHasError, small: true,
-                              errorSetter: emailErrorSetter, validator: validateEmailField, errorMessage: emailErrorMessage,
+                              errorSetter: emailErrorSetter, errorMessage: emailErrorMessage,
                                 inputType: TextInputType.emailAddress
-                            )
+                            ),
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.35 -10,
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
+                                          value: isMaleChecked,
+                                          fillColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
+                                          side: BorderSide.none,
+                                          splashRadius: 20.0,
+                                          onChanged: onCheckboxMaleChecked
+                                      ),
+                                      Text("Мужчина",
+                                        style: TextStyle(fontSize: 18, color: AppColors.backgroundMain2),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.35 -10,
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
+                                          value: isFemaleChecked,
+                                          fillColor: MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus),
+                                          checkColor: AppColors.errorMain,
+                                          side: BorderSide.none,
+                                          onChanged: onCheckboxFemaleChecked
+                                      ),
+                                      Text("Женщина",
+                                        style: TextStyle(fontSize: 18, color: AppColors.backgroundMain2),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -557,28 +686,67 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                       )
                   ),
                   SizedBox(height: 10,),
-                  EditableTextFieldWidget(
-                    label: "Дата рождения", value: birthdate, valueSetter: birthdateSetter, error: birthdateHasError,
-                    errorSetter: birthdateErrorSetter, validator: validateBirthdateField, errorMessage: birthdateErrorMessage,
+                  EditableDateTextFieldWidget(
+                    label: "Дата рождения",
+                    valueDay: birthdateDay, valueDaySetter: birthdateDaySetter,
+                    valueMonth: birthdateMonth, valueMonthSetter: birthdateMonthSetter,
+                    valueYear: birthdateYear, valueYearSetter: birthdateYearSetter,
+                    // errorSetter: birthdateErrorSetter,
+                    // validator: validateBirthdateField,
+                    // errorMessage: birthdateErrorMessage,
                   ),
                   SizedBox(height: 10,),
-                  SizedBox(
-                      height: documentHasError ? 70 : 50,
-                      width: MediaQuery.of(context).size.width - 20,
-                      child: EditableTextFieldWidget(
-                        label: "Документы", value: document, valueSetter: documentSetter, error: documentHasError,
-                        errorSetter: documentErrorSetter, validator: validateDocumentField, errorMessage: documentErrorMessage,
-                      )
-                  ),
+                  ...EditableDocuments,
                   SizedBox(height: 10,),
                   SizedBox(
                       height: citizenshipHasError ? 70 : 50,
                       width: MediaQuery.of(context).size.width - 20,
                       child: EditableTextFieldWidget(
                         label: "Гражданство", value: citizenship, valueSetter: citizenshipSetter, error: citizenshipHasError,
-                        errorSetter: citizenshipErrorSetter, validator: validateCitizenshipField, errorMessage: citizenshipErrorMessage,
+                        errorSetter: citizenshipErrorSetter, errorMessage: citizenshipErrorMessage,
                       )
                   ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: DropdownMenu(
+                      menuStyle: MenuStyle(
+                        backgroundColor: MaterialStateColor.resolveWith((states) => AppColors.cardColor5),
+                        elevation: MaterialStateProperty.resolveWith((states) => 40),
+                        shadowColor: MaterialStateColor.resolveWith((states) => AppColors.backgroundMain2),
+                        surfaceTintColor: MaterialStateColor.resolveWith((states) => AppColors.cardColor1),
+                      ),
+                      inputDecorationTheme: InputDecorationTheme(
+                          fillColor: const Color(0xFFEFEFEF),
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              borderSide: BorderSide(color: AppColors.transparent, width: 1)
+                          ),
+                          constraints: BoxConstraints(
+                              maxHeight: 50,
+                              minHeight: 50
+                          )
+                      ),
+                      textStyle: TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
+                      width: MediaQuery.of(context).size.width - 20,
+                      controller: personClassDropdownController,
+                      label: Text("Класс пассажира", style: TextStyle(fontSize: 22, color: Color(0xFF000000))),
+                      initialSelection: personClassList.first.value,
+                      dropdownMenuEntries: personClassList,
+                      onSelected: (String? value) {  },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  EditableCommentFieldWidget(
+                    value: comment,
+                    valueSetter: commentSetter
+                  ),
+                  const SizedBox(height: 20,),
+                  hasPersonChanges
+                    ? SaveButton(onTap: () {}, label: "Обновить")
+                    : SizedBox.shrink(),
+                  const SizedBox(height: 20,)
                 ],
               ),
             ),

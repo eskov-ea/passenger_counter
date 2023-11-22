@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -309,7 +308,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
       && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
       final newPerson = Person(
-        id: "",
+        id: 0,
         firstname: firstnameController.text,
         lastname: lastnameController.text,
         middlename: middlenameController.text,
@@ -317,7 +316,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         birthdate: "${yearBirthFieldController.text}-${monthBirthFieldController.text}-${dayBirthFieldController.text}",
         phone: phoneFieldController.text,
         email: emailFieldController.text,
-        document: "${documentNameFieldController.text}/${documentNumberFieldController.text}",
         citizenship: citizenshipFieldController.text,
         personClass: "Regular",
         comment: commentTextController.text,
@@ -327,15 +325,24 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       );
       final persons = await _db.findPerson(lastname: newPerson.lastname);
       if (persons.isEmpty) {
-        await _db.addPerson(newPerson);
+        final personId = await _db.addPerson(newPerson);
+        final newDoc = PersonDocument(
+          id: null,
+          name: documentNameFieldController.text,
+          description: documentNumberFieldController.text,
+          personId: personId
+        );
+        await _db.addDocument(document: newDoc);
         // TODO: handle error
         Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
           arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: MainNavigationRouteNames.homeScreen,
-          person: newPerson)
+          person: newPerson, personDocuments: [ newDoc ])
         );
       } else {
         Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,
-          arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: persons)
+          arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: persons,
+          personDocumentName: documentNameFieldController.text,
+          personDocumentNumber: documentNumberFieldController.text)
         );
       }
     }
@@ -420,6 +427,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   
   @override
   void initState() {
+    // TODO: initialize camera on resume lifesicle and dispose on pause / background
     BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
     lastnameFocus.addListener(() {
       if(!lastnameFocus.hasFocus) {
@@ -469,7 +477,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       if (qrResult.value?.code != null) {
         final qr = qrResult.value!.code!;
         final person = Person.fromQRCode(json.decode(qr));
-        _fillInputsWithQRCodeData(person);
+        final doc = PersonDocument.fromQRCode(json.decode(qr)["document"]);
+        _fillInputsWithQRCodeData(person, doc);
       }
     });
     personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
@@ -482,8 +491,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     });
   }
 
-  void _fillInputsWithQRCodeData(Person p) {
-    final doc = p.document.split(" ");
+  void _fillInputsWithQRCodeData(Person p, PersonDocument d) {
     final bDate = p.birthdate.split("-");
 
     firstnameController.text = p.firstname;
@@ -492,8 +500,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     yearBirthFieldController.text = bDate[0];
     monthBirthFieldController.text = bDate[1];
     dayBirthFieldController.text = bDate[2];
-    documentNameFieldController.text = doc[0];
-    documentNumberFieldController.text = doc[1];
+    documentNameFieldController.text = d.name;
+    documentNumberFieldController.text = d.description;
     citizenshipFieldController.text = p.citizenship;
     phoneFieldController.text = p.phone;
     emailFieldController.text = p.email;

@@ -7,8 +7,10 @@ import '../../../globals.dart';
 
 class PersonCardFullSize extends StatelessWidget {
   final Person person;
+  final List<PersonDocument> personDocuments;
   const PersonCardFullSize({
     required this.person,
+    required this.personDocuments,
     super.key
   });
 
@@ -17,15 +19,6 @@ class PersonCardFullSize extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final String personName = "${person.lastname} ${person.firstname} ${person.middlename}";
-    final List<Widget> documents = person.document.split(GlobalVariables.documentSeparator).map((doc) =>
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-          child: Text(person.document,
-            style: AppStyles.submainTitleTextStyle,
-            maxLines: 1,
-          )
-        )
-    ).toList();
 
 
     return GestureDetector(
@@ -105,8 +98,14 @@ class PersonCardFullSize extends StatelessWidget {
             Container(
               height: 60,
               child: ListView.builder(
-                  itemCount: documents.length,
-                  itemBuilder: (context, index) => documents[index]
+                itemCount: personDocuments.length,
+                itemBuilder: (context, index) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                  child: Text("${personDocuments[index].name} ${personDocuments[index].description}",
+                    style: AppStyles.submainTitleTextStyle,
+                    maxLines: 1,
+                  )
+                )
               ),
             ),
             Row(

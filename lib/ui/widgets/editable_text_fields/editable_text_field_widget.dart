@@ -11,7 +11,7 @@ class EditableTextFieldWidget extends StatefulWidget {
   final bool error;
   final Function(String) valueSetter;
   final Function(bool) errorSetter;
-  final Function() validator;
+  final bool Function()? validator;
   final Color backgroundColor;
   final Color accentColor;
   final Color borderColor;
@@ -25,7 +25,7 @@ class EditableTextFieldWidget extends StatefulWidget {
     required this.valueSetter,
     required this.error,
     required this.errorSetter,
-    required this.validator,
+    bool Function()? this.validator,
     String? this.errorMessage,
     Color this.backgroundColor = const Color(0xFFEFEFEF),
     Color this.errorBackgroundColor = const Color(0xFFFFEAEA),
@@ -52,6 +52,7 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
     return textPainter.size;
   }
   bool isEditing = false;
+  bool error = false;
 
   @override
   void initState() {
@@ -82,7 +83,7 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: widget.small ? 0.0 : 2.0, horizontal: 15),
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    fillColor: widget.error ? widget.errorBackgroundColor : const Color(0xFFFFFFFF),
+                    fillColor: error ? widget.errorBackgroundColor : const Color(0xFFFFFFFF),
                     filled: true,
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -109,7 +110,13 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
                 child: GestureDetector(
                   onTap: () {
                     if (isEditing) {
-                      widget.validator();
+                      if (widget.validator != null) {
+                        final err = widget.validator!();
+                        setState(() {
+                          error = err;
+                        });
+                        widget.errorSetter(err);
+                      }
                     }
                     setState(() {
                       isEditing = !isEditing;
@@ -135,14 +142,16 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
               )
             ],
           ),
-          widget.error
-              ? Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Text(widget.errorMessage ?? "Неккоректное значение",
-                    style: const TextStyle(fontSize: 14, color: Color(0xFF5B0A0A),),
-                    textAlign: TextAlign.start,
-                  )
-                )
+          error
+              ? Expanded(
+                child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Text(widget.errorMessage ?? "Неккоректное значение",
+                      style: const TextStyle(fontSize: 14, color: Color(0xFF5B0A0A),),
+                      textAlign: TextAlign.start,
+                    )
+                  ),
+              )
               : const SizedBox.shrink()
         ],
       ),
@@ -187,3 +196,5 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
     );
   }
 }
+
+

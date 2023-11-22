@@ -13,10 +13,14 @@ import '../screens/success_info_screen.dart';
 
 class AddingPersonOptions extends StatefulWidget {
   final Person newPerson;
+  final String personDocumentName;
+  final String personDocumentNumber;
   final List<Person> persons;
 
   const AddingPersonOptions({
     required this.newPerson,
+    required this.personDocumentName,
+    required this.personDocumentNumber,
     required this.persons,
     super.key
   });
@@ -27,19 +31,32 @@ class AddingPersonOptions extends StatefulWidget {
 
 class _AddingPersonOptionsState extends State<AddingPersonOptions> {
 
-  onUpdatePersonData(Person? person) {
+  Person? updatedPerson;
+  List<PersonDocument>? updatedPersonDocuments;
+
+  onUpdatePersonData(Person? person) async {
+    if (person == null) throw Error();
+    final docs = await DBProvider.db.getPersonDocuments(personId: person.id);
     setState(() {
       updatedPerson = person;
+      updatedPersonDocuments = docs;
     });
   }
 
   Future<void> _saveNewPerson() async {
     try {
-      final res = await DBProvider.db.addPerson(widget.newPerson);
-      print("[ DATABASE RESULT]:::   $res");
+      final personId = await DBProvider.db.addPerson(widget.newPerson);
+      final document = PersonDocument(
+        id: null,
+        name: widget.personDocumentName,
+        description: widget.personDocumentNumber,
+        personId: personId
+      );
+      await DBProvider.db.addDocument(document: document);
+      print("[ DATABASE RESULT]:::   $personId");
       Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
           arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: MainNavigationRouteNames.homeScreen,
-              person: widget.newPerson)
+              person: widget.newPerson, personDocuments: [document])
       );
     } catch (err) {
       print("[ DATABASE ERROR]:::   $err");
@@ -48,33 +65,38 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
 
   Future<void> _updatePerson() async {
     try {
-      String doc = updatedPerson!.document;
       String phone = updatedPerson!.phone;
       String email = updatedPerson!.email;
-      if (widget.newPerson.document.trim() != updatedPerson!.document.trim()) {
-        final List<String> docs = updatedPerson!.document.split(",");
-        if (!docs.contains(widget.newPerson.document.trim())) {
-          doc += ", ${widget.newPerson.document.trim()}";
-        }
-      }
+
       if (widget.newPerson.phone.trim() != updatedPerson!.phone.trim()) {
         phone = widget.newPerson.phone.trim();
       }
       if (widget.newPerson.email.trim() != updatedPerson!.email.trim()) {
         email = widget.newPerson.email.trim();
       }
-      final res = await DBProvider.db.updatePerson(id: updatedPerson!.id, document: doc, phone: phone, email: email);
+      final List<PersonDocument> searchedDocs = await DBProvider.db.findPersonDocument(
+        name: widget.personDocumentName, number: widget.personDocumentNumber
+      );
+      if (searchedDocs.isEmpty) {
+        final PersonDocument newDoc = PersonDocument(
+            id: null,
+            name: widget.personDocumentName,
+            description: widget.personDocumentNumber,
+            personId: updatedPerson!.id
+        );
+        await DBProvider.db.addDocument(document: newDoc);
+      }
+      final res = await DBProvider.db.updatePerson(id: updatedPerson!.id, phone: phone, email: email);
+      final List<PersonDocument> allPersonDocs = await DBProvider.db.getPersonDocuments(personId: updatedPerson!.id);
       print("[ DATABASE RESULT]:::   $res");
       Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
           arguments: InfoScreenArguments(message: "Контакт успешно обновлен!", routeName: MainNavigationRouteNames.homeScreen,
-              person: updatedPerson!)
+              person: updatedPerson!, personDocuments: allPersonDocs)
       );
     } catch(err) {
       print("[ DATABASE ERROR]:::   $err");
     }
   }
-
-  Person? updatedPerson;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +110,9 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
           child: Column(
             children: [
               const SizedBox(height: 40,),
-              PersonCardFullSize(person: widget.newPerson),
+              PersonCardFullSize(person: widget.newPerson,
+                personDocuments: [PersonDocument(id: null, name: widget.personDocumentName,
+                description: widget.personDocumentNumber, personId: 0),]),
               const SizedBox(height: 20,),
               updatedPerson == null
               ? const Text("Мы нашли контакты, ранее зарегистрированные с тикими данными. Вы можете обновить контакт или сохранить новый. Для обновления выберите контакт.",
@@ -133,7 +157,7 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
       child: Expanded(
         child: Column(
           children: [
-            PersonCardFullSize(person: updatedPerson!),
+            PersonCardFullSize(person: updatedPerson!, personDocuments: updatedPersonDocuments!),
             const SizedBox(height: 10,),
             SaveButton(onTap: () {
               setState(() {
@@ -154,9 +178,13 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
 class AddingPersonOptionsArguments {
   final Person newPerson;
   final List<Person> persons;
+  final String personDocumentName;
+  final String personDocumentNumber;
 
   const AddingPersonOptionsArguments({
     required this.newPerson,
+    required this.personDocumentName,
+    required this.personDocumentNumber,
     required this.persons
   });
 }

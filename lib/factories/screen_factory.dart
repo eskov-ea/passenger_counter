@@ -42,11 +42,14 @@ class ScreenFactory {
   }
 
   Widget makeAddingPersonOptionsPage(AddingPersonOptionsArguments arguments) {
-    return AddingPersonOptions(newPerson: arguments.newPerson, persons: arguments.persons);
+    return AddingPersonOptions(newPerson: arguments.newPerson,
+        persons: arguments.persons, personDocumentName: arguments.personDocumentName,
+        personDocumentNumber: arguments.personDocumentNumber,);
   }
 
   Widget makeSuccessInfoScreen(InfoScreenArguments arguments) {
-    return SuccessInfoScreen(message: arguments.message, routeName: arguments.routeName, person: arguments.person,);
+    return SuccessInfoScreen(message: arguments.message, routeName: arguments.routeName,
+      person: arguments.person, personDocuments: arguments.personDocuments,);
   }
 
   Widget makeEditPersonInfoScreen(EditPersonScreenArguments arguments) {

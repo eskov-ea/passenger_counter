@@ -8,11 +8,13 @@ class SuccessInfoScreen extends StatelessWidget {
   final String message;
   final String routeName;
   final Person person;
+  final List<PersonDocument> personDocuments;
 
   const SuccessInfoScreen({
     required this.message,
     required this.routeName,
     required this.person,
+    required this.personDocuments,
     super.key
   });
 
@@ -41,7 +43,7 @@ class SuccessInfoScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 10, right: 10, top: 80, bottom: 10),
                         child: Text(message)),
-                      PersonCardFullSize(person: person),
+                      PersonCardFullSize(person: person, personDocuments: personDocuments),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pushReplacementNamed(routeName);
@@ -72,10 +74,12 @@ class InfoScreenArguments {
   final String message;
   final String routeName;
   final Person person;
+  final List<PersonDocument> personDocuments;
 
   const InfoScreenArguments({
     required this.message,
     required this.routeName,
-    required this.person
+    required this.person,
+    required this.personDocuments
   });
 }

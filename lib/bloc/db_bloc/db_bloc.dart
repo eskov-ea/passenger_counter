@@ -40,19 +40,19 @@ class DBBloc extends Bloc<DBEvent, DBState> {
 
   _onUpdatePersonEvent( UpdatePersonEvent event, Emitter<DBState> emit) async {
     try {
-      String doc = event.currentPerson.document;
+      // doc = event.currentPerson.documents;
       String phone = event.currentPerson.phone;
       String email = event.currentPerson.email;
-      if (event.newPerson.document.trim() != event.currentPerson.document.trim()) {
-        doc += ", ${event.currentPerson.document.trim()}";
-      }
+      // if (event.newPerson.documents.trim() != event.currentPerson.documents.trim()) {
+      //   doc += ", ${event.currentPerson.documents.trim()}";
+      // }
       if (event.newPerson.phone.trim() != event.currentPerson.phone.trim()) {
         phone = event.newPerson.phone.trim();
       }
       if (event.newPerson.email.trim() != event.currentPerson.email.trim()) {
         email = event.newPerson.email.trim();
       }
-      _dbProvider.updatePerson(id: event.currentPerson.id, document: doc, phone: phone, email: email);
+      _dbProvider.updatePerson(id: event.currentPerson.id, phone: phone, email: email);
     } catch(err) {
       print("[ DATABASE ERROR]:::   $err");
     }

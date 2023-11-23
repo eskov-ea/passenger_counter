@@ -367,7 +367,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
         );
       }).toList();
       setState(() {
-
+        isPersonDocumentsInited = true;
       });
     });
     personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
@@ -408,6 +408,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   late String citizenship;
   late String comment;
   late final List<PersonDocument> personDocuments;
+  bool isPersonDocumentsInited = false;
   late final List<Widget> EditableDocuments;
   bool isFemaleChecked = false;
   bool isMaleChecked = true;
@@ -614,22 +615,26 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                               errorSetter: emailErrorSetter, errorMessage: emailErrorMessage,
                                 inputType: TextInputType.emailAddress
                             ),
+                            SizedBox(height: 10),
                             Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Container(
                                   width: MediaQuery.of(context).size.width * 0.35 -10,
                                   child: Row(
                                     children: [
-                                      Checkbox(
-                                          value: isMaleChecked,
-                                          fillColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
-                                          side: BorderSide.none,
-                                          splashRadius: 20.0,
-                                          onChanged: onCheckboxMaleChecked
+                                      SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: Checkbox(
+                                            value: isMaleChecked,
+                                            fillColor: isMaleChecked ? MaterialStateProperty.all<Color>(AppColors.backgroundMain5) : MaterialStateProperty.all<Color>(const Color(0xFFEFEFEF)),
+                                            side: BorderSide.none,
+                                            splashRadius: 20.0,
+                                            onChanged: onCheckboxMaleChecked
+                                        ),
                                       ),
                                       Text("Мужчина",
-                                        style: TextStyle(fontSize: 18, color: AppColors.backgroundMain2),
+                                        style: TextStyle(fontSize: 16),
                                       )
                                     ],
                                   ),
@@ -638,15 +643,20 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                                   width: MediaQuery.of(context).size.width * 0.35 -10,
                                   child: Row(
                                     children: [
-                                      Checkbox(
+                                      SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: Checkbox(
                                           value: isFemaleChecked,
-                                          fillColor: MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus),
+                                          fillColor: isFemaleChecked ? MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus) : MaterialStateProperty.all<Color>(const Color(0xFFEFEFEF)),
                                           checkColor: AppColors.errorMain,
                                           side: BorderSide.none,
-                                          onChanged: onCheckboxFemaleChecked
+                                          onChanged: onCheckboxFemaleChecked,
+                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
                                       ),
                                       Text("Женщина",
-                                        style: TextStyle(fontSize: 18, color: AppColors.backgroundMain2),
+                                        style: TextStyle(fontSize: 16),
                                       )
                                     ],
                                   ),
@@ -696,7 +706,9 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                     // errorMessage: birthdateErrorMessage,
                   ),
                   SizedBox(height: 10,),
-                  ...EditableDocuments,
+                  if (isPersonDocumentsInited)
+                    ...EditableDocuments
+                  else SizedBox(height: 68,),
                   SizedBox(height: 10,),
                   SizedBox(
                       height: citizenshipHasError ? 70 : 50,

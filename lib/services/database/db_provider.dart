@@ -36,8 +36,8 @@ final Map<String, String> tables = {
       'name varchar(255) DEFAULT NULL, '
       'description varchar(255) DEFAULT NULL, '
       'id_person INTEGER DEFAULT 0 NOT NULL, '
-      'created_at DATE DEFAULT CURRENT_DATE), '
-      'updated_at DATE DEFAULT CURRENT_DATE), '
+      'created_at DATE DEFAULT CURRENT_DATE, '
+      'updated_at DATE DEFAULT CURRENT_DATE, '
       'deleted_at DATE DEFAULT NULL);'
 };
 
@@ -104,8 +104,8 @@ class DBProvider {
     final db = await database;
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-        'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, document, citizenship, class_person, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, "p.document", p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
+        'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, citizenship, class_person, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
       );
       return id;
     });

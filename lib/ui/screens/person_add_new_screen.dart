@@ -7,11 +7,9 @@ import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/pages/adding_person_options.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
-import 'package:pleyona_app/ui/widgets/added_document_icon_widget.dart';
 import 'package:pleyona_app/ui/widgets/person/adding_person_additional_info_block.dart';
 import 'package:pleyona_app/ui/widgets/person/adding_person_contact_info_block.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
-import 'package:pleyona_app/ui/widgets/scan_button.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../bloc/camera_bloc/camera_bloc.dart';
 import '../../bloc/camera_bloc/camera_event.dart';
@@ -361,7 +359,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   Future<void> _openOnPopGuardAlert() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Вы хотите сохранить черновик?'),

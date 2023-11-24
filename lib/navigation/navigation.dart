@@ -11,7 +11,7 @@ import '../ui/screens/person_search_screen.dart';
 abstract class MainNavigationRouteNames {
   static const loaderWidget = '/';
   static const authScreen = '/auth';
-  static const homeScreen = '/home_screen';
+  static const homeScreen = '/homescreen';
   static const passengerEditingScreen = '/home_screen/passenger_editing_screen';
   static const addPersonScreen = '/home_screen/add_person_screen';
   static const editPersonInfoScreen = '/home_screen/edit_person_screen';

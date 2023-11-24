@@ -35,9 +35,9 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.width,
-      height: widget.width * aspectRatio,
-      child: _cameraView()
+        width: widget.width,
+        height: widget.width * aspectRatio,
+        child: _cameraView()
     );
   }
 
@@ -86,38 +86,38 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
           );
         } else {
           return AspectRatio(
-            aspectRatio: state.controller?.value.aspectRatio ?? aspectRatio,
-            child: GestureDetector(
-              onTap: () {
-                _openCamera(context, state.cameras!, state.controller!);
-              },
-              child: Stack(
-                fit: StackFit.loose,
-                alignment: Alignment.bottomCenter,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 3, color: Colors.black),
+              aspectRatio: state.controller?.value.aspectRatio ?? aspectRatio,
+              child: GestureDetector(
+                onTap: () {
+                  _openCamera(context, state.cameras!, state.controller!);
+                },
+                child: Stack(
+                  fit: StackFit.loose,
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 3, color: Colors.black),
+                        ),
+                        child: Image.memory(base64Decode(widget.personBase64Image!)),
                       ),
-                      child: Image.memory(base64Decode(widget.personBase64Image!)),
                     ),
-                  ),
-                  Container(
-                    color: const Color(0x33626262),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: const Text("Изменить фото",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFFFFFFFF)),
+                    Container(
+                      color: const Color(0x33626262),
                     ),
-                  )
-                ],
-              ),
-            )
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: const Text("Изменить фото",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Color(0xFFFFFFFF)),
+                      ),
+                    )
+                  ],
+                ),
+              )
           );
         }
       } else {

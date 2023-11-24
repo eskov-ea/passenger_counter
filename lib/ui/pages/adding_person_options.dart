@@ -86,7 +86,7 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
         );
         await DBProvider.db.addDocument(document: newDoc);
       }
-      final res = await DBProvider.db.updatePerson(id: updatedPerson!.id, phone: phone, email: email);
+      final res = await DBProvider.db.updatePersonsContactInformation(id: updatedPerson!.id, phone: phone, email: email);
       final List<PersonDocument> allPersonDocs = await DBProvider.db.getPersonDocuments(personId: updatedPerson!.id);
       print("[ DATABASE RESULT]:::   $res");
       Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,

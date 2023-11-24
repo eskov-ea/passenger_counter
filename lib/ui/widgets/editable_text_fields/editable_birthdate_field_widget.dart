@@ -12,6 +12,7 @@ class EditableDateTextFieldWidget extends StatefulWidget {
   final Function(String) valueDaySetter;
   final Function(String) valueMonthSetter;
   final Function(String) valueYearSetter;
+  final Function(bool) errorSetter;
   final Color backgroundColor;
   final Color accentColor;
   final Color borderColor;
@@ -25,6 +26,7 @@ class EditableDateTextFieldWidget extends StatefulWidget {
     required this.valueDaySetter,
     required this.valueMonthSetter,
     required this.valueYearSetter,
+    required this.errorSetter,
     Color this.backgroundColor = const Color(0xFFEFEFEF),
     Color this.errorBackgroundColor = const Color(0xFFFFEAEA),
     Color this.accentColor = const Color(0xFFDEDEDE),
@@ -48,15 +50,20 @@ class _EditableDateTextFieldWidgetState extends State<EditableDateTextFieldWidge
   bool error = false;
 
   void validate() {
-    // if(_textNameController.text.trim().isEmpty || _textNumberController.text.trim().isEmpty) {
-    //   setState(() {
-    //     error = true;
-    //   });
-    // } else {
-    //   setState(() {
-    //     error = false;
-    //   });
-    // }
+    if(_textDayController.text.isEmpty || int.parse(_textDayController.text) > 31 ||
+        _textMonthController.text.isEmpty || int.parse(_textMonthController.text) > 12 ||
+        _textYearController.text.isEmpty || int.parse(_textYearController.text) > DateTime.now().year || int.parse(_textYearController.text) < 1920
+    ) {
+      setState(() {
+        error = true;
+      });
+      widget.errorSetter(true);
+    } else {
+      setState(() {
+        error = false;
+      });
+      widget.errorSetter(false);
+    }
   }
 
   Size _textSize(String text, TextStyle style) {
@@ -239,14 +246,13 @@ class _EditableDateTextFieldWidgetState extends State<EditableDateTextFieldWidge
             ],
           ),
           error
-              ? Expanded(
-                child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: const Text("Название и документа номер должны быть заполнены",
-                      style: TextStyle(fontSize: 14, color: Color(0xFF5B0A0A),),
-                      textAlign: TextAlign.start,
-                    )
-                  ),
+              ? SizedBox(
+                height: 20,
+                width: MediaQuery.of(context).size.width,
+                child: const Text("Некорректная дата рождения",
+                  style: TextStyle(fontSize: 14, color: Color(0xFF5B0A0A),),
+                  textAlign: TextAlign.start,
+                )
               )
               : const SizedBox.shrink()
         ],

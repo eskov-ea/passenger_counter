@@ -10,6 +10,7 @@ class EditableDocumentTextFieldWidget extends StatefulWidget {
   final String valueNumber;
   final Function(String) valueNameSetter;
   final Function(String) valueNumberSetter;
+  final Function(bool) errorSetter;
   final Color backgroundColor;
   final Color accentColor;
   final Color borderColor;
@@ -22,6 +23,7 @@ class EditableDocumentTextFieldWidget extends StatefulWidget {
     required this.valueNumber,
     required this.valueNameSetter,
     required this.valueNumberSetter,
+    required this.errorSetter,
     Color this.backgroundColor = const Color(0xFFEFEFEF),
     Color this.errorBackgroundColor = const Color(0xFFFFEAEA),
     Color this.accentColor = const Color(0xFFDEDEDE),
@@ -48,10 +50,12 @@ class _EditableDocumentTextFieldWidgetState extends State<EditableDocumentTextFi
       setState(() {
         error = true;
       });
+      widget.errorSetter(true);
     } else {
       setState(() {
         error = false;
       });
+      widget.errorSetter(false);
     }
   }
 
@@ -194,14 +198,13 @@ class _EditableDocumentTextFieldWidgetState extends State<EditableDocumentTextFi
             ],
           ),
           error
-              ? Expanded(
-                child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: const Text("Название и документа номер должны быть заполнены",
-                      style: TextStyle(fontSize: 14, color: Color(0xFF5B0A0A),),
-                      textAlign: TextAlign.start,
-                    )
-                  ),
+              ? SizedBox(
+                height: 20,
+                width: MediaQuery.of(context).size.width,
+                child: const Text("Название и документа номер должны быть заполнены",
+                  style: TextStyle(fontSize: 14, color: Color(0xFF5B0A0A),),
+                  textAlign: TextAlign.start,
+                )
               )
               : const SizedBox.shrink()
         ],

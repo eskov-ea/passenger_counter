@@ -10,7 +10,7 @@ class EditableTextFieldWidget extends StatefulWidget {
   final String? errorMessage;
   final bool error;
   final Function(String) valueSetter;
-  final Function(bool) errorSetter;
+  final Function(bool)? errorSetter;
   final bool Function()? validator;
   final Color backgroundColor;
   final Color accentColor;
@@ -24,7 +24,7 @@ class EditableTextFieldWidget extends StatefulWidget {
     required this.value,
     required this.valueSetter,
     required this.error,
-    required this.errorSetter,
+    void Function(bool)? this.errorSetter,
     bool Function()? this.validator,
     String? this.errorMessage,
     Color this.backgroundColor = const Color(0xFFEFEFEF),
@@ -110,12 +110,12 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
                 child: GestureDetector(
                   onTap: () {
                     if (isEditing) {
-                      if (widget.validator != null) {
+                      if (widget.validator != null && widget.errorSetter != null) {
                         final err = widget.validator!();
                         setState(() {
                           error = err;
                         });
-                        widget.errorSetter(err);
+                        widget.errorSetter!(err);
                       }
                     }
                     setState(() {

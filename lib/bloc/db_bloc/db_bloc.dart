@@ -52,7 +52,7 @@ class DBBloc extends Bloc<DBEvent, DBState> {
       if (event.newPerson.email.trim() != event.currentPerson.email.trim()) {
         email = event.newPerson.email.trim();
       }
-      _dbProvider.updatePerson(id: event.currentPerson.id, phone: phone, email: email);
+      _dbProvider.updatePersonsContactInformation(id: event.currentPerson.id, phone: phone, email: email);
     } catch(err) {
       print("[ DATABASE ERROR]:::   $err");
     }

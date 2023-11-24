@@ -137,13 +137,28 @@ class DBProvider {
     });
   }
 
-  Future updatePerson({
+  Future updatePersonsContactInformation({
     required int id, required String phone, required String email
   }) async {
     final db = await database;
     return await db.transaction((txn) async {
       String sql = "UPDATE person SET phone = '$phone', email = '$email' WHERE id = '$id'";
-      // String sql = "UPDATE person SET phone = '$phone', document = '$document', email = '$email' WHERE id = '$id'";
+      return await txn.rawUpdate(sql);
+    });
+  }
+
+  Future updatePerson({required Person p, required String? photo}) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      final String baseField = "UPDATE person SET "
+          "lastname = '${p.lastname}', firstname = '${p.firstname}',"
+          "middlename = '${p.middlename}', gender = '${p.gender}',"
+          "birthdate = '${p.birthdate}', citizenship = '${p.citizenship}',"
+          "phone = '${p.phone}', email = '${p.email}', comment = '${p.comment}',"
+          "class_person = '${p.personClass}'";
+      final String photoField = photo == null ? "" : ", photo = '$photo'";
+      final String where = "WHERE id = '${p.id}';";
+      final String sql = baseField + photoField + where;
       return await txn.rawUpdate(sql);
     });
   }

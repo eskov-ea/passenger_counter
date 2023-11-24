@@ -1,18 +1,24 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pleyona_app/globals.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_fields/editable_text_field_widget.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
+import '../../bloc/camera_bloc/camera_bloc.dart';
+import '../../bloc/camera_bloc/camera_event.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 import '../widgets/editable_text_fields/editable_birthdate_field_widget.dart';
 import '../widgets/editable_text_fields/editable_comment_text_field.dart';
 import '../widgets/editable_text_fields/editable_document_field_widget.dart';
+import 'camera_screen.dart';
 
 class EditPersonInfoScreen extends StatefulWidget {
 
@@ -28,20 +34,39 @@ class EditPersonInfoScreen extends StatefulWidget {
 
 class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
 
-  final DBProvider _db = DBProvider.db;
+  late String firstname;
+  late String lastname;
+  late String middlename;
+  late String documentNumber;
+  late String email;
+  late String birthdateDay;
+  late String birthdateMonth;
+  late String birthdateYear;
+  late String phone;
+  late String citizenship;
+  late String comment;
+  late String personClass;
+  bool isPersonDocumentsInited = false;
+  bool isFemaleChecked = false;
+  bool isMaleChecked = false;
+  bool hasPersonChanges = false;
 
-  bool isLastnameFieldHasError = false;
-  bool isFirstnameFieldHasError = false;
-  bool isMiddlenameFieldHasError = false;
-  bool isDayBirthFieldHasError = false;
-  bool isMonthBirthFieldHasError = false;
-  bool isYearBirthFieldHasError = false;
-  bool isDateInputHasError = false;
-  bool isDocumentNumberFieldHasError = false;
-  bool isDocumentNameFieldHasError = false;
-  bool isDocumentNumberFieldsHasError = false;
-  bool isPhoneFieldsHasError = false;
-  bool isEmailFieldsHasError = false;
+  bool firstnameHasError = false;
+  bool lastnameHasError = false;
+  bool middlenameHasError = false;
+  bool emailHasError = false;
+  bool birthdateHasError = false;
+  bool phoneHasError = false;
+  bool documentHasError = false;
+  bool citizenshipHasError = false;
+  bool isGenderFieldHasError = false;
+  String? firstnameErrorMessage;
+  String? lastnameErrorMessage;
+  String? middlenameErrorMessage;
+  String? emailErrorMessage;
+  String? phoneErrorMessage;
+  String? citizenshipErrorMessage;
+
   final TextEditingController personClassDropdownController = TextEditingController();
   late final List<DropdownMenuEntry<String>> personClassList;
   final FocusNode commentFieldFocus = FocusNode();
@@ -50,219 +75,63 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   String? documentInputFieldsErrorMessage;
   bool isEditingMode = false;
 
+  late final List<PersonDocument> personDocuments;
+  late final List<Widget> EditableDocuments;
+  List<String> documentNames = [];
+  List<String> documentNumbers = [];
+  List<bool> documentErrors = [];
+  String? photo;
 
 
-  String? _validateLastnameField(String? lastname) {
-    if (lastname == null || lastname.trim().isEmpty) {
-      setState(() {
-        isLastnameFieldHasError = true;
-      });
-      return "Поле не может быть пустым";
+
+  void _onUpdate() async {
+    if(
+      firstnameHasError ||
+      lastnameHasError ||
+      middlenameHasError ||
+      birthdateHasError ||
+      documentErrors.contains(true)
+    ) {
+      print("THERE IS AN ERROR:::::");
     } else {
-      setState(() {
-        isLastnameFieldHasError = false;
-      });
-      return null;
-    }
-  }
-
-
-  // String? _validateMiddlenameField(String? value) {
-  //   print("_validateMiddlenameField");
-  //   if (value == null || value.trim().isEmpty) {
-  //     setState(() {
-  //       isMiddlenameFieldHasError = true;
-  //     });
-  //     return "Поле не может быть пустым";
-  //   } else {
-  //     setState(() {
-  //       isMiddlenameFieldHasError = false;
-  //     });
-  //     return null;
-  //   }
-  // }
-  //
-  // void _validateDayBirthField(String? value) {
-  //   if (value == null || value.trim().isEmpty || int.parse(value) > 31) {
-  //     setState(() {
-  //       isDayBirthFieldHasError = true;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       isDayBirthFieldHasError = false;
-  //     });
-  //   }
-  // }
-  //
-  // void _validateMonthBirthField(String? value) {
-  //   if (value == null || value.trim().isEmpty || int.parse(value) > 12) {
-  //     setState(() {
-  //       isMonthBirthFieldHasError = true;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       isMonthBirthFieldHasError = false;
-  //     });
-  //   }
-  // }
-  //
-  // void _validateYearBirthField(String? value) {
-  //   if (value == null || value.trim().isEmpty || int.parse(value) > DateTime.now().year || int.parse(value) < 1920) {
-  //     setState(() {
-  //       isYearBirthFieldHasError = true;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       isYearBirthFieldHasError = false;
-  //     });
-  //   }
-  // }
-  //
-  // void _validateDateBirthInput() {
-  //   _validateDayBirthField(_dayBirthFieldController.text);
-  //   _validateMonthBirthField(_monthBirthFieldController.text);
-  //   _validateYearBirthField(_yearBirthFieldController.text);
-  //   if (isDayBirthFieldHasError || isMonthBirthFieldHasError || isYearBirthFieldHasError) {
-  //     setState(() {
-  //       isDateInputHasError = true;
-  //     });
-  //   } else {
-  //     isDateInputHasError = false;
-  //   }
-  // }
-  //
-  // void _validatePassportFields() {
-  //   if (_documentNameFieldController.text.isEmpty || _documentNumberFieldController.text.isEmpty) {
-  //     setState(() {
-  //       isDocumentNumberFieldHasError = _documentNameFieldController.text.isEmpty ? true : false;
-  //       isDocumentNameFieldHasError = _documentNumberFieldController.text.isEmpty ? true : false;
-  //       documentInputFieldsErrorMessage = "Название документа и его номер должны быть заполнены";
-  //     });
-  //   } else {
-  //     setState(() {
-  //       isDocumentNumberFieldHasError = false;
-  //       isDocumentNameFieldHasError = false;
-  //       documentInputFieldsErrorMessage = null;
-  //     });
-  //   }
-  // }
-
-  void _onSave() async {
-    // _validateDateBirthInput();
-    // _validatePassportFields();
-    if(!isLastnameFieldHasError && !isFirstnameFieldHasError && !isMiddlenameFieldHasError &&
-        !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
-      && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
-
+      final updatedPerson = Person(
+        id: widget.person.id,
+        firstname: firstname,
+        lastname: lastname,
+        middlename: middlename,
+        gender: isMaleChecked ? "МУЖ" : "ЖЕН",
+        birthdate: "$birthdateYear-$birthdateMonth-$birthdateDay",
+        phone: phone,
+        email: email,
+        citizenship: citizenship,
+        personClass: personClass,
+        comment: comment,
+        photo: widget.person.photo,
+        createdAt: widget.person.createdAt,
+        updatedAt: DateTime.now().toString()
+      );
+      await DBProvider.db.updatePerson(p: updatedPerson, photo: photo);
+      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.allPersonsScreen);
+      BlocProvider.of<CameraBloc>(context).add(DisposeCameraEvent());
     }
   }
 
   void onCheckboxMaleChecked(bool? value) {
-    if (value == null) {
-      validateGenderInput();
-      return;
-    }
     setState(() {
       isMaleChecked = false;
       isFemaleChecked = false;
 
-      isMaleChecked = value;
+      isMaleChecked = true;
     });
-    validateGenderInput();
   }
   void onCheckboxFemaleChecked(bool? value) {
-    if (value == null) {
-      validateGenderInput();
-      return;
-    }
     setState(() {
       isMaleChecked = false;
       isFemaleChecked = false;
 
-      isFemaleChecked = value;
+      isFemaleChecked = true;
     });
-    validateGenderInput();
-  }
-  void validateGenderInput() {
-    if (!isMaleChecked && !isFemaleChecked) {
-      setState(() {
-        isGenderFieldHasError = true;
-      });
-    } else {
-      setState(() {
-        isGenderFieldHasError = false;
-      });
-    }
-  }
-
-
-
-  void _openAddingDocOptionDialog() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          height: 220,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(12)
-            ),
-            color: AppColors.textMain
-          ),
-          child: Column(
-            children: [
-              SizedBox(height: 10,),
-              Expanded(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  child: Text("Добавьте страницы паспорта пассажира с основной информацией и пропиской",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: AppColors.textFaded),
-                  ),
-                )
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 60,
-                margin: EdgeInsets.only(top: 20),
-                child: ElevatedButton(
-                  onPressed: (){},
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain4),
-                    overlayColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12))
-                    )),
-                  ),
-                  child: Text("Открыть камеру",
-                    style: TextStyle(fontSize: 24, color: AppColors.textMain),
-                  ),
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 60,
-                margin: EdgeInsets.only(top: 5, bottom: 5),
-                child: ElevatedButton(
-                  onPressed: (){},
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain4),
-                    overlayColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12))
-                    )),
-                  ),
-                  child: Text("Выбрать из галереи",
-                    style: TextStyle(fontSize: 24, color: AppColors.textMain),
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-      }
-    );
   }
 
   Future<void> _openOnPopGuardAlert() async {
@@ -326,9 +195,76 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     return false;
   }
 
+  Widget _addEditableDocument() {
+    final docIndex = EditableDocuments.length;
+    String documentNumber = "";
+    String documentName = "";
+    documentNames.add(documentName);
+    documentNumbers.add(documentNumber);
+    documentErrors.add(false);
+    void setDocName(String value) {
+      setState(() {
+        documentName = value;
+      });
+      documentNames[docIndex] = value;
+      checkIfPersonHasChanges();
+    }
+    void setDocNumber(String value) {
+      setState(() {
+        documentNumber = value;
+      });
+      documentNumbers[docIndex] = value;
+      checkIfPersonHasChanges();
+    }
+    void errorSetter(bool value) {
+      documentErrors[docIndex] = value;
+    }
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      width: MediaQuery.of(context).size.width - 20,
+      child: EditableDocumentTextFieldWidget(
+        label: "Новый документ", valueName: documentName, valueNumber: documentNumber,
+        valueNameSetter: setDocName, valueNumberSetter: setDocNumber, errorSetter: errorSetter,
+      )
+    );
+  }
+
+  Widget _initEditableDocument(PersonDocument doc, int docIndex) {
+    String documentNumber = doc.description;
+    String documentName = doc.name;
+    documentNames.add(documentName);
+    documentNumbers.add(documentNumber);
+    documentErrors.add(false);
+    void setDocName(String value) {
+      setState(() {
+        documentName = value;
+      });
+      documentNames[docIndex-1] = value;
+      checkIfPersonHasChanges();
+    }
+    void setDocNumber(String value) {
+      setState(() {
+        documentNumber = value;
+      });
+      documentNumbers[docIndex-1] = value;
+      checkIfPersonHasChanges();
+    }
+    void errorSetter(bool value) {
+      documentErrors[docIndex-1] = value;
+    }
+    return Container(
+        margin: EdgeInsets.only(bottom: 10),
+        width: MediaQuery.of(context).size.width - 20,
+        child: EditableDocumentTextFieldWidget(
+          label: "Документ $docIndex", valueName: documentName, valueNumber: documentNumber,
+          valueNameSetter: setDocName, valueNumberSetter: setDocNumber, errorSetter: errorSetter
+        )
+    );
+  }
   
   @override
   void initState() {
+    BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
     firstname = widget.person.firstname;
     lastname = widget.person.lastname;
     middlename = widget.person.middlename;
@@ -339,32 +275,19 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     phone = widget.person.phone;
     citizenship = widget.person.citizenship;
     comment = widget.person.comment ?? "";
-    final List<String> birth = widget.person.birthdate.split('-');
-    int i =0;
+    personClass = widget.person.personClass;
+    if(widget.person.gender == "МУЖ") {
+      isMaleChecked = true;
+    }
+    if(widget.person.gender == "ЖЕН") {
+      isFemaleChecked = true;
+    }
+    int docIndex =0;
     DBProvider.db.getPersonDocuments(personId: widget.person.id).then((documents) {
+      personDocuments = documents;
       EditableDocuments = documents.map((doc) {
-        ++i;
-        String documentNumber = doc.description;
-        String documentName = doc.name;
-        void setDocName(String value) {
-          setState(() {
-            documentName = value;
-          });
-        }
-        void setDocNumber(String value) {
-          setState(() {
-            documentNumber = value;
-          });
-        }
-        bool isDocHasError = true;
-        return SizedBox(
-            height: 68,
-            width: MediaQuery.of(context).size.width - 20,
-            child: EditableDocumentTextFieldWidget(
-              label: "Документ $i", valueName: documentName, valueNumber: documentNumber,
-              valueNameSetter: setDocName, valueNumberSetter: setDocNumber,
-            )
-        );
+        ++docIndex;
+        return _initEditableDocument(doc, docIndex);
       }).toList();
       setState(() {
         isPersonDocumentsInited = true;
@@ -375,11 +298,35 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     super.initState();
   }
 
+  bool _checkDocsChanges() {
+    for (int i=0; i < personDocuments.length; ++i) {
+    print("${personDocuments[i].description}, ${documentNumbers[i]}");
+      if(personDocuments[i].name != documentNames[i] || personDocuments[i].description != documentNumbers[i]) {
+        return true;
+      }
+    }
+    return false;
+
+  }
+
+  void _checkNewDocsChanges() {
+    for (int j = personDocuments.length; j < documentNames.length; ++j) {
+      log(documentNames[j].trim().isEmpty.toString());
+      log(documentNumbers[j].trim().isEmpty.toString());
+    }
+  }
+
   void checkIfPersonHasChanges() {
     if(
       firstname != widget.person.firstname ||
       lastname != widget.person.lastname ||
-      middlename != widget.person.middlename
+      middlename != widget.person.middlename ||
+      "$birthdateYear-$birthdateMonth-$birthdateDay" != widget.person.birthdate ||
+      citizenship != widget.person.citizenship ||
+      personClass != widget.person.personClass ||
+      comment != widget.person.comment ||
+      _checkDocsChanges() ||
+      photo != null
     ) {
       setState(() {
         hasPersonChanges = true;
@@ -391,105 +338,21 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     }
   }
 
+  void _openCamera(BuildContext context ,List<CameraDescription> cameras, CameraController controller) async {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CameraScreen(cameras: cameras, controller: controller, setPhotoResult: setPhotoResult)));
+  }
+
+  void setPhotoResult(String result) {
+    setState(() {
+      photo = result;
+    });
+    checkIfPersonHasChanges();
+  }
+
   @override
   void dispose() {
     super.dispose();
   }
-
-  late String firstname;
-  late String lastname;
-  late String middlename;
-  late String documentNumber;
-  late String email;
-  late String birthdateDay;
-  late String birthdateMonth;
-  late String birthdateYear;
-  late String phone;
-  late String citizenship;
-  late String comment;
-  late final List<PersonDocument> personDocuments;
-  bool isPersonDocumentsInited = false;
-  late final List<Widget> EditableDocuments;
-  bool isFemaleChecked = false;
-  bool isMaleChecked = true;
-  bool hasPersonChanges = false;
-
-  void firstnameSetter(String value) {
-    setState(() {
-      firstname = value;
-    });
-    checkIfPersonHasChanges();
-  }
-  void emailSetter(String value) {
-    setState(() {
-      email = value;
-    });
-  }
-  void birthdateDaySetter(String value) {
-    setState(() {
-      birthdateDay = value;
-    });
-  }
-  void birthdateMonthSetter(String value) {
-    setState(() {
-      birthdateMonth = value;
-    });
-  }
-  void birthdateYearSetter(String value) {
-    setState(() {
-      birthdateYear = value;
-    });
-  }
-  void phoneSetter(String value) {
-    setState(() {
-      phone = value;
-    });
-  }
-  void lastnameSetter(String value) {
-    setState(() {
-      lastname = value;
-    });
-    checkIfPersonHasChanges();
-  }
-  void middlenameSetter(String value) {
-    setState(() {
-      middlename = value;
-    });
-    checkIfPersonHasChanges();
-  }
-  void documentSetter(String value) {
-    setState(() {
-      documentNumber = value;
-    });
-  }
-  void citizenshipSetter(String value) {
-    setState(() {
-      citizenship = value;
-    });
-  }
-  void commentSetter(String value) {
-    setState(() {
-      comment = value;
-    });
-  }
-
-  bool firstnameHasError = false;
-  bool lastnameHasError = false;
-  bool middlenameHasError = false;
-  bool emailHasError = false;
-  bool birthdateHasError = false;
-  bool phoneHasError = false;
-  bool documentHasError = false;
-  bool citizenshipHasError = false;
-  bool isGenderFieldHasError = false;
-  String? firstnameErrorMessage;
-  String? lastnameErrorMessage;
-  String? middlenameErrorMessage;
-  String? emailErrorMessage;
-  String? birthdateErrorMessage;
-  String? phoneErrorMessage;
-  String? documentErrorMessage;
-  String? citizenshipErrorMessage;
 
   void firstnameErrorSetter(bool value) {
     setState(() {
@@ -528,7 +391,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   }
   void citizenshipErrorSetter(bool value) {
     setState(() {
-      documentHasError = value;
+      citizenshipHasError = value;
     });
   }
 
@@ -541,9 +404,6 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     }
   }
 
-  bool validateBirthdateField() {
-    return true;
-  }
   bool validateLastnameField() {
     if (lastname.trim().isEmpty) {
       return true;
@@ -561,7 +421,6 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   void validateDocumentField() {
     setState(() {
       documentHasError = false;
-      documentErrorMessage = null;
     });
   }
 
@@ -569,6 +428,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        BlocProvider.of<CameraBloc>(context).add(DisposeCameraEvent());
         if (_checkForUnsavedChanges()) {
           _openOnPopGuardAlert();
           return false;
@@ -586,21 +446,49 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                 children: [
                   SizedBox(height: 50,),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 130,
-                        alignment: Alignment.centerLeft,
-                        width: MediaQuery.of(context).size.width * 0.3 - 10,
-                        child: widget.person.photo != ""
-                          ? Image.memory(base64Decode(widget.person.photo),
-                          fit: BoxFit.cover
-                        )
-                          : Image.asset("assets/images/no_avatar.png"),
+                      GestureDetector(
+                        onTap: () {
+                          final cameraBloc = BlocProvider.of<CameraBloc>(context);
+                          _openCamera(context, cameraBloc.state.cameras!, cameraBloc.state.controller!);
+                        },
+                        child: Container(
+                          height: 130,
+                          width: MediaQuery.of(context).size.width * 0.3 - 15,
+                          child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              Container(
+                                height: 130,
+                                alignment: Alignment.centerLeft,
+                                width: MediaQuery.of(context).size.width * 0.3 - 10,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image:  widget.person.photo != ""
+                                      ? MemoryImage(base64Decode(photo ?? widget.person.photo))
+                                      : const AssetImage("assets/images/no_avatar.png") as ImageProvider
+                                  )
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: EdgeInsets.only(bottom: 20),
+                                color: Color(0x40000000),
+                                child: const Text("Изменить фото",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Color(0xFFFFFFFF)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                       Container(
                         height: 130,
-                        width: MediaQuery.of(context).size.width * 0.7 - 10,
+                        width: MediaQuery.of(context).size.width * 0.7 - 15,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -701,21 +589,39 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                     valueDay: birthdateDay, valueDaySetter: birthdateDaySetter,
                     valueMonth: birthdateMonth, valueMonthSetter: birthdateMonthSetter,
                     valueYear: birthdateYear, valueYearSetter: birthdateYearSetter,
-                    // errorSetter: birthdateErrorSetter,
-                    // validator: validateBirthdateField,
+                    errorSetter: birthdateErrorSetter,
                     // errorMessage: birthdateErrorMessage,
                   ),
                   SizedBox(height: 10,),
                   if (isPersonDocumentsInited)
                     ...EditableDocuments
                   else SizedBox(height: 68,),
-                  SizedBox(height: 10,),
+                  Material(
+                    child: Ink(
+                      width: MediaQuery.of(context).size.width - 20,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFEFEFEF),
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(8),
+                          bottomLeft: Radius.circular(8),
+                        )
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          EditableDocuments.add(_addEditableDocument());
+                          setState(() {});
+                        },
+                        child: Icon(Icons.add)
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
                   SizedBox(
                       height: citizenshipHasError ? 70 : 50,
                       width: MediaQuery.of(context).size.width - 20,
                       child: EditableTextFieldWidget(
                         label: "Гражданство", value: citizenship, valueSetter: citizenshipSetter, error: citizenshipHasError,
-                        errorSetter: citizenshipErrorSetter, errorMessage: citizenshipErrorMessage,
+                        errorMessage: citizenshipErrorMessage
                       )
                   ),
                   const SizedBox(height: 10),
@@ -744,9 +650,9 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                       width: MediaQuery.of(context).size.width - 20,
                       controller: personClassDropdownController,
                       label: Text("Класс пассажира", style: TextStyle(fontSize: 22, color: Color(0xFF000000))),
-                      initialSelection: personClassList.first.value,
+                      initialSelection: personClassList.first,
                       dropdownMenuEntries: personClassList,
-                      onSelected: (String? value) {  },
+                      onSelected: (Object? value) {  },
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -756,9 +662,15 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                   ),
                   const SizedBox(height: 20,),
                   hasPersonChanges
-                    ? SaveButton(onTap: () {}, label: "Обновить")
+                    ? SaveButton(onTap: _onUpdate, label: "Обновить")
                     : SizedBox.shrink(),
-                  const SizedBox(height: 20,)
+                  const SizedBox(height: 20,),
+                  ElevatedButton(
+                    onPressed: () {
+                      _onUpdate();
+                    },
+                    child: Text("CHECK")
+                  )
                 ],
               ),
             ),
@@ -767,6 +679,74 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
       ),
     );
   }
+
+  void firstnameSetter(String value) {
+    setState(() {
+      firstname = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void emailSetter(String value) {
+    setState(() {
+      email = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void birthdateDaySetter(String value) {
+    setState(() {
+      birthdateDay = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void birthdateMonthSetter(String value) {
+    setState(() {
+      birthdateMonth = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void birthdateYearSetter(String value) {
+    setState(() {
+      birthdateYear = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void phoneSetter(String value) {
+    setState(() {
+      phone = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void lastnameSetter(String value) {
+    setState(() {
+      lastname = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void middlenameSetter(String value) {
+    setState(() {
+      middlename = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void documentSetter(String value) {
+    setState(() {
+      documentNumber = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void citizenshipSetter(String value) {
+    setState(() {
+      citizenship = value;
+    });
+    checkIfPersonHasChanges();
+  }
+  void commentSetter(String value) {
+    setState(() {
+      comment = value;
+    });
+    checkIfPersonHasChanges();
+  }
+
 }
 
 class EditPersonScreenArguments {

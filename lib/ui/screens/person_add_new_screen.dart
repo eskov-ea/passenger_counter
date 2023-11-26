@@ -15,6 +15,7 @@ import '../../bloc/camera_bloc/camera_bloc.dart';
 import '../../bloc/camera_bloc/camera_event.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
+import '../widgets/custom_appbar.dart';
 import '../widgets/person/adding_person_document_info_block.dart';
 import '../widgets/person/adding_person_general_info_block.dart';
 import '../widgets/person/adding_person_photo_scan_btns.dart';
@@ -90,6 +91,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   late final List<DropdownMenuEntry<String>> personClassList;
 
 
+  final ScrollController _scrollController = ScrollController();
   ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
   final List<BarcodeFormat> allowedScanFormat = [BarcodeFormat.qrcode];
   String? personBase64Image;
@@ -421,7 +423,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       return false;
     }
   }
-
   
   @override
   void initState() {
@@ -549,106 +550,133 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundNeutral,
-        body: SafeArea(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 10,),
-                  PersonAddingPhotoScanOptionsWidget(onQRScanResultCallback: setQRResult,
-                    allowedFormat: allowedScanFormat, setPhotoResult: setPhotoResult,
-                    personBase64Image: personBase64Image ),
-                  const SizedBox(height: 5,),
-                  blockTitle("Основная информация"),
-                  PersonGeneralInfoBlock(
-                    lastnameFieldKey: lastnameFieldKey,
-                    firstnameFieldKey: firstnameFieldKey,
-                    middlenameFieldKey: middlenameFieldKey,
-                    lastnameController: lastnameController,
-                    firstnameController: firstnameController,
-                    middlenameController: middlenameController,
-                    dayBirthFieldController: dayBirthFieldController,
-                    monthBirthFieldController: monthBirthFieldController,
-                    yearBirthFieldController: yearBirthFieldController,
-                    personClassDropdownController: personClassDropdownController,
-                    lastnameFocus: lastnameFocus,
-                    firstnameFocus: firstnameFocus,
-                    middlenameFocus: middlenameFocus,
-                    dayBirthFieldFocus: dayBirthFieldFocus,
-                    monthBirthFieldFocus: monthBirthFieldFocus,
-                    yearBirthFieldFocus: yearBirthFieldFocus,
-                    genderCheckboxFieldFocus: genderCheckboxFieldFocus,
-                    validateLastnameField: validateLastnameField,
-                    validateFirstnameField: validateFirstnameField,
-                    validateMiddlenameField: validateMiddlenameField,
-                    validateDayBirthField: validateDayBirthField,
-                    validateMonthBirthField: validateMonthBirthField,
-                    validateYearBirthField: validateYearBirthField,
-                    isLastnameFieldHasError: isLastnameFieldHasError,
-                    isFirstnameFieldHasError: isFirstnameFieldHasError,
-                    isMiddlenameFieldHasError: isMiddlenameFieldHasError,
-                    isDayBirthFieldHasError: isDayBirthFieldHasError,
-                    isMonthBirthFieldHasError: isMonthBirthFieldHasError,
-                    isYearBirthFieldHasError: isYearBirthFieldHasError,
-                    isDateInputHasError: isDateInputHasError,
-                    isGenderFieldHasError: isGenderFieldHasError,
-                    isMaleChecked: isMaleChecked,
-                    isFemaleChecked: isFemaleChecked,
-                    personClassList: personClassList,
-                    onNextFieldFocus: onNextFieldFocus, setFieldErrorValue: setFieldErrorValue,
-                    focusedBorderColor: focusedBorderColor,
-                    validateDateBirthInput: validateDateBirthInput,
-                    onCheckboxMaleChecked: onCheckboxMaleChecked,
-                    onCheckboxFemaleChecked: onCheckboxFemaleChecked
-                  ),
+        extendBodyBehindAppBar: true,
+        appBar: CustomAppBar(scrollController: _scrollController, child: null,),
+        body: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                controller: _scrollController,
+                padding: EdgeInsets.only(top: 50),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10,),
+                    PersonAddingPhotoScanOptionsWidget(onQRScanResultCallback: setQRResult,
+                        allowedFormat: allowedScanFormat, setPhotoResult: setPhotoResult,
+                        personBase64Image: personBase64Image ),
+                    const SizedBox(height: 5,),
+                    blockTitle("Основная информация"),
+                    PersonGeneralInfoBlock(
+                        lastnameFieldKey: lastnameFieldKey,
+                        firstnameFieldKey: firstnameFieldKey,
+                        middlenameFieldKey: middlenameFieldKey,
+                        lastnameController: lastnameController,
+                        firstnameController: firstnameController,
+                        middlenameController: middlenameController,
+                        dayBirthFieldController: dayBirthFieldController,
+                        monthBirthFieldController: monthBirthFieldController,
+                        yearBirthFieldController: yearBirthFieldController,
+                        personClassDropdownController: personClassDropdownController,
+                        lastnameFocus: lastnameFocus,
+                        firstnameFocus: firstnameFocus,
+                        middlenameFocus: middlenameFocus,
+                        dayBirthFieldFocus: dayBirthFieldFocus,
+                        monthBirthFieldFocus: monthBirthFieldFocus,
+                        yearBirthFieldFocus: yearBirthFieldFocus,
+                        genderCheckboxFieldFocus: genderCheckboxFieldFocus,
+                        validateLastnameField: validateLastnameField,
+                        validateFirstnameField: validateFirstnameField,
+                        validateMiddlenameField: validateMiddlenameField,
+                        validateDayBirthField: validateDayBirthField,
+                        validateMonthBirthField: validateMonthBirthField,
+                        validateYearBirthField: validateYearBirthField,
+                        isLastnameFieldHasError: isLastnameFieldHasError,
+                        isFirstnameFieldHasError: isFirstnameFieldHasError,
+                        isMiddlenameFieldHasError: isMiddlenameFieldHasError,
+                        isDayBirthFieldHasError: isDayBirthFieldHasError,
+                        isMonthBirthFieldHasError: isMonthBirthFieldHasError,
+                        isYearBirthFieldHasError: isYearBirthFieldHasError,
+                        isDateInputHasError: isDateInputHasError,
+                        isGenderFieldHasError: isGenderFieldHasError,
+                        isMaleChecked: isMaleChecked,
+                        isFemaleChecked: isFemaleChecked,
+                        personClassList: personClassList,
+                        onNextFieldFocus: onNextFieldFocus, setFieldErrorValue: setFieldErrorValue,
+                        focusedBorderColor: focusedBorderColor,
+                        validateDateBirthInput: validateDateBirthInput,
+                        onCheckboxMaleChecked: onCheckboxMaleChecked,
+                        onCheckboxFemaleChecked: onCheckboxFemaleChecked
+                    ),
 
-                  const SizedBox(height: 20,),
-                  blockTitle("Название и номер документа"),
-                  PersonDocumentInfoBlock(
-                    documentNameFieldKey: documentNameFieldKey,
-                    documentNumberFieldKey: documentNumberFieldKey,
-                    documentNameFieldController: documentNameFieldController,
-                    documentNumberFieldController: documentNumberFieldController,
-                    citizenshipFieldController: citizenshipFieldController,
-                    documentNameFieldFocus: documentNameFieldFocus,
-                    documentNumberFieldFocus: documentNumberFieldFocus,
-                    citizenshipFieldFocus: citizenshipFieldFocus,
-                    validateDocumentFields: validateDocumentFields,
-                    validateDocumentNameField: validateDocumentNameField,
-                    isDocumentNumberFieldHasError: isDocumentNumberFieldHasError,
-                    isDocumentNameFieldHasError: isDocumentNameFieldHasError,
-                    onNextFieldFocus: onNextFieldFocus,
-                    setFieldErrorValue: setFieldErrorValue,
-                    focusedBorderColor: focusedBorderColor,
-                    documentInputFieldsErrorMessage: documentInputFieldsErrorMessage
-                  ),
-                  const SizedBox(height: 15,),
-                  blockTitle("Контактные данные"),
-                  PersonContactInfoBlock(
-                    phoneFieldController: phoneFieldController,
-                    emailFieldController: emailFieldController,
-                    phoneFieldFocus: phoneFieldFocus,
-                    emailFieldFocus: emailFieldFocus,
-                    onNextFieldFocus: onNextFieldFocus,
-                    focusedBorderColor: focusedBorderColor
-                  ),
+                    const SizedBox(height: 20,),
+                    blockTitle("Название и номер документа"),
+                    PersonDocumentInfoBlock(
+                        documentNameFieldKey: documentNameFieldKey,
+                        documentNumberFieldKey: documentNumberFieldKey,
+                        documentNameFieldController: documentNameFieldController,
+                        documentNumberFieldController: documentNumberFieldController,
+                        citizenshipFieldController: citizenshipFieldController,
+                        documentNameFieldFocus: documentNameFieldFocus,
+                        documentNumberFieldFocus: documentNumberFieldFocus,
+                        citizenshipFieldFocus: citizenshipFieldFocus,
+                        validateDocumentFields: validateDocumentFields,
+                        validateDocumentNameField: validateDocumentNameField,
+                        isDocumentNumberFieldHasError: isDocumentNumberFieldHasError,
+                        isDocumentNameFieldHasError: isDocumentNameFieldHasError,
+                        onNextFieldFocus: onNextFieldFocus,
+                        setFieldErrorValue: setFieldErrorValue,
+                        focusedBorderColor: focusedBorderColor,
+                        documentInputFieldsErrorMessage: documentInputFieldsErrorMessage
+                    ),
+                    const SizedBox(height: 15,),
+                    blockTitle("Контактные данные"),
+                    PersonContactInfoBlock(
+                        phoneFieldController: phoneFieldController,
+                        emailFieldController: emailFieldController,
+                        phoneFieldFocus: phoneFieldFocus,
+                        emailFieldFocus: emailFieldFocus,
+                        onNextFieldFocus: onNextFieldFocus,
+                        focusedBorderColor: focusedBorderColor
+                    ),
 
 
-                  const SizedBox(height: 15,),
-                  blockTitle("Дополнительно"),
-                  PersonAdditionalInfoBlock(
-                    commentTextController: commentTextController,
-                    commentFieldFocus: commentFieldFocus,
-                    focusedBorderColor: focusedBorderColor
-                  ),
-                  const SizedBox(height: 10,),
-                  SaveButton(onTap: _onSave, label: "Сохранить"),
-                  const SizedBox(height: 10,)
-                ],
+                    const SizedBox(height: 15,),
+                    blockTitle("Дополнительно"),
+                    PersonAdditionalInfoBlock(
+                        commentTextController: commentTextController,
+                        commentFieldFocus: commentFieldFocus,
+                        focusedBorderColor: focusedBorderColor
+                    ),
+                    const SizedBox(height: 10,),
+                    SaveButton(onTap: _onSave, label: "Сохранить"),
+                    const SizedBox(height: 10,)
+                  ],
+                ),
               ),
-            ),
-          ),
+              // isBackArrowHidden ? const SizedBox.shrink() : GestureDetector(
+              //   onTap: () {
+              //     print("CLICKED:::::");
+              //     Navigator.of(context).pop();
+              //   },
+              //   child: Container(
+              //     child: AnimatedOpacity(
+              //       opacity: isBackArrowHidden ? 0 : 1,
+              //       duration: const Duration(milliseconds: 200),
+              //       child: Transform.translate(
+              //         offset: const Offset(0, 50),
+              //         child: Container(
+              //           color: Color(0x0FFFFFFF),
+              //           width: 30,
+              //           height: 30,
+              //           child: Image.asset("assets/icons/back-arrow.png"),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // )
+            ],
+          )
         ),
       ),
     );

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
+import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_fields/editable_text_field_widget.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import '../../bloc/camera_bloc/camera_bloc.dart';
@@ -71,6 +72,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   late final List<DropdownMenuEntry<String>> personClassList;
   final FocusNode commentFieldFocus = FocusNode();
   final TextEditingController commentTextController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   String? documentInputFieldsErrorMessage;
   bool isEditingMode = false;
@@ -438,13 +440,16 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
       },
       child: SafeArea(
         child: Scaffold(
+          extendBodyBehindAppBar: false,
+          appBar: CustomAppBar(child: null, scrollController: _scrollController,),
           backgroundColor: AppColors.textMain,
           body: Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Column(
                 children: [
-                  SizedBox(height: 50,),
+                  // SizedBox(height: 50,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,

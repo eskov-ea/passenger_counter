@@ -9,6 +9,7 @@ import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/current_route_status_widget.dart';
 import '../../bloc/db_bloc/db_event.dart';
 import '../../navigation/navigation.dart';
+import '../widgets/buttons/gradient_button.dart';
 import '../widgets/passenger_options_sliver.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -79,6 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: const Text("Календарь рейсов",
                       style: AppStyles.mainTitleTextStyle,
                     ),
+                  ),
+                  const SizedBox(height: 20,),
+                  GradientButton(
+                    width: MediaQuery.of(context).size.width -100,
+                    height: 100,
                   ),
                   const SizedBox(height: 50,)
                 ],

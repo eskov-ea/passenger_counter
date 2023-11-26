@@ -79,6 +79,15 @@ class _EntryPointState extends State<EntryPoint> with SingleTickerProviderStateM
             height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [
+                AnimatedOpacity(
+                  opacity: isMenuOpen ? 1 : 0,
+                  duration: Duration(milliseconds: 200),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    color: Color(0x40000000),
+                  ),
+                ),
                 AnimatedPositioned(
                   duration: Duration(milliseconds: 180),
                   curve: Curves.fastOutSlowIn,

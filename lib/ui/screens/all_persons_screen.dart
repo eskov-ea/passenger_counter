@@ -38,18 +38,16 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
 
   @override
   void initState() {
-    // _db.DeveloperModeClearPersonTable();
-    print(dateFormatter(DateTime.now()));
     readAllPersons();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundNeutral,
-      body: SafeArea(
-        child: ThemeBackgroundWidget(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundNeutral,
+        body: ThemeBackgroundWidget(
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,

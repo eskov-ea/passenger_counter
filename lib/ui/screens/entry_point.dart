@@ -104,7 +104,7 @@ class _EntryPointState extends State<EntryPoint> with SingleTickerProviderStateM
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 20 : 0)),
                       child: const ThemeBackgroundWidget(
-                        child: TripAddNewScreen(),
+                        child: RouteAddNewScreen(),
                       )
                     )
                   )

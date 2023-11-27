@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:pleyona_app/models/person_model.dart';
+import 'package:pleyona_app/models/route_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -27,18 +29,29 @@ final Map<String, String> tables = {
       'citizenship varchar(100) DEFAULT NULL, '
       'class_person varchar(20) DEFAULT "Regular" REFERENCES person_class_list(person_class), '
       'comment text DEFAULT " ", '
-      'created_at DATE DEFAULT NULL, '
-      'updated_at DATE DEFAULT NULL, '
-      'deleted_at DATE DEFAULT NULL );',
+      'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'deleted_at DATETIME DEFAULT NULL );',
 
   'person_documents' :
   'CREATE TABLE person_documents ( id INTEGER PRIMARY KEY AUTOINCREMENT, '
       'name varchar(255) DEFAULT NULL, '
       'description varchar(255) DEFAULT NULL, '
       'id_person INTEGER DEFAULT 0 NOT NULL, '
-      'created_at DATE DEFAULT CURRENT_DATE, '
-      'updated_at DATE DEFAULT CURRENT_DATE, '
-      'deleted_at DATE DEFAULT NULL);'
+      'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'deleted_at DATETIME DEFAULT NULL);',
+
+  'trip' :
+  'CREATE TABLE trip ( id INTEGER PRIMARY KEY AUTOINCREMENT, '
+      'name varchar(100) DEFAULT NULL, '
+      'start_trip DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'end_trip DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'status TINYINT(1) DEFAULT NULL, '
+      'comments text DEFAULT "", '
+      'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'deleted_at DATETIME DEFAULT NULL); '
 };
 
 
@@ -199,9 +212,25 @@ class DBProvider {
     });
   }
 
+
+  /// ROUTES
+
+  Future<List<TripModel>> getTrips() async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM trip'
+      );
+      print(res);
+      return res.map((el) => TripModel.fromJson(el)).toList();
+    });
+  }
+
   Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;
     await db.execute("DROP TABLE IF EXISTS person");
+    await db.execute("DROP TABLE IF EXISTS trip");
+    await db.execute("DROP TABLE IF EXISTS person_documents");
   }
 
 

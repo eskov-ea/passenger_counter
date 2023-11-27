@@ -81,11 +81,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: AppStyles.mainTitleTextStyle,
                     ),
                   ),
-                  const SizedBox(height: 20,),
-                  GradientButton(
-                    width: MediaQuery.of(context).size.width -100,
-                    height: 100,
-                  ),
+                  // const SizedBox(height: 20,),
+                  // GradientButton(
+                  //   width: MediaQuery.of(context).size.width -100,
+                  //   height: 100,
+                  // ),
                   const SizedBox(height: 50,)
                 ],
               ),

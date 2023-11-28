@@ -80,7 +80,7 @@ class PersonOptionsSliver extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 10,),
-                    Text("Check-in", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
+                    Text("Все люди", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
                   ],
                 ),
               ),

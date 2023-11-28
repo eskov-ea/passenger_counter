@@ -25,6 +25,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
 
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
+  String? filterDate;
   final ScrollController _scrollController = ScrollController();
   final DBProvider _db = DBProvider.db;
   List<TripModel>? trips;
@@ -55,9 +56,12 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
     } else {
       result = await _db.getTrips();
     }
+    String? filter;
+    if (date != null) filter = "${date.day}.${date.month}.${date.year}";
     setState(() {
       trips = result;
       isSearching = false;
+      filterDate = filter;
     });
   }
 
@@ -147,10 +151,13 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
                       });
+                      searchTrips(_selectedDay);
                     },
                   ),
                 ) : const SizedBox.shrink(),
-                SizedBox(height: 40,),
+                const SizedBox(height: 10,),
+                _filterWidget(),
+                const SizedBox(height: 40,),
                 Text("Рейсы",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 32, color: AppColors.textMain),
@@ -167,5 +174,47 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
         ),
       ),
     );
+  }
+
+  Widget _filterWidget() {
+    return filterDate != null ?
+    Stack(
+      children: [
+        Container(
+          // width: MediaQuery.of(context).size.width,
+          height: 30,
+          padding: EdgeInsets.only(left: 10),
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+              color: Color(0x4DFFFFFF),
+              borderRadius: BorderRadius.all(Radius.circular(5))
+          ),
+          child: Text("Сбросить фильтр:  $filterDate",
+            style: AppStyles.secondaryTextStyle,
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Material(
+            color: AppColors.transparent,
+            child: Ink(
+              width: 50,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Color(0x4DFFFFFF),
+                borderRadius: BorderRadius.all(Radius.circular(5))
+              ),
+              child: InkWell(
+                onTap: () {
+                  searchTrips(null);
+                },
+                child: Icon(Icons.close),
+              ),
+            ),
+          ),
+        )
+      ],
+    )
+    : const SizedBox(height: 30);
   }
 }

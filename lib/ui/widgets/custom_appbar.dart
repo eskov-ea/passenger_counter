@@ -37,6 +37,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       }
     });
   }
+
   void _hideBackArrow(bool value) async{
     setState(() {
       isBackArrowHidden = value;

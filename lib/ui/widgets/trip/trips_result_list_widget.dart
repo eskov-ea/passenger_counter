@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/trip/trip_card.dart';
 import '../../../models/route_model.dart';
 

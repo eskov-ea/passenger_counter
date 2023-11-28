@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as d;
+import 'package:visibility_detector/visibility_detector.dart';
 
 
 class InputDateToSearchWidget extends StatefulWidget {
@@ -17,9 +18,14 @@ class InputDateToSearchWidget extends StatefulWidget {
   State<InputDateToSearchWidget> createState() => _InputDateToSearchWidgetState();
 }
 
-class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
+class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with SingleTickerProviderStateMixin{
 
 
+  final ScrollController _scrollController = ScrollController();
+  double visibilityPercentage = 0.0;
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+  bool isTypingSearchMode = false;
   final TextEditingController _dayFieldController = TextEditingController();
   final TextEditingController _monthFieldController = TextEditingController();
   final TextEditingController _yearFieldController = TextEditingController();
@@ -135,12 +141,77 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
     widget.calendarCallback(searchingDate);
   }
 
+  void setupScrollListener({
+    required ScrollController scrollController, Function? onAtTop
+  }) {
+    scrollController.addListener(() {
+      if(scrollController.offset > 250) {
+        // scrollController.position = ;
+      } else {
+        // _hideBackArrow(false);
+      }
+    });
+  }
+
+  void onVisibilityChanged(VisibilityInfo info) {
+    visibilityPercentage = info.visibleFraction * 100;
+    if (visibilityPercentage > 60) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn
+      );
+      setState(() {
+        isTypingSearchMode = true;
+      });
+      if (_animation.status != AnimationStatus.completed) {
+        _controller.forward();
+      } else {
+        _controller.animateBack(0, duration: Duration(seconds: 1));
+      }
+    }
+    if (visibilityPercentage < 60) {
+      _scrollController.animateTo(
+          _scrollController.position.minScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeIn
+      );
+      setState(() {
+        isTypingSearchMode = false;
+      });
+    }
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.fastLinearToSlowEaseIn,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        searchedDateByChoosing(),
+        drawSwitcher(),
+        SingleChildScrollView(
+          controller: _scrollController,
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              searchedDateByChoosing(),
+              const SizedBox(width: 20,),
+              _searchedDateByTyping()
+            ],
+          ),
+        ),
 
         isError
         ?  Container(
@@ -155,12 +226,41 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
     );
   }
 
+  Widget drawSwitcher() {
+    return Container(
+      width: MediaQuery.of(context).size.width - 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizeTransition(
+            sizeFactor: _animation,
+            axis: Axis.horizontal,
+            child: Container(
+              width: isTypingSearchMode ? 0.3 : 0.7 * MediaQuery.of(context).size.width - 20,
+              height: 7,
+              decoration: BoxDecoration(
+                color: isTypingSearchMode ? Color(0xCDD4D4D4) : Color(0xFF428AFF)
+              ),
+            ),
+          ),
+          Container(
+            width: isTypingSearchMode ? 0.7 : 0.3 * MediaQuery.of(context).size.width - 20,
+            height: 7,
+            decoration: BoxDecoration(
+              color: isTypingSearchMode ? Color(0xFF428AFF) : Color(0xCDD4D4D4)
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget searchedDateByChoosing() {
     return Material(
       color: AppColors.transparent,
       child: Ink(
         height: 55,
-        width: MediaQuery.of(context).size.width * 0.85 - 20,
+        width: MediaQuery.of(context).size.width * 0.60 - 20,
         decoration: BoxDecoration(
             border: Border.all(
                 color: AppColors.backgroundMain2, width: 1),
@@ -182,161 +282,165 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> {
   }
 
   Widget _searchedDateByTyping() {
-    return Container(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.15,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              focusNode: _dayFieldFocus,
-              controller: _dayFieldController,
-              inputFormatters: [ LengthLimitingTextInputFormatter(2) ],
-              style: TextStyle(fontSize: 20, color: dayError ? AppColors.errorMain : AppColors.backgroundMain2),
-              cursorColor: AppColors.textMain,
-              onEditingComplete: () {
-                _onNextFieldFocus(context, _dayFieldFocus, _monthFieldFocus);
-                setError();
-              },
-              onTapOutside: (event){
-                if (_dayFieldFocus.hasFocus) {
-                  _dayFieldFocus.unfocus();
-                }
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.textMain,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.textMain,
+    return VisibilityDetector(
+      key: Key('search-typing-widget'),
+      onVisibilityChanged: onVisibilityChanged,
+      child: Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.15,
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                focusNode: _dayFieldFocus,
+                controller: _dayFieldController,
+                inputFormatters: [ LengthLimitingTextInputFormatter(2) ],
+                style: TextStyle(fontSize: 20, color: dayError ? AppColors.errorMain : AppColors.backgroundMain2),
+                cursorColor: AppColors.textMain,
+                onEditingComplete: () {
+                  _onNextFieldFocus(context, _dayFieldFocus, _monthFieldFocus);
+                  setError();
+                },
+                onTapOutside: (event){
+                  if (_dayFieldFocus.hasFocus) {
+                    _dayFieldFocus.unfocus();
+                  }
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: AppColors.textMain,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.textMain,
+                    ),
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.backgroundMain5,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.backgroundMain5,
+                    ),
                   ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.backgroundMain5,
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.backgroundMain5,
+                    ),
                   ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.errorMain,
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.errorMain,
+                    ),
                   ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  label: Text("DD", style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                label: Text("DD", style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),),
               ),
             ),
-          ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.15,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              focusNode: _monthFieldFocus,
-              controller: _monthFieldController,
-              inputFormatters: [ LengthLimitingTextInputFormatter(2) ],
-              style: TextStyle(fontSize: 20, color: dayError ? AppColors.errorMain : AppColors.backgroundMain2),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.textMain,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.textMain,
+            SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.15,
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                focusNode: _monthFieldFocus,
+                controller: _monthFieldController,
+                inputFormatters: [ LengthLimitingTextInputFormatter(2) ],
+                style: TextStyle(fontSize: 20, color: dayError ? AppColors.errorMain : AppColors.backgroundMain2),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: AppColors.textMain,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.textMain,
+                    ),
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.backgroundMain5,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.backgroundMain5,
+                    ),
                   ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.backgroundMain5,
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.backgroundMain5,
+                    ),
                   ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.errorMain,
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.errorMain,
+                    ),
                   ),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                label: Text("MM", style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  label: Text("MM", style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),),
 
+                ),
+                cursorColor: AppColors.textMain,
               ),
-              cursorColor: AppColors.textMain,
             ),
-          ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.3,
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              inputFormatters: [ LengthLimitingTextInputFormatter(4) ],
-              controller: _yearFieldController,
-              style: TextStyle(fontSize: 20, color: dayError ? AppColors.errorMain : AppColors.backgroundMain2),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.textMain,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.textMain,
+            SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.3,
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                inputFormatters: [ LengthLimitingTextInputFormatter(4) ],
+                controller: _yearFieldController,
+                style: TextStyle(fontSize: 20, color: dayError ? AppColors.errorMain : AppColors.backgroundMain2),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: AppColors.textMain,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.textMain,
+                    ),
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.backgroundMain5,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.backgroundMain5,
+                    ),
                   ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.backgroundMain5,
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.backgroundMain5,
+                    ),
                   ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.errorMain,
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.errorMain,
+                    ),
                   ),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                label: Text("YYYY", style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  label: Text("YYYY", style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),),
 
-              ),
-              cursorColor: AppColors.textMain,
-            ),
-          ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
-          Material(
-            color: AppColors.transparent,
-            child: Ink(
-              width: MediaQuery.of(context).size.width * 0.17,
-              height: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  color: isError
-                      ? Color(0x22FFFFFF)
-                      : AppColors.backgroundMain4
-              ),
-              child: InkWell(
-                customBorder: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
                 ),
-                onTap: searchByDate,
-                splashColor: AppColors.secondary1,
-                child: Center(
-                  child: Text("OK",
-                    style: TextStyle(fontSize: 20, color: isError ? Color(0x76FFFFFF) : AppColors.textMain),
+                cursorColor: AppColors.textMain,
+              ),
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
+            Material(
+              color: AppColors.transparent,
+              child: Ink(
+                width: MediaQuery.of(context).size.width * 0.17,
+                height: 50,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    color: isError
+                        ? Color(0x22FFFFFF)
+                        : AppColors.backgroundMain4
+                ),
+                child: InkWell(
+                  customBorder: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  onTap: searchByDate,
+                  splashColor: AppColors.secondary1,
+                  child: Center(
+                    child: Text("OK",
+                      style: TextStyle(fontSize: 20, color: isError ? Color(0x76FFFFFF) : AppColors.textMain),
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

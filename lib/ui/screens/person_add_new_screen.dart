@@ -16,6 +16,7 @@ import '../../bloc/camera_bloc/camera_event.dart';
 import '../../models/person_model.dart';
 import '../../services/database/db_provider.dart';
 import '../widgets/custom_appbar.dart';
+import '../widgets/form_block_title.dart';
 import '../widgets/person/adding_person_document_info_block.dart';
 import '../widgets/person/adding_person_general_info_block.dart';
 import '../widgets/person/adding_person_photo_scan_btns.dart';
@@ -348,15 +349,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
   }
 
-  Widget blockTitle(String message) => Container(
-    width: MediaQuery.of(context).size.width ,
-    padding: const EdgeInsets.only(bottom: 15),
-    child: Text(message,
-      textAlign: TextAlign.start,
-      style: const TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
-    ),
-  );
-
 
   Future<void> _openOnPopGuardAlert() async {
     return showDialog<void>(
@@ -566,7 +558,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                         allowedFormat: allowedScanFormat, setPhotoResult: setPhotoResult,
                         personBase64Image: personBase64Image ),
                     const SizedBox(height: 5,),
-                    blockTitle("Основная информация"),
+                    const BlockTitle(message: "Основная информация"),
                     PersonGeneralInfoBlock(
                         lastnameFieldKey: lastnameFieldKey,
                         firstnameFieldKey: firstnameFieldKey,
@@ -610,7 +602,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     ),
 
                     const SizedBox(height: 20,),
-                    blockTitle("Название и номер документа"),
+                    const BlockTitle(message: "Название и номер документа"),
                     PersonDocumentInfoBlock(
                         documentNameFieldKey: documentNameFieldKey,
                         documentNumberFieldKey: documentNumberFieldKey,
@@ -630,7 +622,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                         documentInputFieldsErrorMessage: documentInputFieldsErrorMessage
                     ),
                     const SizedBox(height: 15,),
-                    blockTitle("Контактные данные"),
+                    const BlockTitle(message: "Контактные данные"),
                     PersonContactInfoBlock(
                         phoneFieldController: phoneFieldController,
                         emailFieldController: emailFieldController,
@@ -642,7 +634,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
 
                     const SizedBox(height: 15,),
-                    blockTitle("Дополнительно"),
+                    const BlockTitle(message: "Дополнительно"),
                     PersonAdditionalInfoBlock(
                         commentTextController: commentTextController,
                         commentFieldFocus: commentFieldFocus,

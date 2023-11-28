@@ -6,11 +6,13 @@ import 'package:pleyona_app/bloc/camera_bloc/camera_event.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_bloc.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_state.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/widgets/current_route_status_widget.dart';
+import 'package:pleyona_app/ui/widgets/trip/current_trip_status_widget.dart';
+import 'package:pleyona_app/ui/widgets/person/person_options_sliver.dart';
 import '../../bloc/db_bloc/db_event.dart';
 import '../../navigation/navigation.dart';
 import '../widgets/buttons/gradient_button.dart';
 import '../widgets/passenger_options_sliver.dart';
+import '../widgets/trip/trip_options_sliver.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.of(context).pushNamed(MainNavigationRouteNames.allPersonsScreen);
+
                             },
                             child: SizedBox(
                               height: 30,
@@ -74,18 +76,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: AppStyles.mainTitleTextStyle,
                     ),
                   ),
-                  const CurrentRouteStatusWidget(),
+                  TripOptionsSliver(),
+                  Container(
+                    padding: EdgeInsets.only(left: 15, bottom: 15, right: 15, top: 15),
+                    child: const Text("Люди",
+                      style: AppStyles.mainTitleTextStyle,
+                    ),
+                  ),
+                  PersonOptionsSliver(),
                   Container(
                     padding: const EdgeInsets.only(left: 15, bottom: 15, top: 15),
                     child: const Text("Календарь рейсов",
                       style: AppStyles.mainTitleTextStyle,
                     ),
                   ),
-                  // const SizedBox(height: 20,),
-                  // GradientButton(
-                  //   width: MediaQuery.of(context).size.width -100,
-                  //   height: 100,
-                  // ),
                   const SizedBox(height: 50,)
                 ],
               ),

@@ -17,11 +17,11 @@ class TripModel {
 
   static TripModel fromJson(json) => TripModel(
       id: json["id"],
-      tripName: json["tripName"],
-      tripStartDate: json["tripStartDate"],
-      tripEndDate: json["tripEndDate"],
+      tripName: json["name"],
+      tripStartDate: DateTime.parse(json["start_trip"]),
+      tripEndDate: DateTime.parse(json["end_trip"]),
       status: json["status"],
-      comment: json["comment"]
+      comment: json["comments"]
   );
 
 }

@@ -12,14 +12,16 @@ abstract class MainNavigationRouteNames {
   static const loaderWidget = '/';
   static const authScreen = '/auth';
   static const homeScreen = '/homescreen';
-  static const passengerEditingScreen = '/home_screen/passenger_editing_screen';
-  static const addPersonScreen = '/home_screen/add_person_screen';
-  static const editPersonInfoScreen = '/home_screen/edit_person_screen';
-  static const allPersonsScreen = '/home_screen/all_persons_screen';
+  static const passengerEditingScreen = '/edit_passenger_info';
+  static const addPersonScreen = '/add_person';
+  static const editPersonInfoScreen = '/edit_person';
+  static const allPersonsScreen = '/all_persons';
   static const scannerScreen = '/scanner';
   static const personOptionsScreen = '/add_person_options';
   static const successInfoScreen = '/success_info';
-  static const searchPersonScreen = '/search_person_screen';
+  static const searchPersonScreen = '/searching_person';
+  static const allTripsScreen = '/all_trips';
+  static const addNewTripScreen = '/add_trip';
   static const test = '/test';
 }
 
@@ -146,6 +148,10 @@ class MainNavigation {
           pageBuilder: (BuildContext context, _, __) => _screenFactory.makeSearchPersonScreen(arguments),
           transitionDuration: Duration(milliseconds: 700),
         );
+      case MainNavigationRouteNames.addNewTripScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeAddNewTripScreen());
+      case MainNavigationRouteNames.allTripsScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeAllTripsScreen());
       case MainNavigationRouteNames.test:
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),

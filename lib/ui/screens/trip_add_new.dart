@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
-as d;
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as d;
+import 'package:pleyona_app/models/route_model.dart';
+import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import '../../theme.dart';
 import '../widgets/custom_appbar.dart';
+import '../widgets/form_block_title.dart';
 
 class TripAddNewScreen extends StatefulWidget {
   const TripAddNewScreen({super.key});
@@ -15,6 +17,7 @@ class TripAddNewScreen extends StatefulWidget {
 class _TripAddNewScreenState extends State<TripAddNewScreen> {
 
   late final ScrollController _scrollController;
+  final DBProvider _db = DBProvider.db;
   final Color focusedBorderColor = AppColors.backgroundMain4;
   final TextEditingController nameTextController = TextEditingController();
   final TextEditingController commentTextController = TextEditingController();
@@ -22,36 +25,78 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
   final FocusNode nameFocusNode = FocusNode();
   final FocusNode commentFocusNode = FocusNode();
 
-  String? tripName;
   bool isStartTripDateFieldError = false;
   bool isEndTripDateFieldError = false;
+  bool isTripNameHasError = false;
   DateTime? _startTripDateSelection;
   DateTime? _startTripTimeSelection;
   String? _startTripDateTimeString;
-  bool isStartTripDateTimeFieldHasError = false;
 
   DateTime? _endTripDateSelection;
   DateTime? _endTripTimeSelection;
   String? _endTripDateTimeString;
-  bool isEndTripDateTimeFieldHasError = false;
+
 
   checkIfDataFilledCorrect() {
-    if(_startTripTimeSelection == null)
+    validateStartTripTime();
+    validateEndTripTime();
+    validateTripName();
   }
 
-  validateStartTripTime() {}
-  validateEndTripTime() {}
-  validateStartTripDate() {}
-  validateEndTripDate() {}
-  validateTripName() {}
+  validateStartTripTime() {
+    if(_startTripDateSelection == null || _startTripDateSelection == null) {
+      setState(() {
+        isStartTripDateFieldError = true;
+      });
+    } else {
+      setState(() {
+        isEndTripDateFieldError = false;
+      });
+    }
+  }
+  validateEndTripTime() {
+    if(_endTripDateSelection == null || _endTripTimeSelection == null) {
+      setState(() {
+        isEndTripDateFieldError = true;
+      });
+    } else {
+      setState(() {
+        isEndTripDateFieldError = false;
+      });
+    }
+  }
+  validateTripName() {
+    if(nameTextController.text.trim().isEmpty) {
+      setState(() {
+        isTripNameHasError = true;
+      });
+    } else {
+      setState(() {
+        isTripNameHasError = false;
+      });
+    }
+  }
 
-  validate() {
-    if(
-      _startTripTimeSelection == null || _startTripDateSelection == null ||
-      _endTripTimeSelection == null || _endTripDateSelection == null ||
-      tripName == null
-    ) {
+  DateTime _makeDateWithTime(DateTime date, DateTime time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
 
+  Future<void> _onSave() async {
+    checkIfDataFilledCorrect();
+    if (!isStartTripDateFieldError && !isEndTripDateFieldError && !isTripNameHasError) {
+      final DateTime start = _makeDateWithTime(_startTripDateSelection!, _startTripTimeSelection!);
+      final DateTime end = _makeDateWithTime(_endTripDateSelection!, _endTripTimeSelection!);
+      final newTrip = TripModel(
+        id: 0,
+        tripName: nameTextController.text,
+        tripStartDate: start,
+        tripEndDate: end,
+        status: 1,
+        comment: ""
+      );
+
+      final res = await _db.addTrip(trip: newTrip);
+      print("SAVING:::: $res");
     }
   }
 
@@ -91,7 +136,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
             itemHeight: 60));
   }
 
-  void _onConfirmDepartureDate(DateTime date) {
+  void _onConfirmStartTripDate(DateTime date) {
     print("Date picked: $date");
     setState(() {
       _startTripDateSelection = date;
@@ -116,7 +161,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
     setDepartureDateTimeString();
   }
 
-  void _onConfirmArrivalTime(DateTime time) {
+  void _onConfirmEndTripTime(DateTime time) {
     print("Date picked: $time");
     setState(() {
       _endTripTimeSelection = time;
@@ -231,7 +276,9 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
         height: MediaQuery.of(context).size.height,
         child: Column(
         children: [
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
+          BlockTitle(message: "Новый рейс".toUpperCase(), alignment: Alignment.center,),
+          const SizedBox(height: 10,),
           TextFormField(
             controller: nameTextController,
             focusNode: nameFocusNode,
@@ -251,7 +298,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 15),
               floatingLabelBehavior: FloatingLabelBehavior.auto,
-              fillColor: AppColors.textMain,
+              fillColor: isTripNameHasError ? AppColors.errorFieldFillColor : AppColors.textMain,
               filled: true,
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -265,216 +312,227 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
                       color: AppColors.backgroundMain2
                   )
               ),
+              errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderSide: BorderSide(
+                      color: AppColors.errorMain
+                  )
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderSide: BorderSide(
+                      color: AppColors.errorMain
+                  )
+              ),
               errorStyle: TextStyle(fontSize: 16, height: 0.3),
               labelText: 'Название рейса',
               labelStyle: TextStyle(fontSize: 22, color: AppColors.backgroundMain2),
               focusColor: AppColors.accent5,
             ),
           ),
-        Text(
-        "Дата и время отправления",
-        style: AppStyles.submainTitleTextStyle,
-        ),
-        Container(
-        width: MediaQuery.of(context).size.width - 20,
-        height: 55,
-        decoration: BoxDecoration(
-          border: Border.all(
-              color: isEndTripDateFieldError
-                  ? AppColors.errorMain
-                  : AppColors.backgroundMain2,
-              width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: isEndTripDateFieldError ? AppColors.errorMain : Colors.transparent,
-        ),
-        child: Center(
-          child: Text(
-            _startTripDateTimeString != null
-                ? _startTripDateTimeString!
-                : "",
-            style: TextStyle(
-                fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
-          ),
-        ),
-        ),
-        SizedBox(
-        height: 5,
-        ),
-        Row(
-        children: [
-          Material(
-            child: Ink(
-              height: 55,
-              width: MediaQuery.of(context).size.width * 0.5 - 15,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color: AppColors.backgroundMain2, width: 1),
-                  color: AppColors.backgroundMain2,
-                  borderRadius: BorderRadius.all(Radius.circular(6))),
-              child: InkWell(
-                onTap: () {
-                  _datePicker(_onConfirmDepartureDate);
-                },
-                splashColor: AppColors.backgroundMain5,
-                child: Center(
-                  child: Text(
-                    _startTripDateSelection == null
-                        ? "Выбрать  дату".toUpperCase()
-                        : "Изменить  дату".toUpperCase(),
-                    style: TextStyle(
-                        fontSize: 18, color: AppColors.textMain),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 10,),
-          Material(
-            child: Ink(
-              height: 55,
-              width: MediaQuery.of(context).size.width * 0.5 - 15,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color: AppColors.backgroundMain2, width: 1),
-                  color: AppColors.backgroundMain2,
-                  borderRadius: BorderRadius.all(Radius.circular(6))),
-              child: InkWell(
-                onTap: () {
-                  _timePicker(_onConfirmStartTripTime);
-                },
-                splashColor: AppColors.backgroundMain5,
-                child: Center(
-                  child: Text(
-                    _startTripDateSelection == null
-                        ? "Выбрать  время".toUpperCase()
-                        : "Изменить  время".toUpperCase(),
-                    style: TextStyle(
-                        fontSize: 18, color: AppColors.textMain),
-                  ),
-                ),
-              ),
-            ),
-          )
-        ],
-        ),
-        SizedBox(
-        height: 7,
-        ),
-        isEndTripDateFieldError
+          isTripNameHasError
           ? Text(
-        "Некорректное время рейса",
-        style:
-        TextStyle(fontSize: 16, color: AppColors.errorMain),
-        )
-          : SizedBox.shrink(),
-        SizedBox(
-        height: 20,
-        ),
-
-
-        Text(
-        "Дата и время прибытия",
-        style: AppStyles.submainTitleTextStyle,
-        ),
-        Container(
-        width: MediaQuery.of(context).size.width - 20,
-        height: 55,
-        decoration: BoxDecoration(
-          border: Border.all(
-              color: isStartTripDateFieldError
-                  ? AppColors.errorMain
-                  : AppColors.backgroundMain2,
-              width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: isStartTripDateFieldError ? AppColors.errorMain : Colors.transparent,
-        ),
-        child: Center(
-          child: Text(
-            _endTripDateTimeString != null
-                ? _endTripDateTimeString!
-                : "",
-            style: TextStyle(
-                fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
+              "Название рейся обязательно",
+              style: TextStyle(fontSize: 16, color: AppColors.errorMain),
+            )
+          : const SizedBox.shrink(),
+          const SizedBox(height: 30),
+          Text(
+          "Дата и время отправления",
+          style: AppStyles.submainTitleTextStyle,
           ),
-        ),
-        ),
-        SizedBox(
-        height: 5,
-        ),
-        Row(
-        children: [
-          Material(
-            child: Ink(
-              height: 55,
-              width: MediaQuery.of(context).size.width * 0.5 - 15,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color: AppColors.backgroundMain2, width: 1),
-                  color: AppColors.backgroundMain2,
-                  borderRadius: BorderRadius.all(Radius.circular(6))),
-              child: InkWell(
-                onTap: () {
-                  _datePicker(_onConfirmEndTripDate);
-                },
-                splashColor: AppColors.backgroundMain5,
-                child: Center(
-                  child: Text(
-                    _endTripDateSelection == null
-                        ? "Выбрать  дату".toUpperCase()
-                        : "Изменить  дату".toUpperCase(),
-                    style: TextStyle(
-                        fontSize: 18, color: AppColors.textMain),
+          Container(
+          width: MediaQuery.of(context).size.width - 20,
+          height: 55,
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: isEndTripDateFieldError
+                    ? AppColors.errorMain
+                    : AppColors.backgroundMain2,
+                width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(6)),
+            color: isEndTripDateFieldError ? AppColors.errorFieldFillColor : Colors.transparent,
+          ),
+          child: Center(
+            child: Text(
+              _startTripDateTimeString != null
+                  ? _startTripDateTimeString!
+                  : "",
+              style: TextStyle(
+                  fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
+            ),
+          ),
+          ),
+          const SizedBox(height: 5),
+          Row(
+          children: [
+            Material(
+              child: Ink(
+                height: 55,
+                width: MediaQuery.of(context).size.width * 0.5 - 15,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: AppColors.backgroundMain2, width: 1),
+                    color: AppColors.backgroundMain2,
+                    borderRadius: BorderRadius.all(Radius.circular(6))),
+                child: InkWell(
+                  onTap: () {
+                    _datePicker(_onConfirmStartTripDate);
+                  },
+                  splashColor: AppColors.backgroundMain5,
+                  child: Center(
+                    child: Text(
+                      _startTripDateSelection == null
+                          ? "Выбрать  дату".toUpperCase()
+                          : "Изменить  дату".toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 18, color: AppColors.textMain),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(width: 10,),
-          Material(
-            child: Ink(
-              height: 55,
-              width: MediaQuery.of(context).size.width * 0.5 - 15,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                      color: AppColors.backgroundMain2, width: 1),
-                  color: AppColors.backgroundMain2,
-                  borderRadius: BorderRadius.all(Radius.circular(6))),
-              child: InkWell(
-                onTap: () {
-                  _timePicker(_onConfirmArrivalTime);
-                },
-                splashColor: AppColors.backgroundMain5,
-                child: Center(
-                  child: Text(
-                    _endTripDateSelection == null
-                        ? "Выбрать  время".toUpperCase()
-                        : "Изменить  время".toUpperCase(),
-                    style: TextStyle(
-                        fontSize: 18, color: AppColors.textMain),
+            SizedBox(width: 10,),
+            Material(
+              child: Ink(
+                height: 55,
+                width: MediaQuery.of(context).size.width * 0.5 - 15,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: AppColors.backgroundMain2, width: 1),
+                    color: AppColors.backgroundMain2,
+                    borderRadius: BorderRadius.all(Radius.circular(6))),
+                child: InkWell(
+                  onTap: () {
+                    _timePicker(_onConfirmStartTripTime);
+                  },
+                  splashColor: AppColors.backgroundMain5,
+                  child: Center(
+                    child: Text(
+                      _startTripDateSelection == null
+                          ? "Выбрать  время".toUpperCase()
+                          : "Изменить  время".toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 18, color: AppColors.textMain),
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
-        ],
-        ),
-        SizedBox(
-          height: 7,
-        ),
-        isStartTripDateFieldError
+            )
+          ],
+          ),
+          const SizedBox(height: 7),
+          isEndTripDateFieldError
             ? Text(
-          "Некорректное время рейса",
-          style:
-          TextStyle(fontSize: 16, color: AppColors.errorMain),
-        )
+                "Некорректное время рейса",
+                style: TextStyle(fontSize: 16, color: AppColors.errorMain),
+              )
             : SizedBox.shrink(),
-            SizedBox(height: 20),
-          Expanded(child: SizedBox.expand(),),
-          SaveButton(
-            onTap: () {},
-            label: "Сохранить"
+
+          const SizedBox(height: 30),
+          Text(
+          "Дата и время прибытия",
+          style: AppStyles.submainTitleTextStyle,
           ),
-          SizedBox(height: 5,)
+          Container(
+          width: MediaQuery.of(context).size.width - 20,
+          height: 55,
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: isStartTripDateFieldError
+                    ? AppColors.errorMain
+                    : AppColors.backgroundMain2,
+                width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(6)),
+            color: isStartTripDateFieldError ? AppColors.errorFieldFillColor : Colors.transparent,
+          ),
+          child: Center(
+            child: Text(
+              _endTripDateTimeString != null
+                  ? _endTripDateTimeString!
+                  : "",
+              style: TextStyle(
+                  fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600),
+            ),
+          ),
+          ),
+          SizedBox(
+          height: 5,
+          ),
+          Row(
+          children: [
+            Material(
+              child: Ink(
+                height: 55,
+                width: MediaQuery.of(context).size.width * 0.5 - 15,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: AppColors.backgroundMain2, width: 1),
+                    color: AppColors.backgroundMain2,
+                    borderRadius: BorderRadius.all(Radius.circular(6))),
+                child: InkWell(
+                  onTap: () {
+                    _datePicker(_onConfirmEndTripDate);
+                  },
+                  splashColor: AppColors.backgroundMain5,
+                  child: Center(
+                    child: Text(
+                      _endTripDateSelection == null
+                          ? "Выбрать  дату".toUpperCase()
+                          : "Изменить  дату".toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 18, color: AppColors.textMain),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 10,),
+            Material(
+              child: Ink(
+                height: 55,
+                width: MediaQuery.of(context).size.width * 0.5 - 15,
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: AppColors.backgroundMain2, width: 1),
+                    color: AppColors.backgroundMain2,
+                    borderRadius: BorderRadius.all(Radius.circular(6))),
+                child: InkWell(
+                  onTap: () {
+                    _timePicker(_onConfirmEndTripTime);
+                  },
+                  splashColor: AppColors.backgroundMain5,
+                  child: Center(
+                    child: Text(
+                      _endTripDateSelection == null
+                          ? "Выбрать  время".toUpperCase()
+                          : "Изменить  время".toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 18, color: AppColors.textMain),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+          ),
+          SizedBox(
+            height: 7,
+          ),
+          isStartTripDateFieldError
+              ? Text(
+            "Некорректное время рейса",
+            style:
+            TextStyle(fontSize: 16, color: AppColors.errorMain),
+          )
+              : SizedBox.shrink(),
+              SizedBox(height: 20),
+            Expanded(child: SizedBox.expand(),),
+            SaveButton(
+              onTap: _onSave,
+              label: "Сохранить"
+            ),
+            SizedBox(height: 5,)
           ],
         ),
       ),

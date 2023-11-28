@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/screens/calendar_screen.dart';
+import 'package:pleyona_app/ui/screens/all_trips_screen.dart';
 import 'package:pleyona_app/ui/screens/person_edit_info_screen.dart';
 import 'package:pleyona_app/ui/screens/homescreen.dart';
 import 'package:pleyona_app/ui/screens/passenger_add_new.dart';
@@ -104,7 +104,7 @@ class _EntryPointState extends State<EntryPoint> with SingleTickerProviderStateM
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(isMenuOpen ? 20 : 0)),
                       child: const ThemeBackgroundWidget(
-                        child: TripAddNewScreen(),
+                        child: HomeScreen(),
                       )
                     )
                   )

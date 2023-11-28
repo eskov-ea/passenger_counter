@@ -213,7 +213,7 @@ class DBProvider {
   }
 
 
-  /// ROUTES
+  /// TRIPS
 
   Future<List<TripModel>> getTrips() async {
     final db = await database;
@@ -226,11 +226,47 @@ class DBProvider {
     });
   }
 
+  Future<int> addTrip({required TripModel trip}) async {
+    final db = await database;
+    print("ADD_TRIP:::: ${trip.comment}");
+    return await db.transaction((txn) async {
+      int id = await txn.rawInsert(
+          'INSERT INTO trip(name, start_trip, end_trip, status, comments) VALUES(?, ?, ?, ?, ?)',
+          [trip.tripName, trip.tripStartDate.toString(), trip.tripEndDate.toString(), trip.status, trip.comment]
+      );
+      return id;
+    });
+  }
+
+  Future<List<TripModel>> searchTripsByDate(DateTime date) async {
+    final db = await database;
+    final DateTime dateRange = date.add(Duration(days: 1));
+    print("SEARCH:::::: \r\n $date \r\n $dateRange");
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM trip WHERE start_trip BETWEEN "$date" and "$dateRange"'
+      );
+      print(res);
+      return res.map((el) => TripModel.fromJson(el)).toList();
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;
-    await db.execute("DROP TABLE IF EXISTS person");
+    // await db.execute("DROP TABLE IF EXISTS person");
     await db.execute("DROP TABLE IF EXISTS trip");
-    await db.execute("DROP TABLE IF EXISTS person_documents");
+    // await db.execute("DROP TABLE IF EXISTS person_documents");
   }
 
 

@@ -11,15 +11,15 @@ import 'package:pleyona_app/ui/widgets/person/adding_person_additional_info_bloc
 import 'package:pleyona_app/ui/widgets/person/adding_person_contact_info_block.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import '../../bloc/camera_bloc/camera_bloc.dart';
-import '../../bloc/camera_bloc/camera_event.dart';
-import '../../models/person_model.dart';
-import '../../services/database/db_provider.dart';
-import '../widgets/custom_appbar.dart';
-import '../widgets/form_block_title.dart';
-import '../widgets/person/adding_person_document_info_block.dart';
-import '../widgets/person/adding_person_general_info_block.dart';
-import '../widgets/person/adding_person_photo_scan_btns.dart';
+import '../../../bloc/camera_bloc/camera_bloc.dart';
+import '../../../bloc/camera_bloc/camera_event.dart';
+import '../../../models/person_model.dart';
+import '../../../services/database/db_provider.dart';
+import '../../widgets/custom_appbar.dart';
+import '../../widgets/form_block_title.dart';
+import '../../widgets/person/adding_person_document_info_block.dart';
+import '../../widgets/person/adding_person_general_info_block.dart';
+import '../../widgets/person/adding_person_photo_scan_btns.dart';
 
 
 enum PersonClass { regular, staff, vip }

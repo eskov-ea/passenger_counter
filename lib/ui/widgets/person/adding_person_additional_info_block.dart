@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
-import 'package:pleyona_app/ui/screens/person_search_screen.dart';
+import 'package:pleyona_app/ui/screens/person/person_search_screen.dart';
 import '../../../theme.dart';
 
 

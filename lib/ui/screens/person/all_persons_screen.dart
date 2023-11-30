@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/screens/person_edit_info_screen.dart';
+import 'package:pleyona_app/ui/screens/person/person_edit_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_brief.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
-import '../../services/database/db_provider.dart';
+import '../../../services/database/db_provider.dart';
 
 
 class AllPersonsScreen extends StatefulWidget {

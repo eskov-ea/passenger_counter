@@ -170,7 +170,7 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
         _controller.animateBack(0, duration: Duration(seconds: 1));
       }
     }
-    if (visibilityPercentage < 60) {
+    if (visibilityPercentage > 0 && visibilityPercentage < 60) {
       _scrollController.animateTo(
           _scrollController.position.minScrollExtent,
           duration: Duration(milliseconds: 300),
@@ -201,6 +201,7 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         drawSwitcher(),
+        const SizedBox(height: 5),
         SingleChildScrollView(
           controller: _scrollController,
           scrollDirection: Axis.horizontal,
@@ -232,22 +233,42 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizeTransition(
-            sizeFactor: _animation,
-            axis: Axis.horizontal,
-            child: Container(
-              width: isTypingSearchMode ? 0.3 : 0.7 * MediaQuery.of(context).size.width - 20,
-              height: 7,
-              decoration: BoxDecoration(
-                color: isTypingSearchMode ? Color(0xCDD4D4D4) : Color(0xFF428AFF)
-              ),
+          Container(
+            height: 35,
+            width: isTypingSearchMode ? 0.3 * MediaQuery.of(context).size.width - 20 : 0.7 * MediaQuery.of(context).size.width - 20,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                Text("Выбрать дату",
+                  style: TextStyle(fontSize: isTypingSearchMode ? 12 : 16),
+                ),
+                Container(
+                  height: isTypingSearchMode ? 5 : 10,
+                  decoration: BoxDecoration(
+                      color: isTypingSearchMode ? Color(0xCDD4D4D4) : Color(0xFF428AFF),
+                      borderRadius: BorderRadius.all(Radius.circular(6))
+      ),
+                ),
+              ]
             ),
           ),
           Container(
-            width: isTypingSearchMode ? 0.7 : 0.3 * MediaQuery.of(context).size.width - 20,
-            height: 7,
-            decoration: BoxDecoration(
-              color: isTypingSearchMode ? Color(0xFF428AFF) : Color(0xCDD4D4D4)
+            height: 35,
+            width: isTypingSearchMode ? 0.7 * MediaQuery.of(context).size.width - 20 : 0.3 * MediaQuery.of(context).size.width - 20,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("Ввести вречную",
+                  style: TextStyle(fontSize: isTypingSearchMode ? 16 : 12),
+                ),
+                Container(
+                  height: isTypingSearchMode ? 10 : 5,
+                  decoration: BoxDecoration(
+                    color: isTypingSearchMode ? Color(0xFF428AFF) : Color(0xCDD4D4D4),
+                    borderRadius: BorderRadius.all(Radius.circular(6))
+                  ),
+                ),
+              ]
             ),
           )
         ],

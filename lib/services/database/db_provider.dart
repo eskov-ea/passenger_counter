@@ -251,6 +251,20 @@ class DBProvider {
     });
   }
 
+  Future updateTrip({
+    required int id, required String tripName, required DateTime tripStartDate, required DateTime tripEndDate, int? status, String? comment,
+  }) async {
+    final db = await database;
+    return await db.transaction((txn) async {
+      String sqlGeneral = "UPDATE trip SET name = '$tripName', start_trip = '$tripStartDate', end_trip = '$tripEndDate'";
+      String sqlStatus = status == null ? "" : ", status = '$status'";
+      String sqlComment = comment == null ? "" : ", comments = '$comment'";
+      String sqlWhere = " WHERE id = '$id';";
+      final sql = sqlGeneral + sqlStatus + sqlComment + sqlWhere;
+      return await txn.rawUpdate(sql);
+    });
+  }
+
 
 
 

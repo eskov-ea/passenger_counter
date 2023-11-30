@@ -13,7 +13,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget{
   final Widget? child;
   final double height;
   final double leadingWidth;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -48,7 +48,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void initState() {
     super.initState();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-    setupScrollListener(scrollController: widget.scrollController);
+    if (widget.scrollController != null) {
+      setupScrollListener(scrollController: widget.scrollController!);
+    }
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack, overlays: []);
   }
   @override

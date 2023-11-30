@@ -3,9 +3,9 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' 
 import 'package:pleyona_app/models/route_model.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
-import '../../theme.dart';
-import '../widgets/custom_appbar.dart';
-import '../widgets/form_block_title.dart';
+import '../../../theme.dart';
+import '../../widgets/custom_appbar.dart';
+import '../../widgets/form_block_title.dart';
 
 class TripAddNewScreen extends StatefulWidget {
   const TripAddNewScreen({super.key});
@@ -96,7 +96,6 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
       );
 
       final res = await _db.addTrip(trip: newTrip);
-      print("SAVING:::: $res");
     }
   }
 
@@ -137,40 +136,34 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
   }
 
   void _onConfirmStartTripDate(DateTime date) {
-    print("Date picked: $date");
     setState(() {
       _startTripDateSelection = date;
     });
-    print("Date picked set state: $_startTripDateSelection");
-    setDepartureDateTimeString();
+    setStartTripDateTimeString();
   }
 
   void _onConfirmEndTripDate(DateTime date) {
-    print("Date picked: $date");
     setState(() {
       _endTripDateSelection = date;
     });
-    setArrivalDateTimeString();
+    setEndTripDateTimeString();
   }
 
   void _onConfirmStartTripTime(DateTime time) {
-    print("Date picked: $time");
     setState(() {
       _startTripTimeSelection = time;
     });
-    setDepartureDateTimeString();
+    setStartTripDateTimeString();
   }
 
   void _onConfirmEndTripTime(DateTime time) {
-    print("Date picked: $time");
     setState(() {
       _endTripTimeSelection = time;
     });
-    setArrivalDateTimeString();
+    setEndTripDateTimeString();
   }
 
-  void setDepartureDateTimeString() {
-    print("Set depart timedate   ^    ${_startTripDateTimeString}");
+  void setStartTripDateTimeString() {
     String hour = "";
     String minute = "";
     String day = "";
@@ -214,7 +207,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
     });
   }
 
-  void setArrivalDateTimeString() {
+  void setEndTripDateTimeString() {
     String hour = "";
     String minute = "";
     String day = "";
@@ -254,7 +247,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
     final time = _endTripTimeSelection == null ? "" : "$hour:$minute";
 
     setState(() {
-      _endTripDateTimeString = "$date   $hour:$time";
+      _endTripDateTimeString = "$date   $time";
     });
   }
 
@@ -409,7 +402,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
                   splashColor: AppColors.backgroundMain5,
                   child: Center(
                     child: Text(
-                      _startTripDateSelection == null
+                      _startTripTimeSelection == null
                           ? "Выбрать  время".toUpperCase()
                           : "Изменить  время".toUpperCase(),
                       style: TextStyle(
@@ -431,8 +424,8 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
 
           const SizedBox(height: 30),
           Text(
-          "Дата и время прибытия",
-          style: AppStyles.submainTitleTextStyle,
+            "Дата и время прибытия",
+            style: AppStyles.submainTitleTextStyle,
           ),
           Container(
           width: MediaQuery.of(context).size.width - 20,
@@ -457,7 +450,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
           ),
           ),
           SizedBox(
-          height: 5,
+            height: 5,
           ),
           Row(
           children: [
@@ -504,7 +497,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
                   splashColor: AppColors.backgroundMain5,
                   child: Center(
                     child: Text(
-                      _endTripDateSelection == null
+                      _endTripTimeSelection == null
                           ? "Выбрать  время".toUpperCase()
                           : "Изменить  время".toUpperCase(),
                       style: TextStyle(

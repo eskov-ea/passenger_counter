@@ -8,18 +8,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/screens/person_add_new_screen.dart';
+import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_fields/editable_text_field_widget.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
-import '../../bloc/camera_bloc/camera_bloc.dart';
-import '../../bloc/camera_bloc/camera_event.dart';
-import '../../models/person_model.dart';
-import '../../services/database/db_provider.dart';
-import '../widgets/editable_text_fields/editable_birthdate_field_widget.dart';
-import '../widgets/editable_text_fields/editable_comment_text_field.dart';
-import '../widgets/editable_text_fields/editable_document_field_widget.dart';
-import 'camera_screen.dart';
+import '../../../bloc/camera_bloc/camera_bloc.dart';
+import '../../../bloc/camera_bloc/camera_event.dart';
+import '../../../models/person_model.dart';
+import '../../../services/database/db_provider.dart';
+import '../../widgets/editable_text_fields/editable_birthdate_field_widget.dart';
+import '../../widgets/editable_text_fields/editable_comment_text_field.dart';
+import '../../widgets/editable_text_fields/editable_document_field_widget.dart';
+import '../camera_screen.dart';
 
 class EditPersonInfoScreen extends StatefulWidget {
 

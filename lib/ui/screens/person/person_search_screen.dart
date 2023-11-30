@@ -3,7 +3,7 @@ import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_brief.dart';
-import '../widgets/search_bar_widget.dart';
+import '../../widgets/search_bar_widget.dart';
 
 
 class SearchPersonScreen extends StatefulWidget {

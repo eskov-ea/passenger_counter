@@ -10,7 +10,7 @@ import 'package:pleyona_app/ui/widgets/theme_background.dart';
 import 'package:pleyona_app/ui/widgets/trip/trips_result_list_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../models/route_model.dart';
+import '../../../models/route_model.dart';
 
 
 class AllTripsScreen extends StatefulWidget {

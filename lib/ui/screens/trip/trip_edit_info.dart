@@ -216,18 +216,18 @@ class _TripEditInfoState extends State<TripEditInfo> {
     Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.allTripsScreen);
   }
   void _startTripDateHasChanges() {
-    final initialTime = "${widget.trip.tripStartDate.hour}:${widget.trip.tripStartDate.minute}";
-    final initialDate = "${widget.trip.tripStartDate.day}.${widget.trip.tripStartDate.month}.${widget.trip.tripStartDate.year}";
+    if(_startTripDateSelection == null) return;
+    final int milliseconds = DateTime(_startTripDateSelection!.year, _startTripDateSelection!.month, _startTripDateSelection!.day, _startTripTimeSelection!.hour, _startTripTimeSelection!.minute).millisecondsSinceEpoch;
     setState(() {
-      isStartTripDateHasChanges = "$initialDate   $initialTime" != _startTripDateTimeString;
+      isStartTripDateHasChanges = widget.trip.tripStartDate.millisecondsSinceEpoch != milliseconds;
     });
     checkChanges();
   }
   void _endTripDateHasChanges() {
-    final initialTime = "${widget.trip.tripEndDate.hour}:${widget.trip.tripEndDate.minute}";
-    final initialDate = "${widget.trip.tripEndDate.day}.${widget.trip.tripEndDate.month}.${widget.trip.tripEndDate.year}";
+    if(_endTripDateSelection == null) return;
+    final int milliseconds = DateTime(_endTripDateSelection!.year, _endTripDateSelection!.month, _endTripDateSelection!.day, _endTripTimeSelection!.hour, _endTripTimeSelection!.minute).millisecondsSinceEpoch;
     setState(() {
-      isEndTripDateHasChanges = "$initialDate   $initialTime" != _startTripDateTimeString;
+      isEndTripDateHasChanges = widget.trip.tripEndDate.millisecondsSinceEpoch != milliseconds;
     });
     checkChanges();
   }
@@ -248,17 +248,32 @@ class _TripEditInfoState extends State<TripEditInfo> {
       });
     }
   }
+  void initTripDates(DateTime start, DateTime end) {
+    setState(() {
+      _startTripDateSelection = start;
+      _startTripTimeSelection = start;
+      _endTripDateSelection = end;
+      _endTripTimeSelection = end;
+    });
+    setStartTripDateTimeString();
+    setEndTripDateTimeString();
+
+    _startTripDateHasChanges();
+    _endTripDateHasChanges();
+  }
+
 
   @override
   void initState() {
     super.initState();
 
-    _onConfirmStartTripDate(widget.trip.tripStartDate);
-    _onConfirmStartTripTime(widget.trip.tripStartDate);
-    _onConfirmEndTripDate(widget.trip.tripEndDate);
-    _onConfirmEndTripTime(widget.trip.tripEndDate);
-    setStartTripDateTimeString();
-    setEndTripDateTimeString();
+    // _onConfirmStartTripDate(widget.trip.tripStartDate);
+    // _onConfirmStartTripTime(widget.trip.tripStartDate);
+    // _onConfirmEndTripDate(widget.trip.tripEndDate);
+    // _onConfirmEndTripTime(widget.trip.tripEndDate);
+    // setStartTripDateTimeString();
+    // setEndTripDateTimeString();
+    initTripDates(widget.trip.tripStartDate, widget.trip.tripEndDate);
     nameTextController.text = widget.trip.tripName;
   }
 

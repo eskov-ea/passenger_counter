@@ -53,8 +53,22 @@ final Map<String, String> tables = {
       'seat_id INTEGER DEFAULT NULL,  '
       'document varchar(255) DEFAULT NULL,  '
       'status TINYINT(1) DEFAULT NULL,  '
-      'comments text DEFAULT '',  '
+      'comments text DEFAULT "",  '
       'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
       'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
-      'deleted_at DATETIME DEFAULT NULL); '
+      'deleted_at DATETIME DEFAULT NULL); ',
+
+  'passenger_status'  :
+  'CREATE TABLE passenger_status ('
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,  '
+      'passenger_id INTEGER DEFAULT NULL, '
+      'status varchar(20) NOT NULL DEFAULT "CheckIn" REFERENCES passenger_status_list(status),  '
+      'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'deleted_at DATETIME DEFAULT NULL); ',
+
+  'passenger_status_list' :
+      'CREATE TABLE passenger_status_list ('
+      'status varchar(20) PRIMARY KEY NOT NULL,'
+      'seq INTEGER);'
 };

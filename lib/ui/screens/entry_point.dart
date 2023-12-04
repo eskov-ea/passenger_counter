@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/test_animated.dart';
 import 'package:pleyona_app/ui/screens/trip/all_trips_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_edit_info_screen.dart';
 import 'package:pleyona_app/ui/screens/homescreen.dart';

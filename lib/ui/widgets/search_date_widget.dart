@@ -154,8 +154,11 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
   }
 
   void onVisibilityChanged(VisibilityInfo info) {
-    visibilityPercentage = info.visibleFraction * 100;
-    if (visibilityPercentage > 60) {
+    print(info.visibleFraction * 100);
+    setState(() {
+      visibilityPercentage = info.visibleFraction * 100;
+    });
+    if (!isTypingSearchMode && visibilityPercentage > 60) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: Duration(milliseconds: 300),
@@ -164,13 +167,8 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
       setState(() {
         isTypingSearchMode = true;
       });
-      if (_animation.status != AnimationStatus.completed) {
-        _controller.forward();
-      } else {
-        _controller.animateBack(0, duration: Duration(seconds: 1));
-      }
     }
-    if (visibilityPercentage > 0 && visibilityPercentage < 60) {
+    if (isTypingSearchMode && visibilityPercentage > 0 && visibilityPercentage < 60) {
       _scrollController.animateTo(
           _scrollController.position.minScrollExtent,
           duration: Duration(milliseconds: 300),
@@ -179,6 +177,11 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
       setState(() {
         isTypingSearchMode = false;
       });
+    }
+    if (_animation.status != AnimationStatus.completed) {
+      _controller.forward();
+    } else {
+      _controller.animateBack(0, duration: Duration(seconds: 1));
     }
   }
   
@@ -231,46 +234,98 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
     return Container(
       width: MediaQuery.of(context).size.width - 20,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+
           Container(
-            height: 35,
-            width: isTypingSearchMode ? 0.3 * MediaQuery.of(context).size.width - 20 : 0.7 * MediaQuery.of(context).size.width - 20,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                Text("Выбрать дату",
-                  style: TextStyle(fontSize: isTypingSearchMode ? 12 : 16),
-                ),
-                Container(
-                  height: isTypingSearchMode ? 5 : 10,
-                  decoration: BoxDecoration(
-                      color: isTypingSearchMode ? Color(0xCDD4D4D4) : Color(0xFF428AFF),
-                      borderRadius: BorderRadius.all(Radius.circular(6))
-      ),
-                ),
-              ]
+            height: 5,
+            width: 150 * visibilityPercentage / 100,
+            decoration: BoxDecoration(
+                color: isTypingSearchMode ? Color(0xFF428AFF) : Color(0xCDC70404),
+                borderRadius: BorderRadius.all(Radius.circular(6))
             ),
           ),
+          SizedBox(width: 10),
           Container(
-            height: 35,
-            width: isTypingSearchMode ? 0.7 * MediaQuery.of(context).size.width - 20 : 0.3 * MediaQuery.of(context).size.width - 20,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text("Ввести вречную",
-                  style: TextStyle(fontSize: isTypingSearchMode ? 16 : 12),
-                ),
-                Container(
-                  height: isTypingSearchMode ? 10 : 5,
-                  decoration: BoxDecoration(
-                    color: isTypingSearchMode ? Color(0xFF428AFF) : Color(0xCDD4D4D4),
-                    borderRadius: BorderRadius.all(Radius.circular(6))
-                  ),
-                ),
-              ]
+            height: 5,
+            width: 150 * (130 - visibilityPercentage) / 100,
+            decoration: BoxDecoration(
+                color: isTypingSearchMode ? Color(0xCDC70404) : Color(0xFF428AFF),
+                borderRadius: BorderRadius.all(Radius.circular(6))
             ),
-          )
+          ),
+      //     AnimatedSwitcher(
+      //       duration: Duration(milliseconds: 100),
+      //       // reverseDuration: Duration(milliseconds: 100),
+      //       transitionBuilder: (child, animation) {
+      //         return SizeTransition(
+      //           sizeFactor: animation,
+      //           axis: Axis.horizontal,
+      //           axisAlignment: 10,
+      //           child: child,
+      //         );
+      //       },
+      //       child: isTypingSearchMode ? Container(
+      //         key: Key("1"),
+      //         height: 35,
+      //         width: 0.3 * MediaQuery.of(context).size.width - 20,
+      //         child: Column(
+      //             mainAxisAlignment: MainAxisAlignment.end,
+      //             children: [
+      //             Text("Выбрать дату",
+      //               style: TextStyle(fontSize: 12),
+      //             ),
+      //             Container(
+      //               height: 3,
+      //               width: 20,
+      //               decoration: BoxDecoration(
+      //                   color: Color(0xCDD4D4D4),
+      //                   borderRadius: BorderRadius.all(Radius.circular(6))
+      // ),
+      //             ),
+      //           ]
+      //         ),
+      //       ) : Container(
+      //         key: Key("2"),
+      //         height: 35,
+      //         width: 0.7 * MediaQuery.of(context).size.width - 20,
+      //         child: Column(
+      //             mainAxisAlignment: MainAxisAlignment.end,
+      //             children: [
+      //               Text("Выбрать дату",
+      //                 style: TextStyle(fontSize: 16),
+      //               ),
+      //               Container(
+      //                 height: 5,
+      //                 width: 50,
+      //                 decoration: BoxDecoration(
+      //                     color: Color(0xFF428AFF),
+      //                     borderRadius: BorderRadius.all(Radius.circular(6))
+      //                 ),
+      //               ),
+      //             ]
+      //         ),
+      //       ),
+      //     ),
+          // Container(
+          //   height: 35,
+          //   width: isTypingSearchMode ? 0.7 * MediaQuery.of(context).size.width - 20 : 0.3 * MediaQuery.of(context).size.width - 20,
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.end,
+          //     children: [
+          //       Text("Ввести вречную",
+          //         style: TextStyle(fontSize: isTypingSearchMode ? 16 : 12),
+          //       ),
+          //       Container(
+          //         height: isTypingSearchMode ? 10 : 5,
+          //         decoration: BoxDecoration(
+          //           color: isTypingSearchMode ? Color(0xFF428AFF) : Color(0xCDD4D4D4),
+          //           borderRadius: BorderRadius.all(Radius.circular(6))
+          //         ),
+          //       ),
+          //     ]
+          //   ),
+          // )
         ],
       ),
     );

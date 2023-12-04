@@ -1,52 +1,48 @@
-import '../../../models/person_model.dart';
+import '../../../models/passenger.dart';
 import '../db_provider.dart';
 
 
 class PersonDBLayer {
 
-  Future<int> addPerson(Person p) async {
+  Future<int> addPassenger(Passenger p) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-          'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, citizenship, class_person, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
+          'INSERT INTO passenger(person_id, trip_id, seat_id, document, status, comments) VALUES(?, ?, ?, ?, ?, ?)',
+          [p.personId,  p.tripId, p.seatId, p.document, p.status, p.comments]
       );
       return id;
     });
   }
 
-  Future<List<Person>> getPersons() async {
+  Future<List<Passenger>> getPassengers(int tripId) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM person'
+          'SELECT * FROM passenger WHERE trip_id="$tripId"'
       );
       print(res);
-      return res.map((el) => Person.fromJson(el)).toList();
+      return res.map((el) => Passenger.fromJson(el)).toList();
     });
   }
 
-  Future<List<Person>> findPerson({
-    required String lastname, String? firstname, String? middlename, String? birthdate
-  }) async {
+  Future<Passenger> findPassengerById({required int id}) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
-      String sql = "SELECT * FROM person WHERE lastname = '$lastname'";
-      if (firstname != null) sql += ", firstname = '$firstname'";
-      if (middlename != null) sql += ", firstname = '$middlename'";
-      if (birthdate != null) sql += ", firstname = '$birthdate'";
-
+      String sql = "SELECT * FROM passenger WHERE id = '$id'";
       final res = await txn.rawQuery(sql);
-      return res.map((el) => Person.fromJson(el)).toList();
+      return Passenger.fromJson(res.first);
     });
   }
 
-  Future updatePersonsContactInformation({
-    required int id, required String phone, required String email
-  }) async {
+  Future<int> updatePassenger({required Passenger p}) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
-      String sql = "UPDATE person SET phone = '$phone', email = '$email' WHERE id = '$id'";
+      String sql = "UPDATE passenger SET "
+          "person_id = '${p.personId}', trip_id = '${p.tripId}', "
+          "seat_id = '${p.seatId}', document = '${p.document}', "
+          "status = '${p.status}', comments = '${p.comments}' "
+          "WHERE id = '${p.id}'";
       return await txn.rawUpdate(sql);
     });
   }

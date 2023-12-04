@@ -5,7 +5,8 @@ final Map<String, String> tables = {
       'seq INTEGER );',
 
   'person' :
-  'CREATE TABLE person (id INTEGER PRIMARY KEY AUTOINCREMENT, '
+  'CREATE TABLE person ('
+      'id INTEGER PRIMARY KEY AUTOINCREMENT, '
       'firstname varchar(255) DEFAULT NULL, '
       'lastname varchar(255) DEFAULT NULL, '
       'middlename varchar(255) DEFAULT NULL, '
@@ -23,7 +24,8 @@ final Map<String, String> tables = {
       'deleted_at DATETIME DEFAULT NULL );',
 
   'person_documents' :
-  'CREATE TABLE person_documents ( id INTEGER PRIMARY KEY AUTOINCREMENT, '
+  'CREATE TABLE person_documents ( '
+      'id INTEGER PRIMARY KEY AUTOINCREMENT, '
       'name varchar(255) DEFAULT NULL, '
       'description varchar(255) DEFAULT NULL, '
       'id_person INTEGER DEFAULT 0 NOT NULL, '
@@ -32,12 +34,26 @@ final Map<String, String> tables = {
       'deleted_at DATETIME DEFAULT NULL);',
 
   'trip' :
-  'CREATE TABLE trip ( id INTEGER PRIMARY KEY AUTOINCREMENT, '
+  'CREATE TABLE trip ( '
+      'id INTEGER PRIMARY KEY AUTOINCREMENT, '
       'name varchar(100) DEFAULT NULL, '
       'start_trip DATETIME DEFAULT CURRENT_TIMESTAMP, '
       'end_trip DATETIME DEFAULT CURRENT_TIMESTAMP, '
       'status TINYINT(1) DEFAULT NULL, '
       'comments text DEFAULT "", '
+      'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
+      'deleted_at DATETIME DEFAULT NULL); ',
+
+  'passenger' :
+  'CREATE TABLE passenger ('
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,  '
+      'person_id INTEGER DEFAULT NULL,  '
+      'trip_id INTEGER DEFAULT NULL,  '
+      'seat_id INTEGER DEFAULT NULL,  '
+      'document varchar(255) DEFAULT NULL,  '
+      'status TINYINT(1) DEFAULT NULL,  '
+      'comments text DEFAULT '',  '
       'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
       'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
       'deleted_at DATETIME DEFAULT NULL); '

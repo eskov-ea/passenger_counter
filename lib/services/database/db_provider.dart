@@ -2,30 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/models/route_model.dart';
+import 'package:pleyona_app/services/database/dbs/person_db_layer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-
 import 'dbs/tables.dart';
-
-
-String dateFormatter(DateTime date) {
-  return "${date.day}.${date.month}.${date.year}";
-}
-
-
-
-class DBTable {
-  final String name;
-  const DBTable({required this.name});
-  static DBTable fromJson(json) => DBTable(name: json["name"]);
-}
-bool checkIfTableExists(List<DBTable> existingTables, String searchingTableName) {
-  final res = existingTables.where((el) =>
-      el.name == searchingTableName
-  );
-  return res.isEmpty ?  false : true;
-}
-
 
 
 class DBProvider {
@@ -33,6 +13,7 @@ class DBProvider {
 
   static final DBProvider db = DBProvider._();
   static Database? _database;
+
   Future<Database> get database async {
     if (_database != null) {
       return _database!;
@@ -72,68 +53,15 @@ class DBProvider {
     }
   }
 
-  Future<int> addPerson(Person p) async {
-    final db = await database;
-    return await db.transaction((txn) async {
-      int id = await txn.rawInsert(
-        'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, citizenship, class_person, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
-      );
-      return id;
-    });
-  }
-
-  Future<List<Person>> getPersons() async {
-    final db = await database;
-    return await db.transaction((txn) async {
-      List<Object> res = await txn.rawQuery(
-        'SELECT * FROM person'
-      );
-      print(res);
-      return res.map((el) => Person.fromJson(el)).toList();
-    });
-  }
-
+  Future<int> addPerson(Person p) => PersonDBLayer().addPerson(p);
+  Future<List<Person>> getPersons() => PersonDBLayer().getPersons();
   Future<List<Person>> findPerson({
     required String lastname, String? firstname, String? middlename, String? birthdate
-  }) async {
-    final db = await database;
-    return await db.transaction((txn) async {
-      String sql = "SELECT * FROM person WHERE lastname = '$lastname'";
-      if (firstname != null) sql += ", firstname = '$firstname'";
-      if (middlename != null) sql += ", firstname = '$middlename'";
-      if (birthdate != null) sql += ", firstname = '$birthdate'";
-
-      final res = await txn.rawQuery(sql);
-      return res.map((el) => Person.fromJson(el)).toList();
-    });
-  }
-
+  }) => PersonDBLayer().findPerson(lastname: lastname, firstname: firstname, middlename: middlename, birthdate: birthdate);
   Future updatePersonsContactInformation({
     required int id, required String phone, required String email
-  }) async {
-    final db = await database;
-    return await db.transaction((txn) async {
-      String sql = "UPDATE person SET phone = '$phone', email = '$email' WHERE id = '$id'";
-      return await txn.rawUpdate(sql);
-    });
-  }
-
-  Future updatePerson({required Person p, required String? photo}) async {
-    final db = await database;
-    return await db.transaction((txn) async {
-      final String baseField = "UPDATE person SET "
-          "lastname = '${p.lastname}', firstname = '${p.firstname}',"
-          "middlename = '${p.middlename}', gender = '${p.gender}',"
-          "birthdate = '${p.birthdate}', citizenship = '${p.citizenship}',"
-          "phone = '${p.phone}', email = '${p.email}', comment = '${p.comment}',"
-          "class_person = '${p.personClass}'";
-      final String photoField = photo == null ? "" : ", photo = '$photo'";
-      final String where = "WHERE id = '${p.id}';";
-      final String sql = baseField + photoField + where;
-      return await txn.rawUpdate(sql);
-    });
-  }
+  }) => PersonDBLayer().updatePersonsContactInformation(id: id, phone: phone, email: email);
+  Future updatePerson({required Person p, required String? photo}) => PersonDBLayer().updatePerson(p: p, photo: photo);
 
   /// DOCUMENTS//
 
@@ -244,6 +172,27 @@ class DBProvider {
 
 
 }
+
+String dateFormatter(DateTime date) {
+  return "${date.day}.${date.month}.${date.year}";
+}
+
+
+
+class DBTable {
+  final String name;
+  const DBTable({required this.name});
+  static DBTable fromJson(json) => DBTable(name: json["name"]);
+}
+
+
+bool checkIfTableExists(List<DBTable> existingTables, String searchingTableName) {
+  final res = existingTables.where((el) =>
+  el.name == searchingTableName
+  );
+  return res.isEmpty ?  false : true;
+}
+
 
 
 

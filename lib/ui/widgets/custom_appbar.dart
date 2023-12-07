@@ -82,6 +82,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
         ),
       ),
+      title: widget.child
     );
   }
 }

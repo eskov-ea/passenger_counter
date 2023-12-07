@@ -70,5 +70,14 @@ final Map<String, String> tables = {
   'passenger_status_list' :
       'CREATE TABLE passenger_status_list ('
       'status varchar(20) PRIMARY KEY NOT NULL,'
-      'seq INTEGER);'
+      'seq INTEGER);',
+
+  'passenger_bagage'  :
+  'CREATE TABLE passenger_bagage ('
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+      'passenger_id INTEGER DEFAULT NULL,'
+      'weight INTEGER DEFAULT NULL,'
+      'created_at DATETIME DEFAULT CURRENT_TIMESTAMP,'
+      'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,'
+      'deleted_at DATETIME DEFAULT NULL);'
 };

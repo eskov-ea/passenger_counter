@@ -1,4 +1,4 @@
-import '../../../models/passenger.dart';
+import '../../../models/passenger/passenger.dart';
 import '../db_provider.dart';
 
 

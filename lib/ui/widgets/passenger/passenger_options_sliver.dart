@@ -29,7 +29,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen);
+                  Navigator.of(context).pushNamed(MainNavigationRouteNames.passengerAddNewScreen);
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),

@@ -4,16 +4,18 @@ class BlockTitle extends StatelessWidget {
   const BlockTitle({
     required this.message,
     this.alignment = Alignment.centerLeft,
+    this.bottomPadding = 15,
     super.key
   });
   final String message;
   final Alignment alignment;
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width ,
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: EdgeInsets.only(bottom: bottomPadding),
       alignment: alignment,
       child: Text(message,
         textAlign: TextAlign.start,

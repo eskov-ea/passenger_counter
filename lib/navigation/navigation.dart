@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/factories/screen_factory.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
+import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/widgets/scanner.dart';
 import '../ui/pages/adding_person_options.dart';
 import '../ui/screens/person/person_edit_info_screen.dart';
@@ -24,6 +25,8 @@ abstract class MainNavigationRouteNames {
   static const allTripsScreen = '/all_trips';
   static const addNewTripScreen = '/add_trip';
   static const editTripScreen = '/edit_trip';
+  static const passengerAddNewScreen = '/add_passenger';
+  static const tripSearchScreen = '/search_trip';
   static const test = '/test';
 }
 
@@ -157,7 +160,12 @@ class MainNavigation {
       case MainNavigationRouteNames.editTripScreen:
         final arguments = settings.arguments as TripEditInfoScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeEditTripScreen(arguments));
-      case MainNavigationRouteNames.test:
+      case MainNavigationRouteNames.passengerAddNewScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makePassengerAddNewScreen());
+      case MainNavigationRouteNames.tripSearchScreen:
+        final arguments = settings.arguments as TripSearchScreenArguments;
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripSearchScreen(arguments));
+        case MainNavigationRouteNames.test:
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),
           pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAllPersonsScreen(),

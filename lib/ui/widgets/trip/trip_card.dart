@@ -9,7 +9,7 @@ import '../../../theme.dart';
 class TripCard extends StatelessWidget {
   const TripCard({
     required this.trip,
-    required this.index,
+    this.index = 0,
     super.key
   });
 

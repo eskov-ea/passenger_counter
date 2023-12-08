@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/trip/trip_edit_info.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/search_date_widget.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
@@ -11,6 +12,7 @@ import 'package:pleyona_app/ui/widgets/trip/trips_result_list_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../models/route_model.dart';
+import '../../../navigation/navigation.dart';
 
 
 class AllTripsScreen extends StatefulWidget {
@@ -63,6 +65,12 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
       isSearching = false;
       filterDate = filter;
     });
+  }
+
+  void openEditTripScreen(TripModel trip) {
+    Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripScreen,
+        arguments: TripEditInfoScreenArguments(trip: trip)
+    );
   }
 
   @override
@@ -165,7 +173,8 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
                 SizedBox(height: 10,),
                 TripsResultList(
                   trips: trips,
-                  isSearching: isSearching
+                  isSearching: isSearching,
+                  callback: openEditTripScreen,
                 ),
                 SizedBox(height: 40,),
               ],

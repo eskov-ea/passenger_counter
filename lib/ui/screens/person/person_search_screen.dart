@@ -12,7 +12,7 @@ class SearchPersonScreen extends StatefulWidget {
     Key? key
   }) : super(key: key);
 
-  final Function() callback;
+  final Function(Person person) callback;
 
   @override
   State<SearchPersonScreen> createState() => _SearchPersonScreenState();
@@ -77,7 +77,7 @@ class _SearchPersonScreenState extends State<SearchPersonScreen> {
                   child: ListView.builder(
                     itemCount: searchResult!.length,
                     itemBuilder: (context, index) {
-                      return PersonCardBrief(person: searchResult![index], onTap: (v) {});
+                      return PersonCardBrief(person: searchResult![index], onTap: widget.callback);
                     }
                   ),
                 )
@@ -100,6 +100,6 @@ class _SearchPersonScreenState extends State<SearchPersonScreen> {
 }
 
 class SearchPersonScreenArguments{
-  final Function() callback;
+  final Function(Person person) callback;
   SearchPersonScreenArguments({required this.callback});
 }

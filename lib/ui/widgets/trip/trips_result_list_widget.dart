@@ -7,12 +7,13 @@ class TripsResultList extends StatelessWidget {
   const TripsResultList({
     required this.isSearching,
     required this.trips,
+    required this.callback,
     super.key
   });
 
   final bool isSearching;
   final List<TripModel>? trips;
-
+  final Function(TripModel) callback;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class TripsResultList extends StatelessWidget {
             itemCount: trips!.length,
             padding: EdgeInsets.all(0),
             itemBuilder: (BuildContext context, int index) {
-              return TripCard(trip: trips![index], index: index);
+              return TripCard(trip: trips![index], index: index, callback: callback);
             }
           ),
         );

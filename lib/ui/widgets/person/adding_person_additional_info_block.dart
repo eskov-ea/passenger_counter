@@ -56,7 +56,7 @@ class PersonAdditionalInfoBlock extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.of(context).pushNamed(MainNavigationRouteNames.searchPersonScreen,
-              arguments: SearchPersonScreenArguments(callback: (){}));
+              arguments: SearchPersonScreenArguments(callback: (person){}));
             },
             child: Row(
               children: [

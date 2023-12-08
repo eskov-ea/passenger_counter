@@ -153,6 +153,15 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
     });
   }
 
+  final visibilityListeners =
+    <void Function(VisibilityInfo info)>[];
+
+  void _handleVisibilityChanged(VisibilityInfo info) {
+    for (final listener in visibilityListeners) {
+      listener(info);
+    }
+  }
+
   void onVisibilityChanged(VisibilityInfo info) {
     print(info.visibleFraction * 100);
     setState(() {
@@ -196,6 +205,14 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
       parent: _controller,
       curve: Curves.fastLinearToSlowEaseIn,
     );
+    visibilityListeners.add(onVisibilityChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    visibilityListeners.remove(onVisibilityChanged);
+    super.dispose();
   }
 
   @override
@@ -360,7 +377,7 @@ class _InputDateToSearchWidgetState extends State<InputDateToSearchWidget> with 
   Widget _searchedDateByTyping() {
     return VisibilityDetector(
       key: Key('search-typing-widget'),
-      onVisibilityChanged: onVisibilityChanged,
+      onVisibilityChanged: _handleVisibilityChanged,
       child: Container(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -9,10 +9,12 @@ import '../../../theme.dart';
 class TripCard extends StatelessWidget {
   const TripCard({
     required this.trip,
+    required this.callback,
     this.index = 0,
     super.key
   });
 
+  final Function(TripModel trip) callback;
   String dateToString(DateTime date) {
     String hour = "";
     String minute = "";
@@ -58,14 +60,12 @@ class TripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    void openEditTripScreen() {
-      Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripScreen,
-        arguments: TripEditInfoScreenArguments(trip: trip)
-      );
+    void callFunction() {
+      callback(trip);
     }
 
     return GestureDetector(
-      onTap: openEditTripScreen,
+      onTap: callFunction,
       child: Container(
         height: 100,
         margin: EdgeInsets.only(bottom: 10),

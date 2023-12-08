@@ -5,11 +5,11 @@ class Passenger {
   final int tripId;
   final int personId;
   final int seatId;
-  final PersonDocument document;
+  final List<PersonDocument> document;
   final int status;
   final String comments;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
 
   // final String baggageStatus;
   // final String? baggageWeight;
@@ -40,7 +40,7 @@ class Passenger {
       tripId: json["trip_id"],
       personId: json["person_id"],
       seatId: json["seat_id"],
-      document: json["document"],
+      document: json["document"].map((doc) => PersonDocument.fromJson(doc)).toList(),
       status: json["status"],
       comments: json["comments"],
       createdAt: json["created_at"],

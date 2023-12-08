@@ -12,7 +12,7 @@ class TripSearchScreen extends StatefulWidget {
     super.key
   });
 
-  final Function() onResultCallback;
+  final Function(TripModel) onResultCallback;
 
   @override
   State<TripSearchScreen> createState() => _TripSearchScreenState();
@@ -45,6 +45,11 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    searchTrips(null);
+  }
 
 
   @override
@@ -62,7 +67,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
               const SizedBox(height: 100),
               InputDateToSearchWidget(calendarCallback: searchTrips),
               const SizedBox(height: 20),
-              TripsResultList(trips: [], isSearching: isSearching)
+              TripsResultList(trips: trips, isSearching: isSearching, callback: widget.onResultCallback)
             ],
           ),
         ),
@@ -72,7 +77,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
 }
 
 class TripSearchScreenArguments {
-  final Function() onResultCallback;
+  final Function(TripModel) onResultCallback;
 
   const TripSearchScreenArguments({required this.onResultCallback});
 }

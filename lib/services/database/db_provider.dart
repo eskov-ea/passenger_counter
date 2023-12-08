@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:pleyona_app/models/passenger/passenger.dart';
+import 'package:pleyona_app/models/passenger/passenger_bagage.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/models/route_model.dart';
+import 'package:pleyona_app/services/database/dbs/bagage_layer.dart';
 import 'package:pleyona_app/services/database/dbs/person_db_layer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'dbs/passenger_layer.dart';
 import 'dbs/tables.dart';
 
 
@@ -115,7 +119,6 @@ class DBProvider {
 
   Future<int> addTrip({required TripModel trip}) async {
     final db = await database;
-    print("ADD_TRIP:::: ${trip.comment}");
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
           'INSERT INTO trip(name, start_trip, end_trip, status, comments) VALUES(?, ?, ?, ?, ?)',
@@ -153,6 +156,18 @@ class DBProvider {
   }
 
 
+  /// TRIPS
+
+  Future<int> addPassenger({required Passenger p}) => PassengerDBLayer().addPassenger(p);
+  Future<List<Passenger>> getPassengers({required int tripId}) => PassengerDBLayer().getPassengers(tripId);
+  Future<Passenger> findPassengerById({required int tripId}) => PassengerDBLayer().findPassengerById(tripId);
+  Future<int> updatePassenger({required Passenger p}) => PassengerDBLayer().addPassenger(p);
+
+
+  /// BAGAGE
+
+  Future<int> addPassengerBagage({required PassengerBagage b}) => BagageDBLayer().addPassengerBagage(b);
+  Future<List<PassengerBagage>> getPassengerBagage({required int passengerId}) => BagageDBLayer().getPassengerBagage(passengerId);
 
 
 
@@ -160,10 +175,7 @@ class DBProvider {
 
 
 
-
-
-
-  Future<void> DeveloperModeClearPersonTable() async {
+      Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;
     // await db.execute("DROP TABLE IF EXISTS person");
     await db.execute("DROP TABLE IF EXISTS trip");

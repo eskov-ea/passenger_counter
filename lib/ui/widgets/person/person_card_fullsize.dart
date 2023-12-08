@@ -14,15 +14,22 @@ class PersonCardFullSize extends StatelessWidget {
     super.key
   });
 
+  double _getDocumentsContainerHeight() {
+    if (personDocuments.length < 4) {
+      return personDocuments.length * 45.0;
+    } else {
+      return 120.0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
+    print("${personDocuments[0].name} ${personDocuments[0].description}");
     final String personName = "${person.lastname} ${person.firstname} ${person.middlename}";
 
 
     return GestureDetector(
-      onTap: () { print("[ PERSON CARD ]:::: $personName"); },
+      onTap: () { print("[ PERSON CARD ]:::: $personDocuments"); },
       child: Container(
         margin: const EdgeInsets.only(top: 10,),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -96,14 +103,18 @@ class PersonCardFullSize extends StatelessWidget {
               ],
             ),
             Container(
-              height: 60,
+              height: _getDocumentsContainerHeight(),
+              width: MediaQuery.of(context).size.width,
               child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                padding: EdgeInsets.all(0),
                 itemCount: personDocuments.length,
                 itemBuilder: (context, index) => Container(
                   padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                   child: Text("${personDocuments[index].name} ${personDocuments[index].description}",
                     style: AppStyles.submainTitleTextStyle,
-                    maxLines: 1,
+                    // maxLines: 1,
                   )
                 )
               ),

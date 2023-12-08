@@ -110,5 +110,8 @@ class Person extends Equatable{
     );
 
     @override
+    String toString() => "$name $description\n\r";
+
+    @override
     List<Object?> get props => [id];
   }

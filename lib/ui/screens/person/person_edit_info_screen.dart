@@ -612,6 +612,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                         )
                       ),
                       child: InkWell(
+                        splashColor: AppColors.cardColor5,
                         onTap: () {
                           EditableDocuments.add(_addEditableDocument());
                           setState(() {});

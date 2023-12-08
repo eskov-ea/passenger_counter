@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
@@ -96,8 +98,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
-                onTap: () {
-                  print("Clicked!");
+                onTap: () async {
+                  final res = await DBProvider.db.getPassengers(tripId: 4);
+                  log(res[0].toString(), level: 10);
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),

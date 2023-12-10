@@ -4,11 +4,11 @@ import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_bagage.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/models/route_model.dart';
-import 'package:pleyona_app/services/database/dbs/bagage_layer.dart';
+import 'package:pleyona_app/services/database/dbs/bagage_db_layer.dart';
 import 'package:pleyona_app/services/database/dbs/person_db_layer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'dbs/passenger_layer.dart';
+import 'dbs/passenger_db_layer.dart';
 import 'dbs/tables.dart';
 
 

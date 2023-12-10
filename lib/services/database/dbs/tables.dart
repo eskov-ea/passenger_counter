@@ -79,5 +79,20 @@ final Map<String, String> tables = {
       'weight INTEGER DEFAULT NULL,'
       'created_at DATETIME DEFAULT CURRENT_TIMESTAMP,'
       'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,'
+      'deleted_at DATETIME DEFAULT NULL);',
+
+  'seat'  :
+  'CREATE TABLE seat ('
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+      'cabin_number varchar(5) DEFAULT NULL,'
+      'place_number varchar(5) DEFAULT NULL,'
+      'deck varchar(50) DEFAULT NULL,'
+      'side varchar(50) DEFAULT NULL,'
+      'barcode varchar(100) DEFAULT NULL,'
+      'class_seat TINYINT(3) DEFAULT NULL,'
+      'status TINYINT(1) DEFAULT NULL,'
+      'comments text DEFAULT "",'
+      'created_at DATETIME DEFAULT CURRENT_TIMESTAMP,'
+      'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,'
       'deleted_at DATETIME DEFAULT NULL);'
 };

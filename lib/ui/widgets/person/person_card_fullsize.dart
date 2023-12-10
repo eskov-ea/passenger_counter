@@ -24,7 +24,6 @@ class PersonCardFullSize extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("${personDocuments[0].name} ${personDocuments[0].description}");
     final String personName = "${person.lastname} ${person.firstname} ${person.middlename}";
 
 

@@ -19,6 +19,7 @@ final Map<String, String> tables = {
       'citizenship varchar(100) DEFAULT NULL, '
       'class_person varchar(20) DEFAULT "Regular" REFERENCES person_class_list(person_class), '
       'comment text DEFAULT " ", '
+      'parent_id INTEGER DEFAULT 0 NOT NULL, '
       'created_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
       'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, '
       'deleted_at DATETIME DEFAULT NULL );',

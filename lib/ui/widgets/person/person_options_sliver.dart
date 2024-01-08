@@ -4,6 +4,8 @@ import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 
+import '../../screens/person/person_add_new_screen.dart';
+
 
 class PersonOptionsSliver extends StatelessWidget {
   PersonOptionsSliver({super.key});
@@ -29,7 +31,9 @@ class PersonOptionsSliver extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen);
+                  Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen,
+                      arguments: AddNewPersonScreenArguments(parentId: null, routeName: null)
+                  );
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),

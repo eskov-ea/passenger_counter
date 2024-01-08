@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/models/person_model.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/person/person_edit_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_fullsize.dart';
 
 class SuccessInfoScreen extends StatelessWidget {
@@ -37,20 +39,25 @@ class SuccessInfoScreen extends StatelessWidget {
                     color: AppColors.textMain,
                     borderRadius: const BorderRadius.all(Radius.circular(12))
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10, top: 80, bottom: 10),
-                        child: Text(message)),
-                      PersonCardFullSize(person: person, personDocuments: personDocuments),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacementNamed(routeName);
-                        },
-                        child: Text("Продолжить"),
-                      ),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10, top: 80, bottom: 10),
+                          child: Text(message)),
+                        PersonCardFullSize(person: person, personDocuments: personDocuments),
+                        ElevatedButton(
+                          onPressed: () {
+                            if(routeName == MainNavigationRouteNames.editPersonInfoScreen) {
+                              Navigator.of(context).pushReplacementNamed(routeName, arguments: EditPersonScreenArguments(person: person));
+                            }
+                            Navigator.of(context).pushReplacementNamed(routeName);
+                          },
+                          child: Text("Продолжить"),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Transform.translate(

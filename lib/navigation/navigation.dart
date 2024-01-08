@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/factories/screen_factory.dart';
+import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/widgets/scanner.dart';
@@ -60,14 +61,15 @@ class MainNavigation {
           transitionDuration: Duration(milliseconds: 700),
         );
       case MainNavigationRouteNames.addPersonScreen:
+        final arguments = settings.arguments as AddNewPersonScreenArguments;
         return CupertinoPageRoute(
           settings: const RouteSettings(name: MainNavigationRouteNames.addPersonScreen),
-          builder: (BuildContext context) => _screenFactory.makeAddPersonScreen()
+          builder: (BuildContext context) => _screenFactory.makeAddPersonScreen(arguments)
         );
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.addPersonScreen),
 
-          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAddPersonScreen(),
+          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAddPersonScreen(arguments),
           transitionsBuilder: (context, Animation<double> animation,
               Animation<double> secondaryAnimation, Widget child) {
             final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));

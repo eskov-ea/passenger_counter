@@ -34,8 +34,8 @@ class ScreenFactory {
     return const PassengerAddNew();
   }
 
-  Widget makeAddPersonScreen() {
-    return const PersonAddNewScreen();
+  Widget makeAddPersonScreen(AddNewPersonScreenArguments arguments) {
+    return PersonAddNewScreen(parentId: arguments.parentId, routeName: arguments.routeName);
   }
 
   Widget makeAllPersonsScreen() {
@@ -58,7 +58,7 @@ class ScreenFactory {
   }
 
   Widget makeEditPersonInfoScreen(EditPersonScreenArguments arguments) {
-    return EditPersonInfoScreen(person: arguments.person,);
+    return EditPersonInfoScreen(person: arguments.person);
   }
 
   Widget makeSearchPersonScreen(SearchPersonScreenArguments arguments) {

@@ -59,6 +59,7 @@ class DBProvider {
 
   Future<int> addPerson(Person p) => PersonDBLayer().addPerson(p);
   Future<List<Person>> getPersons() => PersonDBLayer().getPersons();
+  Future<List<Person>> getPersonChildren(int personId) => PersonDBLayer().getPersonChildren(personId);
   Future<List<Person>> findPerson({
     required String lastname, String? firstname, String? middlename, String? birthdate
   }) => PersonDBLayer().findPerson(lastname: lastname, firstname: firstname, middlename: middlename, birthdate: birthdate);
@@ -175,10 +176,10 @@ class DBProvider {
 
 
 
-      Future<void> DeveloperModeClearPersonTable() async {
+  Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;
-    // await db.execute("DROP TABLE IF EXISTS person");
-    await db.execute("DROP TABLE IF EXISTS trip");
+    await db.execute("DROP TABLE IF EXISTS person");
+    // await db.execute("DROP TABLE IF EXISTS trip");
     // await db.execute("DROP TABLE IF EXISTS person_documents");
   }
 

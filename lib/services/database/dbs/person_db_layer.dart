@@ -26,15 +26,26 @@ class PersonDBLayer {
     });
   }
 
+  Future<List<Person>> getPersonChildren(int personId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM person WHERE parent_id = $personId'
+      );
+      print(res);
+      return res.map((el) => Person.fromJson(el)).toList();
+    });
+  }
+
   Future<List<Person>> findPerson({
     required String lastname, String? firstname, String? middlename, String? birthdate
   }) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       String sql = "SELECT * FROM person WHERE lastname = '$lastname'";
-      if (firstname != null) sql += ", firstname = '$firstname'";
-      if (middlename != null) sql += ", firstname = '$middlename'";
-      if (birthdate != null) sql += ", firstname = '$birthdate'";
+      if (firstname != null) sql += "AND firstname = '$firstname'";
+      if (middlename != null) sql += "AND middlename = '$middlename'";
+      if (birthdate != null) sql += "AND birthdate = '$birthdate'";
 
       final res = await txn.rawQuery(sql);
       return res.map((el) => Person.fromJson(el)).toList();

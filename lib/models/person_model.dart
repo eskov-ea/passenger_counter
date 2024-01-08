@@ -12,6 +12,7 @@ class Person extends Equatable{
   final String citizenship;
   final String personClass;
   final String? comment;
+  final int? parentId;
   final String photo;
   final String createdAt;
   final String updatedAt;
@@ -29,6 +30,7 @@ class Person extends Equatable{
     required this.citizenship,
     required this.personClass,
     required this.comment,
+    required this.parentId,
     required this.photo,
     required this.createdAt,
     required this.updatedAt
@@ -48,6 +50,7 @@ class Person extends Equatable{
         personClass: json["class_person"],
         comment: json["comment"],
         photo: json["photo"],
+        parentId: json["parent_id"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
       );
@@ -66,6 +69,7 @@ class Person extends Equatable{
         personClass: json["class_person"] ?? "Regular",
         comment: "",
         photo: "",
+        parentId: 0,
         createdAt: "",
         updatedAt: ""
       );

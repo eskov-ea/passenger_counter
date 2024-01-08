@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +78,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
 
   late final List<PersonDocument> personDocuments;
   late final List<Widget> EditableDocuments;
+  List<Person>? children;
   List<String> documentNames = [];
   List<String> documentNumbers = [];
   List<bool> documentErrors = [];
@@ -107,6 +107,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
         email: email,
         citizenship: citizenship,
         personClass: personClass,
+        parentId: widget.person.parentId,
         comment: comment,
         photo: widget.person.photo,
         createdAt: widget.person.createdAt,
@@ -296,6 +297,11 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
       });
     });
     personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
+    DBProvider.db.getPersonChildren(widget.person.id).then((value) {
+      if (value.isNotEmpty) {
+        children = value;
+      }
+    });
 
     super.initState();
   }
@@ -662,6 +668,8 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
+                  _childrenBlock(),
+                  const SizedBox(height: 10),
                   EditableCommentFieldWidget(
                     value: comment,
                     valueSetter: commentSetter
@@ -670,13 +678,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                   hasPersonChanges
                     ? SaveButton(onTap: _onUpdate, label: "Обновить")
                     : SizedBox.shrink(),
-                  const SizedBox(height: 20,),
-                  ElevatedButton(
-                    onPressed: () {
-                      _onUpdate();
-                    },
-                    child: Text("CHECK")
-                  )
+                  const SizedBox(height: 20,)
                 ],
               ),
             ),
@@ -686,6 +688,53 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     );
   }
 
+  Widget _childrenBlock() {
+    return Container(
+      child: Column(
+        children: [
+          const Text("Дети", style: TextStyle(fontSize: 24)),
+          children == null
+            ? Text("Нет детей")
+            : Container(),
+          GestureDetector(
+            onTap: _openAddingChildPage,
+            child: Container(
+              height: 30,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                color: Color(0xFFEFEFEF)
+              ),
+              child: Text('Добавить ребенка'),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+  Future<void> _openAddingChildPage() async {
+    Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen,
+      arguments: AddNewPersonScreenArguments(parentId: widget.person.id, routeName: MainNavigationRouteNames.passengerEditingScreen)
+    );
+  }
+  // Future<void> _openAddingChildPage() async {
+  //   return await showDialog(
+  //       context: context,
+  //       builder: (context) =>
+  //     Scaffold(
+  //       body: Container(
+  //         height: MediaQuery.of(context).size.height,
+  //         width: MediaQuery.of(context).size.width,
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Text("Добавить ребенка", style: AppStyles.submainTitleTextStyle)
+  //           ],
+  //         ),
+  //       ),
+  //     )
+  //   );
+  // }
   void firstnameSetter(String value) {
     setState(() {
       firstname = value;

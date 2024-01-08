@@ -23,9 +23,24 @@ import '../../widgets/person/adding_person_photo_scan_btns.dart';
 
 
 enum PersonClass { regular, staff, vip }
+class AddNewPersonScreenArguments {
+  final int? parentId;
+  final String? routeName;
+
+  AddNewPersonScreenArguments({
+    required this.parentId,
+    required this.routeName
+  });
+}
 
 class PersonAddNewScreen extends StatefulWidget {
-  const PersonAddNewScreen({super.key});
+
+  final int? parentId;
+  final String? routeName;
+  const PersonAddNewScreen({
+    required this.parentId,
+    required this.routeName,
+    super.key});
 
   @override
   State<PersonAddNewScreen> createState() => _PersonAddNewScreenState();
@@ -321,10 +336,11 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         personClass: "Regular",
         comment: commentTextController.text,
         photo: personBase64Image ?? "",
+        parentId: widget.parentId,
         createdAt: dateFormatter(DateTime.now()),
         updatedAt: dateFormatter(DateTime.now())
       );
-      final persons = await _db.findPerson(lastname: newPerson.lastname);
+      final persons = await _db.findPerson(lastname: newPerson.lastname, firstname: newPerson.firstname);
       if (persons.isEmpty) {
         final personId = await _db.addPerson(newPerson);
         final newDoc = PersonDocument(
@@ -336,7 +352,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         await _db.addDocument(document: newDoc);
         // TODO: handle error
         Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
-          arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: MainNavigationRouteNames.homeScreen,
+          arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: widget.routeName ?? MainNavigationRouteNames.homeScreen,
           person: newPerson, personDocuments: [ newDoc ])
         );
       } else {

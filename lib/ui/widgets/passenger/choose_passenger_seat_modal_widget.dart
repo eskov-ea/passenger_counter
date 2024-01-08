@@ -6,7 +6,7 @@ Future<void> ChoosePassengerSeatModalWidget(BuildContext context) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text("Выберите место"),
-        content: ,
+        content: Container(),
       );
     }
   );

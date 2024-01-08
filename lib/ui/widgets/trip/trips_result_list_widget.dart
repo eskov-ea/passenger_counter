@@ -32,7 +32,7 @@ class TripsResultList extends StatelessWidget {
         );
       } else {
         return Container(
-          height: 500,
+          height: 330,
           alignment: Alignment.topCenter,
           child: ListView.builder(
             scrollDirection: Axis.vertical,

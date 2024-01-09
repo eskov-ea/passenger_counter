@@ -8,8 +8,8 @@ class PersonDBLayer {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-          'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, citizenship, class_person, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.citizenship, p.personClass, p.comment, p.photo, p.createdAt, p.updatedAt]
+          'INSERT INTO person(firstname, lastname, middlename, gender, birthdate, phone, email, citizenship, class_person, parent_id, comment, photo, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [p.firstname, p.lastname, p.middlename, p.gender, p.birthdate, p.phone, p.email, p.citizenship, p.personClass, p.parentId ?? 0, p.comment, p.photo, p.createdAt, p.updatedAt]
       );
       return id;
     });
@@ -43,7 +43,6 @@ class PersonDBLayer {
       List<Object> res = await txn.rawQuery(
           'SELECT * FROM person WHERE parent_id = $personId'
       );
-      print(res);
       return res.map((el) => Person.fromJson(el)).toList();
     });
   }

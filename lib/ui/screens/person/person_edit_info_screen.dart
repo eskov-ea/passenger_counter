@@ -267,6 +267,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   
   @override
   void initState() {
+    print("start init state");
     BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
     firstname = widget.person.firstname;
     lastname = widget.person.lastname;
@@ -695,7 +696,9 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
           const Text("Дети", style: TextStyle(fontSize: 24)),
           children == null
             ? Text("Нет детей")
-            : Container(),
+            : Container(
+            child: ,
+          ),
           GestureDetector(
             onTap: _openAddingChildPage,
             child: Container(
@@ -714,7 +717,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   }
   Future<void> _openAddingChildPage() async {
     Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen,
-      arguments: AddNewPersonScreenArguments(parentId: widget.person.id, routeName: MainNavigationRouteNames.passengerEditingScreen)
+      arguments: AddNewPersonScreenArguments(parentId: widget.person.id, routeName: MainNavigationRouteNames.editPersonInfoScreen)
     );
   }
   // Future<void> _openAddingChildPage() async {

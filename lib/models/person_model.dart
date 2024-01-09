@@ -78,7 +78,7 @@ class Person extends Equatable{
     String toString() {
       return "Instance Person [ firstname: $firstname, lastname: $lastname, middlename: $middlename,"
           " gender: $gender, birthdate: $birthdate, phone: $phone, "
-          "email: $email, citizenship: $citizenship, "
+          "email: $email, citizenship: $citizenship, parent id: $parentId "
           "person class: $personClass, comment: $comment, created at: $createdAt, updated at: $updatedAt";
     }
 

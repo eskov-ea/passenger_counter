@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
-import '../../../models/route_model.dart';
+import '../../../models/trip_model.dart';
 import '../../../services/database/db_provider.dart';
 import '../../widgets/search_date_widget.dart';
 import '../../widgets/trip/trips_result_list_widget.dart';
@@ -12,7 +12,7 @@ class TripSearchScreen extends StatefulWidget {
     super.key
   });
 
-  final Function(TripModel) onResultCallback;
+  final Function(Trip) onResultCallback;
 
   @override
   State<TripSearchScreen> createState() => _TripSearchScreenState();
@@ -21,7 +21,7 @@ class TripSearchScreen extends StatefulWidget {
 class _TripSearchScreenState extends State<TripSearchScreen> {
 
   bool isSearching = false;
-  List<TripModel>? trips;
+  List<Trip>? trips;
   final DBProvider _db = DBProvider.db;
   String? filterDate;
 
@@ -30,9 +30,9 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
     setState(() {
       isSearching = true;
     });
-    List<TripModel> result = [];
+    List<Trip> result = [];
     if (date != null) {
-      result = await _db.searchTripsByDate(date);
+      result = await _db.searchTripsByDate(date: date);
     } else {
       result = await _db.getTrips();
     }
@@ -77,7 +77,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
 }
 
 class TripSearchScreenArguments {
-  final Function(TripModel) onResultCallback;
+  final Function(Trip) onResultCallback;
 
   const TripSearchScreenArguments({required this.onResultCallback});
 }

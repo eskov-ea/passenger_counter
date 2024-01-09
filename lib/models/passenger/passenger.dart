@@ -5,7 +5,7 @@ class Passenger {
   final int tripId;
   final int personId;
   final int seatId;
-  final List<PersonDocument> document;
+  final String document;
   final int status;
   final String comments;
   final String createdAt;
@@ -40,10 +40,13 @@ class Passenger {
       tripId: json["trip_id"],
       personId: json["person_id"],
       seatId: json["seat_id"],
-      document: json["document"].map((doc) => PersonDocument.fromJson(doc)).toList(),
+      document: json["document"],
       status: json["status"],
       comments: json["comments"],
       createdAt: json["created_at"],
       updatedAt: json["updated_at"]
     );
+
+  @override
+  String toString() => "Passenger: $id, $tripId, $personId, $seatId, $document";
 }

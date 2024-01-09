@@ -11,7 +11,7 @@ import 'package:pleyona_app/ui/widgets/theme_background.dart';
 import 'package:pleyona_app/ui/widgets/trip/trips_result_list_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../../models/route_model.dart';
+import '../../../models/trip_model.dart';
 import '../../../navigation/navigation.dart';
 
 
@@ -30,7 +30,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
   String? filterDate;
   final ScrollController _scrollController = ScrollController();
   final DBProvider _db = DBProvider.db;
-  List<TripModel>? trips;
+  List<Trip>? trips;
 
   void goToDate(int year, int month, int day) {
     final date = DateTime(year, month, day);
@@ -52,9 +52,9 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
     setState(() {
       isSearching = true;
     });
-    List<TripModel> result = [];
+    List<Trip> result = [];
     if (date != null) {
-      result = await _db.searchTripsByDate(date);
+      result = await _db.searchTripsByDate(date: date);
     } else {
       result = await _db.getTrips();
     }
@@ -67,7 +67,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
     });
   }
 
-  void openEditTripScreen(TripModel trip) {
+  void openEditTripScreen(Trip trip) {
     Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripScreen,
         arguments: TripEditInfoScreenArguments(trip: trip)
     );

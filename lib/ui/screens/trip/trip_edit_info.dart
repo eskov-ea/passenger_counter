@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pleyona_app/models/route_model.dart';
+import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
@@ -15,7 +15,7 @@ class TripEditInfo extends StatefulWidget {
     super.key
   });
 
-  final TripModel trip;
+  final Trip trip;
 
   @override
   State<TripEditInfo> createState() => _TripEditInfoState();
@@ -560,6 +560,6 @@ class _TripEditInfoState extends State<TripEditInfo> {
 }
 
 class TripEditInfoScreenArguments {
-  final TripModel trip;
+  final Trip trip;
   const TripEditInfoScreenArguments({required this.trip});
 }

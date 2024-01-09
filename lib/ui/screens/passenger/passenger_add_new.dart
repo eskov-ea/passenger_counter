@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_bagage.dart';
 import 'package:pleyona_app/models/person_model.dart';
-import 'package:pleyona_app/models/route_model.dart';
+import 'package:pleyona_app/models/seat_model.dart';
+import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/passenger/passenger_bagage_info.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_fullsize.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
+import 'package:pleyona_app/ui/widgets/seats/seat_card.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 import 'package:pleyona_app/ui/widgets/trip/trip_card.dart';
 import '../../widgets/form_block_title.dart';
@@ -30,7 +33,8 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   final ScrollController _scrollController = ScrollController();
   Person? person;
   List<PersonDocument>? personDocuments;
-  TripModel? trip;
+  Trip? trip;
+  Seat? seat;
   final DBProvider _db = DBProvider.db;
   final TextEditingController commentTextController= TextEditingController();
   final FocusNode commentFieldFocus = FocusNode();
@@ -87,7 +91,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
     Navigator.of(context).pop();
   }
 
-  void setTrip(TripModel t) {
+  void setTrip(Trip t) {
     setState(() {
       trip = t;
     });
@@ -102,15 +106,26 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
     }
   }
 
+  void setSeat(Seat s) {
+    setState(() {
+      seat = s;
+    });
+    Navigator.of(context).pop();
+  }
+
   Future<void> _onSafe() async {
-    if (person != null && personDocuments != null && trip != null) {
+    if (person != null && personDocuments != null && trip != null && seat != null) {
       try {
+        String document = "";
+        personDocuments!.forEach((doc) {
+          document += doc.toString();
+        });
         final passenger = Passenger(
             id: 0,
             tripId: trip!.id,
             personId: person!.id,
-            seatId: 101,
-            document: personDocuments!,
+            seatId: seat!.id,
+            document: document,
             status: 1,
             comments: commentTextController.text,
             createdAt: "",
@@ -171,6 +186,9 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                       const SizedBox(height: 10),
                       const BlockTitle(message: "Рейс", bottomPadding: 0),
                       _tripBlock(),
+                      const SizedBox(height: 10),
+                      const BlockTitle(message: "Выбор места", bottomPadding: 0),
+                      _seatBlock(),
                       const SizedBox(height: 10),
                       const BlockTitle(message: "Дополнительная информация",
                         bottomPadding: 0, alignment: Alignment.center,
@@ -295,7 +313,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
     if (trip != null) {
       return Column(
         children: [
-          TripCard(trip: trip!, callback: (TripModel trip) {  } ),
+          TripCard(trip: trip!, callback: (Trip trip) {  } ),
           Material(
             color: AppColors.transparent,
             child: Ink(
@@ -348,6 +366,77 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             child: const Align(
               alignment: Alignment.bottomCenter,
               child: Text("Выбрать рейс"),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _seatBlock() {
+    if (trip == null) {
+      return Container(
+        width: MediaQuery.of(context).size.width - 20,
+        height: 100,
+        child: Text('Выберите рейс'),
+      );
+    }
+    if (seat != null) {
+      return Column(
+        children: [
+          SeatCard(seat: seat!),
+          Material(
+            color: AppColors.transparent,
+            child: Ink(
+              width: MediaQuery.of(context).size.width - 20,
+              height: 20,
+              decoration: const BoxDecoration(
+                color: Color(0x80FFFFFF),
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+              ),
+              child: InkWell(
+                onTap: () async {
+                  await Navigator.of(context).pushNamed(
+                      MainNavigationRouteNames.seatSearchScreen,
+                      arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id)
+                  );
+                },
+                customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                splashColor: const Color(0xB3FFFFFF),
+                child: const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text("Изменить место"),
+                ),
+              ),
+            ),
+          )
+        ],
+      );
+    } else {
+      return Material(
+        color: AppColors.transparent,
+        child: Ink(
+          width: MediaQuery.of(context).size.width - 20,
+          height: 100,
+          decoration: const BoxDecoration(
+              color: Color(0x80FFFFFF),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              image: DecorationImage(image: AssetImage("assets/icons/seat.png"),
+                  opacity: 0.5, fit: BoxFit.scaleDown, scale: 8
+              )
+          ),
+          child: InkWell(
+            onTap: () async {
+              await Navigator.of(context).pushNamed(
+                  MainNavigationRouteNames.seatSearchScreen,
+                  arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id)
+              );
+            },
+            customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+            splashColor: const Color(0xB3FFFFFF),
+            child: const Align(
+              alignment: Alignment.bottomCenter,
+              child: Text("Выбрать место"),
             ),
           ),
         ),

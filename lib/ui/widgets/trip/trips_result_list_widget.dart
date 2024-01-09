@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/ui/widgets/trip/trip_card.dart';
-import '../../../models/route_model.dart';
+import '../../../models/trip_model.dart';
 
 class TripsResultList extends StatelessWidget {
   const TripsResultList({
@@ -12,8 +12,8 @@ class TripsResultList extends StatelessWidget {
   });
 
   final bool isSearching;
-  final List<TripModel>? trips;
-  final Function(TripModel) callback;
+  final List<Trip>? trips;
+  final Function(Trip) callback;
 
   @override
   Widget build(BuildContext context) {

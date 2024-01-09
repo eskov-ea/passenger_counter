@@ -341,7 +341,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         updatedAt: dateFormatter(DateTime.now())
       );
       final persons = await _db.findPerson(lastname: newPerson.lastname, firstname: newPerson.firstname);
-      if (persons.isEmpty) {
+      // if (persons.isEmpty) {
         final personId = await _db.addPerson(newPerson);
         final newDoc = PersonDocument(
           id: null,
@@ -355,13 +355,13 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
           arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: widget.routeName ?? MainNavigationRouteNames.homeScreen,
           person: newPerson, personDocuments: [ newDoc ])
         );
-      } else {
-        Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,
-          arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: persons,
-          personDocumentName: documentNameFieldController.text,
-          personDocumentNumber: documentNumberFieldController.text)
-        );
-      }
+      // } else {
+      //   Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,
+      //     arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: persons,
+      //     personDocumentName: documentNameFieldController.text,
+      //     personDocumentNumber: documentNumberFieldController.text)
+      //   );
+      // }
     }
   }
 

@@ -1,4 +1,6 @@
-class TripModel {
+import 'package:intl/intl.dart';
+
+class Trip {
   final int id;
   final String tripName;
   final DateTime tripStartDate;
@@ -6,7 +8,7 @@ class TripModel {
   final int status;
   final String comment;
 
-  TripModel({
+  Trip({
     required this.id,
     required this.tripName,
     required this.tripStartDate,
@@ -15,7 +17,7 @@ class TripModel {
     required this.comment
   });
 
-  static TripModel fromJson(json) => TripModel(
+  static Trip fromJson(json) => Trip(
       id: json["id"],
       tripName: json["name"],
       tripStartDate: DateTime.parse(json["start_trip"]),
@@ -24,4 +26,6 @@ class TripModel {
       comment: json["comments"]
   );
 
+  String getTripDate() => "${DateFormat.yMd().format(tripStartDate)} ${DateFormat.Hm().format(tripStartDate)} "
+      "- ${DateFormat.yMd().format(tripEndDate)} ${DateFormat.Hm().format(tripEndDate)}";
 }

@@ -1,6 +1,5 @@
 import 'package:pleyona_app/models/seat_model.dart';
 import 'package:sqflite/sqflite.dart';
-import '../../../models/passenger/passenger.dart';
 import '../db_provider.dart';
 
 
@@ -29,31 +28,21 @@ class SeatsDBLayer {
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
           'SELECT * FROM seat WHERE seat.id NOT IN '
-              'SELECT * FROM passenger WHERE passenger.trip_id = "$tripId"'
+              '(SELECT passenger.seat_id FROM passenger WHERE passenger.trip_id = "$tripId")'
       );
       print(res);
       return res.map((el) => Seat.fromJson(el)).toList();
     });
   }
 
-  Future<Passenger> findPassengerById(int id) async {
+  Future<Seat> getPassengerSeat(int seatId) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
-      String sql = "SELECT * FROM passenger WHERE id = '$id'";
-      final res = await txn.rawQuery(sql);
-      return Passenger.fromJson(res.first);
-    });
-  }
-
-  Future<int> updatePassenger({required Passenger p}) async {
-    final db = await DBProvider.db.database;
-    return await db.transaction((txn) async {
-      String sql = "UPDATE passenger SET "
-          "person_id = '${p.personId}', trip_id = '${p.tripId}', "
-          "seat_id = '${p.seatId}', document = '${p.document}', "
-          "status = '${p.status}', comments = '${p.comments}' "
-          "WHERE id = '${p.id}'";
-      return await txn.rawUpdate(sql);
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM seat WHERE id = $seatId '
+      );
+      print(res.first);
+      return Seat.fromJson(res.first);
     });
   }
 

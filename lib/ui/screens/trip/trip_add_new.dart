@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as d;
-import 'package:pleyona_app/models/route_model.dart';
+import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
@@ -87,7 +87,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
     if (!isStartTripDateFieldError && !isEndTripDateFieldError && !isTripNameHasError) {
       final DateTime start = _makeDateWithTime(_startTripDateSelection!, _startTripTimeSelection!);
       final DateTime end = _makeDateWithTime(_endTripDateSelection!, _endTripTimeSelection!);
-      final newTrip = TripModel(
+      final newTrip = Trip(
         id: 0,
         tripName: nameTextController.text,
         tripStartDate: start,

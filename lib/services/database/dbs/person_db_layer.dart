@@ -26,6 +26,17 @@ class PersonDBLayer {
     });
   }
 
+  Future<Person> getPersonById(int personId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM person WHERE id = $personId '
+      );
+      print(res);
+      return Person.fromJson(res.first);
+    });
+  }
+
   Future<List<Person>> getPersonChildren(int personId) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {

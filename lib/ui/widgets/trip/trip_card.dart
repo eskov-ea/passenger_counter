@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pleyona_app/models/route_model.dart';
+import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_edit_info.dart';
 import '../../../theme.dart';
@@ -14,7 +14,7 @@ class TripCard extends StatelessWidget {
     super.key
   });
 
-  final Function(TripModel trip) callback;
+  final Function(Trip trip) callback;
   String dateToString(DateTime date) {
     String hour = "";
     String minute = "";
@@ -54,7 +54,7 @@ class TripCard extends StatelessWidget {
 
   final Color firstColor = const Color(0xF2FFFFFF);
   final Color secondColor = const Color(0xD9FFFFFF);
-  final TripModel trip;
+  final Trip trip;
   final int index;
 
   @override

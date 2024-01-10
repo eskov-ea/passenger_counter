@@ -6,6 +6,7 @@ import 'package:pleyona_app/ui/screens/trip/all_trips_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_search_screen.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
+import 'package:pleyona_app/ui/screens/trip/trip_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/widgets/scanner.dart';
 import '../ui/pages/adding_person_options.dart';
@@ -88,5 +89,9 @@ class ScreenFactory {
 
   Widget makeSeatSearchScreen(SeatSearchScreenArguments arguments) {
     return SeatSearchScreen(onResultCallback: arguments.onResultCallback, tripId: arguments.tripId);
+  }
+
+  Widget makeTripFullInfoScreen() {
+    return const TripFullInfoScreen();
   }
 }

@@ -99,8 +99,8 @@ class PassengerOptionsSliver extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () async {
-                  final res = await DBProvider.db.getPassengers(tripId: 4);
-                  log(res[0].toString(), level: 10);
+                  final res = await DBProvider.db.getAvailableStatuses();
+                  log(res.toString(), level: 10);
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
+import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 
@@ -28,7 +29,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<CurrentTripBloc, CurrentTripState>(
         builder: (context, state) {
-      if (state is InitializedCurrentTripState && state.currentTrip == null) {
+      if (state is NoCurrentTripState) {
         return Material(
           color: AppColors.transparent,
           child: Ink(
@@ -71,7 +72,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
             )
           )
         );
-      } else if (state is InitializedCurrentTripState && state.currentTrip != null) {
+      } else if (state is InitializedCurrentTripState) {
         return Material(
           color: AppColors.transparent,
           child: Ink(
@@ -79,7 +80,9 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                 color: AppColors.backgroundMainCard,
                 borderRadius: BorderRadius.all(Radius.circular(20))),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushNamed(MainNavigationRouteNames.tripFullInfoScreen);
+              },
               customBorder: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -105,17 +108,48 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                                 fontSize: 22, color: AppColors.textMain),
                           )
                         ])),
-                    Text.rich(TextSpan(
-                        text: "Дата: ",
-                        style: TextStyle(
-                            fontSize: 16, color: AppColors.textSecondary),
-                        children: [
-                          TextSpan(
-                            text: state.currentTrip.getTripDate(),
-                            style: TextStyle(
-                                fontSize: 20, color: AppColors.textMain),
-                          )
-                        ])),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Дата: ",
+                          style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 60,
+                          child: Column(
+                            children: [
+                              Text(dateToTimeString(state.currentTrip.tripStartDate),
+                                style: TextStyle(fontSize: 30, color: AppColors.textMain),
+                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
+                              ),
+                              // SizedBox(height: 10),
+                              Text(dateToDateString(state.currentTrip.tripStartDate),
+                                style: TextStyle(fontSize: 18, color: AppColors.textMain),
+                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 60,
+                          child: Column(
+                            children: [
+                              Text(dateToTimeString(state.currentTrip.tripEndDate),
+                                style: TextStyle(fontSize: 30, color: AppColors.textMain),
+                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
+                              ),
+                              // SizedBox(height: 10),
+                              Text(dateToDateString(state.currentTrip.tripEndDate),
+                                style: TextStyle(fontSize: 18, color: AppColors.textMain),
+                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                     SizedBox(
                       height: 10,
                     ),
@@ -128,16 +162,17 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                     ),
                     Container(
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.5 - 30,
+                            width: MediaQuery.of(context).size.width * 0.43,
                             child: Text("На борту:".toUpperCase(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 22, color: AppColors.textMain)),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.5 - 30,
+                            width: MediaQuery.of(context).size.width * 0.43,
                             child: Text("Свободно:".toUpperCase(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -148,16 +183,17 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                     ),
                     Container(
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.5 - 30,
+                            width: MediaQuery.of(context).size.width * 0.43,
                             child: Text(state.tripPassengers.length.toString(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 72, color: AppColors.textMain)),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.5 - 30,
+                            width: MediaQuery.of(context).size.width * 0.43,
                             child: Text(state.availableSeats.length.toString(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(

@@ -30,6 +30,7 @@ abstract class MainNavigationRouteNames {
   static const passengerAddNewScreen = '/add_passenger';
   static const tripSearchScreen = '/search_trip';
   static const seatSearchScreen = '/search_seat';
+  static const tripFullInfoScreen = '/trip_full_info';
   static const test = '/test';
 }
 
@@ -172,7 +173,9 @@ class MainNavigation {
       case MainNavigationRouteNames.tripSearchScreen:
         final arguments = settings.arguments as TripSearchScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripSearchScreen(arguments));
-        case MainNavigationRouteNames.test:
+      case MainNavigationRouteNames.tripFullInfoScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripFullInfoScreen());
+      case MainNavigationRouteNames.test:
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),
           pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAllPersonsScreen(),

@@ -50,6 +50,7 @@ class SuccessInfoScreen extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () {
                             if(routeName == MainNavigationRouteNames.editPersonInfoScreen) {
+                              Navigator.of(context).pop();
                               Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.editPersonInfoScreen,
                                   arguments: EditPersonScreenArguments(person: person)
                               );

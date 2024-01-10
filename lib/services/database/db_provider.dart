@@ -6,11 +6,13 @@ import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/services/database/dbs/bagage_db_layer.dart';
 import 'package:pleyona_app/services/database/dbs/documents_db_layer.dart';
+import 'package:pleyona_app/services/database/dbs/passenger_status_db_layer.dart';
 import 'package:pleyona_app/services/database/dbs/person_db_layer.dart';
 import 'package:pleyona_app/services/database/dbs/seats_db_layer.dart';
 import 'package:pleyona_app/services/database/dbs/trip_db_layer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../../models/passenger/passenger_status.dart';
 import '../../models/seat_model.dart';
 import 'dbs/passenger_db_layer.dart';
 import 'dbs/tables.dart';
@@ -114,11 +116,15 @@ class DBProvider {
   Future<int> addPassengerBagage({required PassengerBagage b}) => BagageDBLayer().addPassengerBagage(b);
   Future<List<PassengerBagage>> getPassengerBagage({required int passengerId}) => BagageDBLayer().getPassengerBagage(passengerId);
 
-
-
-
-
-
+  /// PASSENGER STATUS
+  Future<void> initializePassengerStatusValues(
+      {required List<PassengerStatusValue> statuses}) => PassengerStatusDBLayer().initializePassengerStatusValues(statuses);
+  Future<List<PassengerStatusValue>> getAvailableStatuses() => PassengerStatusDBLayer().getAvailableStatuses();
+  Future<List<Passenger>> getPassengersByStatusName({required int tripId,
+    required String statusName}) => PassengerStatusDBLayer().getPassengersByStatusName(tripId, statusName);
+  Future<int> addPassengerStatus({required int passengerId, required String? statusName}) => PassengerStatusDBLayer().addPassengerStatus(passengerId, statusName);
+  Future<List<PassengerStatus>> getPassengerStatuses({required int passengerId}) =>
+      PassengerStatusDBLayer().getPassengerStatuses(passengerId);
 
   Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;

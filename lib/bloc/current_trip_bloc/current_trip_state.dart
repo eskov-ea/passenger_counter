@@ -41,3 +41,8 @@ class InitializingCurrentTripState extends CurrentTripState {
   @override
   List<Object?> get props => [];
 }
+
+class NoCurrentTripState extends CurrentTripState {
+  @override
+  List<Object?> get props => [];
+}

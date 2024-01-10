@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/models/trip_model.dart';
-import 'package:pleyona_app/navigation/navigation.dart';
-import 'package:pleyona_app/ui/screens/trip/trip_edit_info.dart';
 import '../../../theme.dart';
-
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class TripCard extends StatelessWidget {
   const TripCard({
@@ -15,40 +14,46 @@ class TripCard extends StatelessWidget {
   });
 
   final Function(Trip trip) callback;
-  String dateToString(DateTime date) {
-    String hour = "";
-    String minute = "";
-    String day = "";
-    String month = "";
-    String year = "";
 
-    if (date.hour < 10) {
-      hour = "0${date.hour}";
-    } else {
-      hour = "${date.hour}";
-    }
+  Future<void> _openAlertDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Вы хотите удалить рейс?'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Это действие нельзя будет отменить.'),
+                Text('При удалении рейса будут удалены все пассажиры, зарегистрированные на этот рейс, багаж пассажиров, места. Контактная информация (Персона) о пассажирах удалена НЕ БУДЕТ'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Удалить'),
+              onPressed: () async {
+                await _deleteTrip();
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Отменить'),
+              onPressed: () {
+                Navigator.of(context).pop();
 
-    if (date.minute < 10) {
-      minute = "0${date.minute}";
-    } else {
-      minute = "${date.minute}";
-    }
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
 
-    if (date.day < 10) {
-      day = "0${date.day}";
-    } else {
-      day = "${date.day}";
-    }
+  //Todo: delete trip functionality
+  Future<void> _deleteTrip() async {
 
-    if (date.month < 10) {
-      month = "0${date.month}";
-    } else {
-      month = "${date.month}";
-    }
-
-    year = "${date.year}";
-
-    return "$day.$month.$year  $hour:$minute";
   }
 
 
@@ -64,38 +69,59 @@ class TripCard extends StatelessWidget {
       callback(trip);
     }
 
-    return GestureDetector(
-      onTap: callFunction,
-      child: Container(
-        height: 100,
-        margin: EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: index % 2 == 0 ? firstColor : secondColor,
-        ),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(trip.tripName,
-              style: AppStyles.submainTitleTextStyle,
+    return Slidable(
+      key: ValueKey(trip.id),
+      groupTag: 'trip',
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        children: [
+          SlidableAction(
+            autoClose: false,
+            onPressed: _openAlertDialog,
+            backgroundColor: const Color(0xFFFE4A49),
+            foregroundColor: Colors.white,
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(6),
+              bottomRight: Radius.circular(6)
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(dateToString(trip.tripStartDate),
-                  style: AppStyles.secondaryTextStyle,
-                ),
-                Text(dateToString(trip.tripEndDate),
-                  style: AppStyles.secondaryTextStyle,
-                ),
-              ],
-            )
-          ],
+            icon: Icons.delete,
+            label: 'Delete',
+          )
+        ],
+      ),
+      child: GestureDetector(
+        onTap: callFunction,
+        child: Container(
+          height: 100,
+          margin: EdgeInsets.only(bottom: 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(6)),
+            color: index % 2 == 0 ? firstColor : secondColor,
+          ),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(trip.tripName,
+                style: AppStyles.submainTitleTextStyle,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Divider(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(dateToFullDateString(trip.tripStartDate),
+                    style: AppStyles.secondaryTextStyle,
+                  ),
+                  Text(dateToFullDateString(trip.tripEndDate),
+                    style: AppStyles.secondaryTextStyle,
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

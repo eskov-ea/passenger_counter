@@ -18,6 +18,7 @@ import '../../../services/database/db_provider.dart';
 import '../../widgets/editable_text_fields/editable_birthdate_field_widget.dart';
 import '../../widgets/editable_text_fields/editable_comment_text_field.dart';
 import '../../widgets/editable_text_fields/editable_document_field_widget.dart';
+import '../../widgets/person/persons_children_widget.dart';
 import '../camera_screen.dart';
 
 class EditPersonInfoScreen extends StatefulWidget {
@@ -75,9 +76,11 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
 
   String? documentInputFieldsErrorMessage;
   bool isEditingMode = false;
+  bool isChildrenLoaded = false;
 
   late final List<PersonDocument> personDocuments;
   late final List<Widget> EditableDocuments;
+  late final CameraBloc _cameraBloc;
   List<Person>? children;
   List<String> documentNames = [];
   List<String> documentNumbers = [];
@@ -267,8 +270,8 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   
   @override
   void initState() {
-    print("start init state");
-    BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
+    _cameraBloc = BlocProvider.of<CameraBloc>(context);
+    _cameraBloc.add(InitializeCameraEvent());
     firstname = widget.person.firstname;
     lastname = widget.person.lastname;
     middlename = widget.person.middlename;
@@ -299,9 +302,10 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     });
     personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
     DBProvider.db.getPersonChildren(widget.person.id).then((value) {
-      if (value.isNotEmpty) {
-        children = value;
-      }
+      setState(() {
+        children = value.isNotEmpty ? value : null;
+        isChildrenLoaded = true;
+      });
     });
 
     super.initState();
@@ -360,6 +364,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
 
   @override
   void dispose() {
+    _cameraBloc.add(DisposeCameraEvent());
     super.dispose();
   }
 
@@ -437,7 +442,6 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        BlocProvider.of<CameraBloc>(context).add(DisposeCameraEvent());
         if (_checkForUnsavedChanges()) {
           _openOnPopGuardAlert();
           return false;
@@ -690,15 +694,46 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   }
 
   Widget _childrenBlock() {
+    late Widget _widget;
+    if ( !isChildrenLoaded) {
+      _widget = Container(
+        height: 50,
+        margin: const EdgeInsets.only(bottom: 5),
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: Color(0xFFEFEFEF)
+        ),
+        child: const CircularProgressIndicator(),
+      );
+    } else {
+      if (children == null) {
+        _widget = Container(
+          height: 50,
+          margin: const EdgeInsets.only(bottom: 5),
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              color: Color(0xFFEFEFEF)
+          ),
+          child: const Text("Нет детей"),
+        );
+      } else {
+        _widget = Container(
+          height: children!.length * 56,
+          child: Column(
+            children: [
+              ...children!.map((child) => PersonsChildrenWidget(child: child)).toList()
+            ],
+          ),
+        );
+      }
+    }
     return Container(
       child: Column(
         children: [
           const Text("Дети", style: TextStyle(fontSize: 24)),
-          children == null
-            ? Text("Нет детей")
-            : Container(
-            child: ,
-          ),
+          _widget,
           GestureDetector(
             onTap: _openAddingChildPage,
             child: Container(

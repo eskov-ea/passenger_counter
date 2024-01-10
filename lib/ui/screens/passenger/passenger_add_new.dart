@@ -131,6 +131,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             createdAt: "",
             updatedAt: "");
         final passengerId = await _db.addPassenger(p: passenger);
+        await _db.addPassengerStatus(passengerId: passengerId, statusName: 'CheckIn');
         for (int i=0; i<personBagage.length; ++i) {
           final bagage = PassengerBagage(
             id: 0,

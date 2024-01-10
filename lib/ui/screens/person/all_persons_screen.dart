@@ -4,6 +4,7 @@ import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/person/person_edit_info_screen.dart';
+import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_brief.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
@@ -46,7 +47,9 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         backgroundColor: AppColors.backgroundNeutral,
+        appBar: CustomAppBar(child: null, scrollController: null),
         body: ThemeBackgroundWidget(
           child: Container(
             width: MediaQuery.of(context).size.width,

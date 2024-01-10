@@ -105,7 +105,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   String? documentInputFieldsErrorMessage;
 
   late final List<DropdownMenuEntry<String>> personClassList;
-
+  late final CameraBloc _cameraBloc;
 
   final ScrollController _scrollController = ScrollController();
   ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
@@ -435,7 +435,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   @override
   void initState() {
     // TODO: initialize camera on resume lifesicle and dispose on pause / background
-    BlocProvider.of<CameraBloc>(context).add(InitializeCameraEvent());
+    _cameraBloc = BlocProvider.of<CameraBloc>(context);
+    _cameraBloc.add(InitializeCameraEvent());
     lastnameFocus.addListener(() {
       if(!lastnameFocus.hasFocus) {
         lastnameFieldKey.currentState?.validate();
@@ -522,6 +523,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
 
   @override
   void dispose() {
+    _cameraBloc.add(DisposeCameraEvent());
     lastnameController.dispose();
     lastnameFocus.dispose();
     firstnameController.dispose();
@@ -547,8 +549,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        print("WillPopScope");
-        BlocProvider.of<CameraBloc>(context).add(DisposeCameraEvent());
         if (_checkForUnsavedChanges()) {
           _openOnPopGuardAlert();
           return false;

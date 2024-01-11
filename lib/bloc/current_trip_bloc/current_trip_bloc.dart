@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
@@ -27,12 +26,13 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
       InitializeCurrentTripEvent event,
       Emitter<CurrentTripState> emit
       ) async {
+    if (state is! InitializingCurrentTripState) return;
+    emit(InitializingCurrentTripState());
     final db = DBProvider.db;
     final trips = await db.searchTripsByDate(date: DateTime.now());
     if (trips.isEmpty) {
       emit(NoCurrentTripState());
     } else {
-      print('InitializeCurrentTripEvent    $trips');
       final current = trips.first;
       final List<Passenger> passengers = await db.getPassengers(tripId: current.id);
       final List<PassengerPerson> passengerPerson = [];

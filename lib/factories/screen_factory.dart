@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_add_new.dart';
+import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/person/all_persons_screen.dart';
 import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
 import 'package:pleyona_app/ui/screens/trip/all_trips_screen.dart';
@@ -12,6 +13,7 @@ import 'package:pleyona_app/ui/widgets/scanner.dart';
 import '../ui/pages/adding_person_options.dart';
 import '../ui/pages/loader_widget.dart';
 import '../ui/screens/auth_screen.dart';
+import '../ui/screens/passenger/all_trip_passengers.dart';
 import '../ui/screens/person/person_edit_info_screen.dart';
 import '../ui/screens/entry_point.dart';
 import '../ui/screens/passenger_add_new.dart';
@@ -93,5 +95,13 @@ class ScreenFactory {
 
   Widget makeTripFullInfoScreen() {
     return const TripFullInfoScreen();
+  }
+
+  Widget makeTripPassengersScreen(TripPassengersScreenArguments arguments) {
+    return AllTripPassengers(tripPassengers: arguments.tripPassengers);
+  }
+
+  Widget makePassengerFullInfoScreen(TripFullPassengerInfoScreenArguments arguments) {
+    return PassengerFullInfoScreen(passenger: arguments.passenger);
   }
 }

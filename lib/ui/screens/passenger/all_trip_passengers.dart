@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
+import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_card.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/form_block_title.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
 class AllTripPassengers extends StatefulWidget {
-  const AllTripPassengers({super.key});
+  final List<PassengerPerson> tripPassengers;
+  const AllTripPassengers({
+    required this.tripPassengers,
+    super.key
+  });
 
   @override
   State<AllTripPassengers> createState() => _AllTripPassengersState();
@@ -60,4 +65,10 @@ class _AllTripPassengersState extends State<AllTripPassengers> {
       ),
     );
   }
+}
+
+class TripPassengersScreenArguments {
+  final List<PassengerPerson> tripPassengers;
+
+  TripPassengersScreenArguments({required this.tripPassengers});
 }

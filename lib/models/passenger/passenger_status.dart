@@ -2,8 +2,8 @@ class PassengerStatus {
   final int id;
   final int passengerId;
   final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
 
   const PassengerStatus({
     required this.id,

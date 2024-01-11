@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget{
   const CustomAppBar({
@@ -82,6 +83,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
         ),
       ),
+      actions: [
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
+          },
+          child: Container(
+            padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
+            child: Image.asset("assets/icons/homescreen_icon.png",
+              fit: BoxFit.contain,
+            ),
+          ),
+        )
+      ],
       title: widget.child
     );
   }

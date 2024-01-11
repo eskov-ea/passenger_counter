@@ -4,10 +4,13 @@ import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
+import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/models/passenger/passenger_status.dart';
 import 'package:pleyona_app/models/trip_model.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/passenger/all_trip_passengers.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
@@ -25,23 +28,44 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
   final DBProvider _db = DBProvider.db;
   late final CurrentTripBloc _bloc;
   late final List<PassengerStatusValue> statuses;
-  late final List<Passenger> checkInPassengers;
+  late final List<PassengerPerson> passengers;
+  final Map<String, List<PassengerPerson>> passengersByStatuses = {};
 
 
   void initializeCurrentTrip() async {
     if(_bloc.state is InitializedCurrentTripState) {
       final bstate = _bloc.state as InitializedCurrentTripState;
       currentTrip = bstate.currentTrip;
-      await _readPassengerStatusValues();
+      passengers = bstate.tripPassengers;
+      await _readStatusValues();
+      for (var status in statuses) {
+        for (var tp in bstate.tripPassengers) {
+          if (tp.statuses.first.status == status.statusName) {
+
+            if (passengersByStatuses.containsKey(status.statusName)) {
+              passengersByStatuses[status.statusName]!.add(tp);
+            } else {
+              passengersByStatuses.addAll({
+                status.statusName: [tp]
+              });
+            }
+          }
+        }
+      }
+      print('initializeCurrentTrip  $passengersByStatuses');
       setState(() {
         isInitialized = true;
       });
     }
   }
 
-  Future<void> _readPassengerStatusValues() async {
-    checkInPassengers = await _db.getPassengersByStatusName(tripId: currentTrip!.id, statusName: 'CheckIn');
-
+  Future<void> _readStatusValues() async {
+    statuses = await _db.getAvailableStatuses();
+  }
+  void _openAllTripPassengersScreen() {
+    Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengers,
+      arguments: TripPassengersScreenArguments(tripPassengers: passengers)
+    );
   }
 
   @override
@@ -77,7 +101,7 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
         const SizedBox(height: 20),
         _tripPassengersStatus(),
         const SizedBox(height: 60),
-        _optionButtons(label: 'Пассажиры', callback: (){}),
+        _optionButtons(label: 'Пассажиры', callback: _openAllTripPassengersScreen),
         const SizedBox(height: 20),
         _optionButtons(label: 'Каюто-места', callback: (){}),
         const SizedBox(height: 20),
@@ -135,25 +159,69 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
           color: Color(0xCCFFFFFF),
           borderRadius: BorderRadius.all(Radius.circular(6))
       ),
-      child: Row(
-        children: [
-          Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * 0.5 -20,
-                child: Text("CheckIn: ${checkInPassengers.length}"),
-              )
-            ],
-          ),
-          Column(
-            children: [],
-          )
-        ],
-      ),
+      child: isInitialized
+        ? GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              mainAxisExtent: 60,
+              crossAxisCount: 2),
+          itemCount: statuses.length,
+          padding: const EdgeInsets.all(0),
+          itemBuilder: (context, index) {
+            return Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  color: index == 0 ? Colors.white : index % 2 != 0 ? Colors.white : Colors.white70,
+                  border: const Border.fromBorderSide(BorderSide(color: Colors.black26, width: 0.5)),
+                  borderRadius: BorderRadius.all(Radius.circular(6))
+              ),
+              child: Text("${statuses[index].statusName}: ${passengersByStatuses[statuses[index].statusName]?.length ?? "0"}",
+                style: TextStyle(fontSize: 20),
+              ),
+            );
+          }
+      )
+        : Center(
+          child: CircularProgressIndicator(),
+      )
     );
   }
 
-  Widget _optionButtons({required String label, required Function callback}) {
+  Widget _optionButtons({required String label, required Function() callback}) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 15),
+        alignment: Alignment.center,
+        child: Ink(
+          height: 50,
+          decoration: const BoxDecoration(
+              color: Color(0xCCFFFFFF),
+              borderRadius: BorderRadius.all(Radius.circular(6))
+          ),
+          child: InkWell(
+            onTap: callback,
+            splashColor: const Color(0xFFFFFFFF),
+            customBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 30),
+                  child: Text(label, style: const TextStyle(fontSize: 20, color: Color(0xFF000000), fontWeight: FontWeight.w500)),
+                ),
+                SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: Icon(Icons.arrow_right, color: AppColors.backgroundMain2),
+                )
+              ],
+            ),
+          )
+        ),
+      ),
+    );
     return Container(
       width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.symmetric(horizontal: 15),

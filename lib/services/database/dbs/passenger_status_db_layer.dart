@@ -48,7 +48,8 @@ class PassengerStatusDBLayer {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM passenger_status WHERE passenger_id = $passengerId'
+          'SELECT * FROM passenger_status WHERE passenger_id = $passengerId '
+          'ORDER BY created_at DESC '
       );
       log('getPassengerStatuses' + res.toString());
       return res.map((el) => PassengerStatus.fromJson(el)).toList();

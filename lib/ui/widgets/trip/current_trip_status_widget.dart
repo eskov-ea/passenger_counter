@@ -23,6 +23,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
 
   void onCurrentTripSet(Trip trip) {
     BlocProvider.of<CurrentTripBloc>(context).add(SetNewCurrentTripEvent(tripId: trip.id));
+    Navigator.of(context).pop();
   }
 
   @override

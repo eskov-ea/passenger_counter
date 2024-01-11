@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/factories/screen_factory.dart';
+import 'package:pleyona_app/ui/screens/passenger/all_trip_passengers.dart';
+import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
@@ -31,6 +33,8 @@ abstract class MainNavigationRouteNames {
   static const tripSearchScreen = '/search_trip';
   static const seatSearchScreen = '/search_seat';
   static const tripFullInfoScreen = '/trip_full_info';
+  static const tripPassengers = '/trip_passengers';
+  static const tripPassengerInfo = '/trip_passenger_full_info';
   static const test = '/test';
 }
 
@@ -173,6 +177,12 @@ class MainNavigation {
       case MainNavigationRouteNames.tripSearchScreen:
         final arguments = settings.arguments as TripSearchScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripSearchScreen(arguments));
+      case MainNavigationRouteNames.tripPassengers:
+        final arguments = settings.arguments as TripPassengersScreenArguments;
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripPassengersScreen(arguments));
+      case MainNavigationRouteNames.tripPassengerInfo:
+        final arguments = settings.arguments as TripFullPassengerInfoScreenArguments;
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makePassengerFullInfoScreen(arguments));
       case MainNavigationRouteNames.tripFullInfoScreen:
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripFullInfoScreen());
       case MainNavigationRouteNames.test:

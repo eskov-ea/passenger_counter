@@ -3,6 +3,7 @@ import 'package:pleyona_app/ui/screens/passenger/passenger_add_new.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/person/all_persons_screen.dart';
 import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
+import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
 import 'package:pleyona_app/ui/screens/trip/all_trips_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_search_screen.dart';
@@ -103,5 +104,9 @@ class ScreenFactory {
 
   Widget makePassengerFullInfoScreen(TripFullPassengerInfoScreenArguments arguments) {
     return PassengerFullInfoScreen(passenger: arguments.passenger);
+  }
+
+  Widget makeEditTripPassengersStatus(EditTripPassengersStatusScreenArguments arguments) {
+    return EditTripPassengersStatus(statusName: arguments.statusName, tripId: arguments.tripId);
   }
 }

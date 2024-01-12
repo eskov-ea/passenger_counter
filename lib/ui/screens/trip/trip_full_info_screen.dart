@@ -52,7 +52,6 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
           }
         }
       }
-      print('initializeCurrentTrip  $passengersByStatuses');
       setState(() {
         isInitialized = true;
       });

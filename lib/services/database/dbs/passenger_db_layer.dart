@@ -23,7 +23,7 @@ class PassengerDBLayer {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM passenger WHERE trip_id="$tripId"'
+          'SELECT * FROM passenger WHERE trip_id="$tripId" AND deleted_at IS NULL '
       );
       print(res);
       return res.map((el) => Passenger.fromJson(el)).toList();
@@ -33,7 +33,7 @@ class PassengerDBLayer {
   Future<Passenger> findPassengerById(int id) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
-      String sql = "SELECT * FROM passenger WHERE id = '$id'";
+      String sql = "SELECT * FROM passenger WHERE id = $id AND deleted_at IS NULL";
       final res = await txn.rawQuery(sql);
       return Passenger.fromJson(res.first);
     });
@@ -48,6 +48,24 @@ class PassengerDBLayer {
           "status = '${p.status}', comments = '${p.comments}' "
           "WHERE id = '${p.id}'";
       return await txn.rawUpdate(sql);
+    });
+  }
+
+  Future<void> deletePassenger(int passengerId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      await txn.rawUpdate(
+          'UPDATE passenger SET deleted_at = CURRENT_TIMESTAMP WHERE id = $passengerId '
+      );
+      await txn.rawUpdate(
+          'UPDATE passenger_status SET deleted_at = CURRENT_TIMESTAMP WHERE passenger_id = $passengerId '
+      );
+      await txn.rawUpdate(
+          'UPDATE passenger_bagage SET deleted_at = CURRENT_TIMESTAMP WHERE passenger_id = $passengerId '
+      );
+      await txn.rawUpdate(
+          'UPDATE passenger_bagage SET deleted_at = CURRENT_TIMESTAMP WHERE passenger_id = $passengerId '
+      );
     });
   }
 

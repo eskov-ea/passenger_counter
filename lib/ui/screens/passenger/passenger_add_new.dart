@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
+import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_bagage.dart';
 import 'package:pleyona_app/models/person_model.dart';
@@ -129,19 +132,9 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             status: 1,
             comments: commentTextController.text,
             createdAt: "",
-            updatedAt: "");
-        final passengerId = await _db.addPassenger(p: passenger);
-        await _db.addPassengerStatus(passengerId: passengerId, statusName: 'CheckIn');
-        for (int i=0; i<personBagage.length; ++i) {
-          final bagage = PassengerBagage(
-            id: 0,
-            passengerId: passengerId,
-            weight: personBagage[i],
-            createdAt: "",
             updatedAt: ""
-          );
-          await _db.addPassengerBagage(b: bagage);
-        }
+        );
+        BlocProvider.of<CurrentTripBloc>(context).add(AddNewTripPassengerEvent(passenger: passenger, baggage: personBagage));
         Navigator.pushReplacementNamed(context, MainNavigationRouteNames.homeScreen);
       } catch (err, stack) {
         // TODO: error handle

@@ -11,11 +11,6 @@ class Passenger {
   final String createdAt;
   final String updatedAt;
 
-  // final String baggageStatus;
-  // final String? baggageWeight;
-  // final int children;
-  // final String passangerRoundStatus;
-  // final String passId;
 
   const Passenger({
     required this.id,
@@ -27,12 +22,6 @@ class Passenger {
     required this.comments,
     required this.createdAt,
     required this.updatedAt,
-
-    // required this.baggageStatus,
-    // required this.baggageWeight,
-    // required this.children,
-    // required this.passangerRoundStatus,
-    // required this.passId,
   });
 
   static Passenger fromJson(json) => Passenger(
@@ -49,4 +38,16 @@ class Passenger {
 
   @override
   String toString() => "Passenger: $id, $tripId, $personId, $seatId, $document";
+
+  static Passenger updatePassengerId(Passenger p, id) => Passenger(
+    id: id,
+    tripId: p.tripId,
+    personId: p.personId,
+    seatId: p.seatId,
+    document: p.document,
+    status: p.status,
+    comments: p.comments,
+    createdAt: p.createdAt,
+    updatedAt: p.updatedAt
+  );
 }

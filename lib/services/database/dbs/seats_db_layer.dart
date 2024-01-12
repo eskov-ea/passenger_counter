@@ -28,7 +28,8 @@ class SeatsDBLayer {
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
           'SELECT * FROM seat WHERE seat.id NOT IN '
-              '(SELECT passenger.seat_id FROM passenger WHERE passenger.trip_id = "$tripId")'
+              '(SELECT passenger.seat_id FROM passenger '
+              'WHERE passenger.trip_id = $tripId AND passenger.deleted_at IS NULL) '
       );
       print(res);
       return res.map((el) => Seat.fromJson(el)).toList();

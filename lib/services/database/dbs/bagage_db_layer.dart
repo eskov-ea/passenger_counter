@@ -4,12 +4,12 @@ import '../db_provider.dart';
 
 class BagageDBLayer {
 
-  Future<int> addPassengerBagage(PassengerBagage b) async {
+  Future<int> addPassengerBagage(int passengerId, int weight) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
           'INSERT INTO passenger_bagage(passenger_id, weight) VALUES(?, ?)',
-          [b.passengerId, b.weight]
+          [passengerId, weight]
       );
       return id;
     });

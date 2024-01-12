@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/models/trip_model.dart';
+import 'package:pleyona_app/ui/widgets/slidable_wrapper.dart';
 import '../../../theme.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -68,6 +69,47 @@ class TripCard extends StatelessWidget {
     void callFunction() {
       callback(trip);
     }
+
+    return SlidableWrapperWidget(
+      groupTag: 'trip',
+      idKey: '',
+      callback: _openAlertDialog,
+      child: GestureDetector(
+        onTap: callFunction,
+        child: Container(
+          height: 100,
+          margin: EdgeInsets.only(bottom: 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(6)),
+            color: index % 2 == 0 ? firstColor : secondColor,
+          ),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(trip.tripName,
+                style: AppStyles.submainTitleTextStyle,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Divider(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(dateToFullDateString(trip.tripStartDate),
+                    style: AppStyles.secondaryTextStyle,
+                  ),
+                  Text(dateToFullDateString(trip.tripEndDate),
+                    style: AppStyles.secondaryTextStyle,
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      )
+    );
 
     return Slidable(
       key: ValueKey(trip.id),

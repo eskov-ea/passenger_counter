@@ -1,9 +1,9 @@
 import 'dart:developer';
-
 import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_status.dart';
 import 'package:sqflite/sqflite.dart';
 import '../db_provider.dart';
+
 
 class PassengerStatusDBLayer {
 
@@ -44,11 +44,26 @@ class PassengerStatusDBLayer {
     });
   }
 
+  Future<List<Passenger>> getPassengersWithoutCurrentStatus(int tripId, String statusName) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+        'SELECT  * FROM passenger LEFT JOIN passenger_status '
+        'ON passenger_status.passenger_id = passenger.id '
+        'WHERE trip_id = $tripId AND passenger_status.deleted_at IS NULL AND passenger.deleted_at IS NULL '
+        'ORDER BY passenger_status.created_at DESC'
+      );
+      log('getPassengersByStatusName \n\r'  + res.toString() + '\n\r length: ${res.length}');
+      return res.map((el) => Passenger.fromJson(el)).toList();
+    });
+  }
+
   Future<List<PassengerStatus>> getPassengerStatuses(int passengerId) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM passenger_status WHERE passenger_id = $passengerId '
+          'SELECT * FROM passenger_status '
+          'WHERE passenger_id = $passengerId AND deleted_at IS NULL '
           'ORDER BY created_at DESC '
       );
       log('getPassengerStatuses' + res.toString());
@@ -56,7 +71,7 @@ class PassengerStatusDBLayer {
     });
   }
 
-  Future<int> addPassengerStatus(int passengerId, String? statusName) async {
+  Future<PassengerStatus> addPassengerStatus(int passengerId, String? statusName) async {
     final db = await DBProvider.db.database;
     final status = statusName ?? 'CheckIn';
     return await db.transaction((txn) async {
@@ -64,7 +79,19 @@ class PassengerStatusDBLayer {
           'INSERT INTO passenger_status(passenger_id, status) VALUES(?, ?)',
           [passengerId, status]
       );
-      return id;
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM passenger_status WHERE id = $id'
+      );
+      return PassengerStatus.fromJson(res.first);
+    });
+  }
+
+  Future<void> deletePassengerStatus(int statusId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      await txn.rawUpdate(
+        'UPDATE passenger_status SET deleted_at = CURRENT_TIMESTAMP WHERE id = $statusId '
+      );
     });
   }
 

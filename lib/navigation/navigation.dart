@@ -5,6 +5,7 @@ import 'package:pleyona_app/ui/screens/passenger/all_trip_passengers.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
+import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/widgets/scanner.dart';
@@ -35,6 +36,7 @@ abstract class MainNavigationRouteNames {
   static const tripFullInfoScreen = '/trip_full_info';
   static const tripPassengers = '/trip_passengers';
   static const tripPassengerInfo = '/trip_passenger_full_info';
+  static const editTripPassengersStatus = '/edit_passenger_status';
   static const test = '/test';
 }
 
@@ -183,6 +185,9 @@ class MainNavigation {
       case MainNavigationRouteNames.tripPassengerInfo:
         final arguments = settings.arguments as TripFullPassengerInfoScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makePassengerFullInfoScreen(arguments));
+      case MainNavigationRouteNames.editTripPassengersStatus:
+        final arguments = settings.arguments as EditTripPassengersStatusScreenArguments;
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeEditTripPassengersStatus(arguments));
       case MainNavigationRouteNames.tripFullInfoScreen:
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripFullInfoScreen());
       case MainNavigationRouteNames.test:

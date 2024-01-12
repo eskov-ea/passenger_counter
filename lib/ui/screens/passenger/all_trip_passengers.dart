@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
@@ -42,13 +43,16 @@ class _AllTripPassengersState extends State<AllTripPassengers> {
                           child: Text("На данный рейс пассажиров не зарегистрировано"),
                         );
                       } else {
-                        return ListView.builder(
-                          padding: EdgeInsets.all(0),
-                          scrollDirection: Axis.vertical,
-                          itemCount: state.tripPassengers.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return PassengerCard(passengerPerson: state.tripPassengers[index], index: index,);
-                          },
+                        return SlidableAutoCloseBehavior(
+                          closeWhenOpened: true,
+                          child: ListView.builder(
+                            padding: EdgeInsets.all(0),
+                            scrollDirection: Axis.vertical,
+                            itemCount: state.tripPassengers.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return PassengerCard(passengerPerson: state.tripPassengers[index], index: index,);
+                            },
+                          ),
                         );
                       }
                     } else {

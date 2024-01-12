@@ -105,6 +105,7 @@ class DBProvider {
   Future<List<Passenger>> getPassengers({required int tripId}) => PassengerDBLayer().getPassengers(tripId);
   Future<Passenger> findPassengerById({required int tripId}) => PassengerDBLayer().findPassengerById(tripId);
   Future<int> updatePassenger({required Passenger p}) => PassengerDBLayer().addPassenger(p);
+  Future<void> deletePassenger({required int passengerId}) => PassengerDBLayer().deletePassenger(passengerId);
 
   /// SEAT
 
@@ -113,7 +114,7 @@ class DBProvider {
 
   /// BAGAGE
 
-  Future<int> addPassengerBagage({required PassengerBagage b}) => BagageDBLayer().addPassengerBagage(b);
+  Future<int> addPassengerBagage({required int passengerId, required int weight}) => BagageDBLayer().addPassengerBagage(passengerId, weight);
   Future<List<PassengerBagage>> getPassengerBagage({required int passengerId}) => BagageDBLayer().getPassengerBagage(passengerId);
 
   /// PASSENGER STATUS
@@ -122,9 +123,15 @@ class DBProvider {
   Future<List<PassengerStatusValue>> getAvailableStatuses() => PassengerStatusDBLayer().getAvailableStatuses();
   Future<List<Passenger>> getPassengersByStatusName({required int tripId,
     required String statusName}) => PassengerStatusDBLayer().getPassengersByStatusName(tripId, statusName);
-  Future<int> addPassengerStatus({required int passengerId, required String? statusName}) => PassengerStatusDBLayer().addPassengerStatus(passengerId, statusName);
+  Future<List<Passenger>> getPassengersWithoutCurrentStatus({required int tripId,
+    required String statusName}) => PassengerStatusDBLayer().getPassengersWithoutCurrentStatus(tripId, statusName);
+  Future<PassengerStatus> addPassengerStatus({required int passengerId, required String? statusName}) => PassengerStatusDBLayer().addPassengerStatus(passengerId, statusName);
   Future<List<PassengerStatus>> getPassengerStatuses({required int passengerId}) =>
       PassengerStatusDBLayer().getPassengerStatuses(passengerId);
+  Future<void> deletePassengerStatus({required int statusId}) => PassengerStatusDBLayer().deletePassengerStatus(statusId);
+
+
+
 
   Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;

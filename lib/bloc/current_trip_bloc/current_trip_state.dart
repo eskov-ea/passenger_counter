@@ -3,9 +3,7 @@ import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/models/trip_model.dart';
 import '../../models/seat_model.dart';
 
-abstract class CurrentTripState extends Equatable {
-
-}
+abstract class CurrentTripState  {}
 
 class InitializedCurrentTripState extends CurrentTripState {
   final Trip currentTrip;
@@ -18,10 +16,7 @@ class InitializedCurrentTripState extends CurrentTripState {
     required this.availableSeats
   });
 
-  // TODO: fix state comparation
-  @override
-  // List<Object?> get props => [currentTrip, tripPassengers, tripPassengers.length];
-  List<Object?> get props => [];
+
 
 
   InitializedCurrentTripState copyWith({
@@ -37,12 +32,6 @@ class InitializedCurrentTripState extends CurrentTripState {
   }
 }
 
-class InitializingCurrentTripState extends CurrentTripState {
-  @override
-  List<Object?> get props => [];
-}
+class InitializingCurrentTripState extends CurrentTripState {}
 
-class NoCurrentTripState extends CurrentTripState {
-  @override
-  List<Object?> get props => [];
-}
+class NoCurrentTripState extends CurrentTripState {}

@@ -68,7 +68,7 @@ class DBProvider {
   /// PERSON
 
   Future<int> addPerson(Person p) => PersonDBLayer().addPerson(p);
-  Future<List<Person>> getPersons() => PersonDBLayer().getPersons();
+  Future<List<Person>> getPersons(List<int>? ids) => PersonDBLayer().getPersons(ids);
   Future<Person> getPersonById({required int personId}) => PersonDBLayer().getPersonById(personId);
   Future<List<Person>> getPersonChildren(int personId) => PersonDBLayer().getPersonChildren(personId);
   Future<List<Person>> findPerson({

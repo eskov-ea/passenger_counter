@@ -15,11 +15,12 @@ class PersonDBLayer {
     });
   }
 
-  Future<List<Person>> getPersons() async {
+  Future<List<Person>> getPersons(List<int>? ids) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM person'
+          'SELECT * FROM person '
+          '${ids == null ? "" : "WHERE id IN (${ids.join(',')})"}'
       );
       print(res);
       return res.map((el) => Person.fromJson(el)).toList();

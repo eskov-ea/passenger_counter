@@ -24,7 +24,7 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
   List<Person> persons = [];
 
   void readAllPersons() async {
-    final List<Person> res =  await _db.getPersons();
+    final List<Person> res =  await _db.getPersons(null);
     setState(() {
       persons = res;
     });

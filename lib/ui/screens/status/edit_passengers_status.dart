@@ -5,8 +5,11 @@ import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_status.dart';
+import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
+import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
+import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
 
@@ -28,6 +31,9 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
   bool isInitialized = false;
   PassengerStatusValue? status;
   List<Passenger>? passengers;
+  List<Person>? persons;
+  Map<int, bool> checkValues = <int, bool>{};
+  bool isUpdating = false;
   final DBProvider db = DBProvider.db;
 
 
@@ -41,15 +47,37 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
   }
 
   Future<void> _findPassengersByCurrentStatus() async {
-    final res = await db.getPassengersWithoutCurrentStatus(tripId: widget.tripId, statusName: widget.statusName);
-    log('FindPassengersByCurrentStatus   $res');
+    final cPassengers = await db.getPassengersWithoutCurrentStatus(tripId: widget.tripId, statusName: widget.statusName);
+    final List<int> ids = cPassengers.map((e) => e.personId).toList();
+    final cPersons = await db.getPersons(ids);
+    for (var passenger in cPassengers) {
+      checkValues.addAll({passenger.id: false});
+    }
+    setState(() {
+      persons = cPersons;
+      passengers = cPassengers;
+    });
+  }
+  Future<void> _updateStatuses() async {
+    setState(() {
+      isUpdating = true;
+    });
+    checkValues.forEach((key, value) async {
+      if (value) {
+        final status = await db.addPassengerStatus(passengerId: key, statusName: widget.statusName);
+        log('Updated status  $status');
+      }
+    });
+    await _findPassengersByCurrentStatus();
+    setState(() {
+      isUpdating = false;
+    });
   }
 
   @override
   void initState() {
     _findCurrentStatus();
     _findPassengersByCurrentStatus();
-
     super.initState();
   }
 
@@ -63,11 +91,50 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
           child: BlocBuilder<CurrentTripBloc, CurrentTripState>(
             builder: (context, state) {
               if (state is InitializedCurrentTripState) {
-                return Column(
-                  children: [
-
-                  ],
-                );
+                if (passengers != null && persons != null) {
+                  return Stack(
+                    children: [
+                      Column(
+                        children: [
+                          SizedBox(height: 80, width: MediaQuery.of(context).size.width),
+                          Text(widget.statusName, style: AppStyles.mainTitleTextStyle),
+                          const SizedBox(height: 20),
+                          Expanded(
+                              child: ListView.builder(
+                                  itemCount: passengers!.length,
+                                  itemBuilder: (context, index) {
+                                    return _passengersOptions(passengers![index], persons![index]);
+                                  })
+                          ),
+                          const SizedBox(height: 20),
+                          SaveButton(
+                              onTap: _updateStatuses,
+                              label: "Обновить статус"
+                          ),
+                          const SizedBox(height: 5),
+                        ],
+                      ),
+                      isUpdating ? Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(
+                          color: Color(0xBFFFFFFF),
+                          borderRadius: BorderRadius.all(Radius.circular(6))
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xBF1131FF),
+                          ),
+                        ),
+                      ) : const SizedBox.shrink()
+                    ],
+                  );
+                } else {
+                  return Container(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
               } else {
                 return Container();
               }
@@ -75,6 +142,33 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
           )
         ),
       )
+    );
+  }
+
+  Widget _passengersOptions(Passenger passenger, Person person) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      decoration: const BoxDecoration(
+        color: Color(0xBFFFFFFF),
+        borderRadius: BorderRadius.all(Radius.circular(6))
+      ),
+      child: Row(
+        children: [
+          Checkbox(
+            value: checkValues[passenger.id],
+            onChanged: (value) {
+              setState(() {
+                checkValues[passenger.id] = value ?? false;
+              });
+            }
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.7 -20,
+            child: Text("${person.lastname} ${person.firstname} ${person.middlename}"),
+          )
+        ],
+      ),
     );
   }
 }

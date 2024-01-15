@@ -29,7 +29,7 @@ class _SearchPersonScreenState extends State<SearchPersonScreen> {
       isSearching = true;
     });
     if (value == null || value == "") {
-      final res = await _db.getPersons();
+      final res = await _db.getPersons(null);
       setState(() {
         searchResult = res;
       });

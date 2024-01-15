@@ -48,10 +48,13 @@ class PassengerStatusDBLayer {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-        'SELECT  * FROM passenger LEFT JOIN passenger_status '
-        'ON passenger_status.passenger_id = passenger.id '
-        'WHERE trip_id = $tripId AND passenger_status.deleted_at IS NULL AND passenger.deleted_at IS NULL '
-        'ORDER BY passenger_status.created_at DESC'
+        'SELECT * FROM passenger as p '
+        ' LEFT JOIN ('
+            'SELECT MAX(id) as status_id, passenger_id, deleted_at, status as statusName '
+            'FROM passenger_status WHERE deleted_at IS NULL GROUP BY passenger_id'
+        ') as s ON s.passenger_id = p.id '
+        'WHERE p.trip_id = $tripId AND p.deleted_at IS NULL '
+        'AND s.statusName != "$statusName" AND s.statusName != "CheckOut" '
       );
       log('getPassengersByStatusName \n\r'  + res.toString() + '\n\r length: ${res.length}');
       return res.map((el) => Passenger.fromJson(el)).toList();
@@ -95,10 +98,21 @@ class PassengerStatusDBLayer {
     });
   }
 
+  // 'SELECT * FROM passenger WHERE trip_id = $tripId AND deleted_at IS NULL '
+  // 'AND id IN ('
+  // ' SELECT passenger_id FROM passenger_status WHERE deleted_at IS NULL '
+  // ' GROUP BY passenger_id ORDER BY created_at DESC '
+  // ') '
+
   // /'SELECT * FROM passenger_status LEFT JOIN '
   // 'passenger ON passenger_status.passenger_id = passenger.id '
   // 'WHERE passenger.id IN '
   // '(SELECT passenger.id FROM passenger WHERE passenger.trip_id = $tripId) '
   // 'AND passenger_status.status = $statusName'
 
+
+  // 'SELECT  * FROM passenger LEFT JOIN passenger_status '
+  // 'ON passenger_status.passenger_id = passenger.id '
+  // 'WHERE trip_id = $tripId AND passenger_status.deleted_at IS NULL AND passenger.deleted_at IS NULL '
+  // 'GROUP BY passenger_status.status ORDER BY passenger_status.created_at DESC '
 }

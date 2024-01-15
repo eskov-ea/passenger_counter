@@ -74,7 +74,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                         // await db.DeveloperModeClearPersonTable();
                         // print("TABLE DELETE::::");
                         Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
-                          arguments: EditTripPassengersStatusScreenArguments(tripId: 1, statusName: 'CheckIn')
+                          arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckIn')
                         );
                       },
                       customBorder: RoundedRectangleBorder(
@@ -108,8 +108,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () async {
-                        final res = await DBProvider.db.getAvailableStatuses();
-                        log(res.toString(), level: 10);
+                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
+                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckOut')
+                        );
                       },
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -142,7 +143,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        print("Clicked!");
+                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
+                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OffBoard')
+                        );
                       },
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -175,7 +178,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        print("Clicked!");
+                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
+                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OnBoard')
+                        );
                       },
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),

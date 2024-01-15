@@ -111,6 +111,7 @@ class DBProvider {
 
   Future<Seat> getPassengerSeat({required int seatId}) => SeatsDBLayer().getPassengerSeat(seatId);
   Future<List<Seat>> getAvailableSeats({required int tripId}) => SeatsDBLayer().getAvailableSeats(tripId);
+  Future<void> initializeSeats({required List<Seat> s}) => SeatsDBLayer().initializeSeats(s);
 
   /// BAGAGE
 

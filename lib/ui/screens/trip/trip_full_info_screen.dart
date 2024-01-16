@@ -66,6 +66,9 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
       arguments: TripPassengersScreenArguments(tripPassengers: passengers)
     );
   }
+  void _openTripSeatsScreen() {
+    Navigator.of(context).pushNamed(MainNavigationRouteNames.tripSeatsScreen);
+  }
 
   @override
   void initState() {
@@ -102,7 +105,7 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
         const SizedBox(height: 60),
         _optionButtons(label: 'Пассажиры', callback: _openAllTripPassengersScreen),
         const SizedBox(height: 20),
-        _optionButtons(label: 'Каюто-места', callback: (){}),
+        _optionButtons(label: 'Каюто-места', callback: _openTripSeatsScreen),
         const SizedBox(height: 20),
         _optionButtons(label: 'Еще что-то', callback: (){}),
       ],

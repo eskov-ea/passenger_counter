@@ -26,6 +26,8 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
         await _onDeleteTripPassengerEvent(event, emit);
       } else if (event is AddNewTripPassengerEvent) {
         await _onAddNewTripPassengerEvent(event, emit);
+      } else if (event is ChangePassengerSeatEvent) {
+        await _onChangePassengerSeatEvent(event, emit);
       }
     });
   }
@@ -51,10 +53,11 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
         print('initializeCurrentTrip  ${statuses}');
         passengerPerson.add(PassengerPerson(person: person, passenger: passenger, seat: seat, statuses: statuses));
       }
-      List<Seat>availableSeats = await db.getAvailableSeats(tripId: current.id);
+      final List<Seat> availableSeats = await db.getAvailableSeats(tripId: current.id);
+      final List<Seat> occupiedSeats = await db.getOccupiedTripSeats(tripId: current.id);
 
       final newState = InitializedCurrentTripState(currentTrip: current,
-          tripPassengers: passengerPerson, availableSeats: availableSeats);
+          tripPassengers: passengerPerson, availableSeats: availableSeats, occupiedSeats: occupiedSeats);
       emit(newState);
     }
   }
@@ -69,7 +72,6 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
     final current = await db.getTripById(tripId: event.tripId);
     List<Passenger>? passengers;
     List<PassengerPerson> passengerPerson = [];
-    List<Seat>? availableSeats = [];
     passengers = await db.getPassengers(tripId: event.tripId);
     log("Passangers   $passengers");
     for (var passenger in passengers) {
@@ -79,9 +81,10 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
       print('initializeCurrentTrip  ${statuses}');
       passengerPerson.add(PassengerPerson(person: person, passenger: passenger, seat: seat, statuses: statuses));
     }
-    availableSeats = await db.getAvailableSeats(tripId: current.id);
+    final List<Seat> availableSeats = await db.getAvailableSeats(tripId: current.id);
+    final List<Seat> occupiedSeats = await db.getOccupiedTripSeats(tripId: current.id);
     final newState = InitializedCurrentTripState(currentTrip: current,
-        tripPassengers: passengerPerson, availableSeats: availableSeats);
+        tripPassengers: passengerPerson, availableSeats: availableSeats, occupiedSeats: occupiedSeats);
     emit(newState);
   }
 
@@ -167,7 +170,17 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
         tripPassengers: s.tripPassengers,
         availableSeats: availableSeats
     ));
+  }
 
+  Future<void> _onChangePassengerSeatEvent(
+      ChangePassengerSeatEvent event,
+      Emitter<CurrentTripState> emit
+      ) async {
+    print('_onChangePassengerSeatEvent');
+    emit(InitializingCurrentTripState());
+    final db = DBProvider.db;
+    await db.changePassengerSeat(passengerId: event.passengerId, seatId: event.seatId);
+    add(SetNewCurrentTripEvent(tripId: event.tripId));
   }
 
 }

@@ -106,12 +106,16 @@ class DBProvider {
   Future<Passenger> findPassengerById({required int tripId}) => PassengerDBLayer().findPassengerById(tripId);
   Future<int> updatePassenger({required Passenger p}) => PassengerDBLayer().addPassenger(p);
   Future<void> deletePassenger({required int passengerId}) => PassengerDBLayer().deletePassenger(passengerId);
+  Future<int> changePassengerSeat({required int passengerId, required int seatId}) => PassengerDBLayer().changePassengerSeat(passengerId, seatId);
+  Future<Passenger?> checkIfPersonRegisteredOnTrip({required int personId, required int tripId}) => PassengerDBLayer().checkIfPersonRegisteredOnTrip(personId, tripId);
 
   /// SEAT
 
   Future<Seat> getPassengerSeat({required int seatId}) => SeatsDBLayer().getPassengerSeat(seatId);
   Future<List<Seat>> getAvailableSeats({required int tripId}) => SeatsDBLayer().getAvailableSeats(tripId);
+  Future<List<Seat>> getOccupiedTripSeats({required int tripId}) => SeatsDBLayer().getOccupiedTripSeats(tripId);
   Future<void> initializeSeats({required List<Seat> s}) => SeatsDBLayer().initializeSeats(s);
+  Future<Seat> getParentTripSeat({required int personId, required int tripId}) => SeatsDBLayer().getParentTripSeat(personId, tripId);
 
   /// BAGAGE
 

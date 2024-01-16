@@ -37,6 +37,7 @@ abstract class MainNavigationRouteNames {
   static const tripPassengers = '/trip_passengers';
   static const tripPassengerInfo = '/trip_passenger_full_info';
   static const editTripPassengersStatus = '/edit_passenger_status';
+  static const tripSeatsScreen = '/trip_seats';
   static const test = '/test';
 }
 
@@ -56,38 +57,11 @@ class MainNavigation {
       case MainNavigationRouteNames.passengerEditingScreen:
         settings: const RouteSettings(name: MainNavigationRouteNames.passengerEditingScreen);
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makePassengerEditingScreen());
-        return PageRouteBuilder(
-          settings: const RouteSettings(name: MainNavigationRouteNames.passengerEditingScreen),
-          pageBuilder: (BuildContext context, _, __) => _screenFactory.makePassengerEditingScreen(),
-          transitionsBuilder: (context, Animation<double> animation,
-              Animation<double> secondaryAnimation, Widget child) {
-            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 700),
-        );
       case MainNavigationRouteNames.addPersonScreen:
         final arguments = settings.arguments as AddNewPersonScreenArguments;
         return CupertinoPageRoute(
           settings: const RouteSettings(name: MainNavigationRouteNames.addPersonScreen),
           builder: (BuildContext context) => _screenFactory.makeAddPersonScreen(arguments)
-        );
-        return PageRouteBuilder(
-          settings: const RouteSettings(name: MainNavigationRouteNames.addPersonScreen),
-
-          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAddPersonScreen(arguments),
-          transitionsBuilder: (context, Animation<double> animation,
-              Animation<double> secondaryAnimation, Widget child) {
-            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 700),
         );
       case MainNavigationRouteNames.allPersonsScreen:
         settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen);
@@ -95,51 +69,12 @@ class MainNavigation {
       case MainNavigationRouteNames.scannerScreen:
         final arguments = settings.arguments as ScannerScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeScannerScreen(arguments));
-        return PageRouteBuilder(
-          settings: const RouteSettings(name: MainNavigationRouteNames.scannerScreen),
-          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeScannerScreen(arguments),
-          transitionsBuilder: (context, Animation<double> animation,
-              Animation<double> secondaryAnimation, Widget child) {
-            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 700),
-        );
       case MainNavigationRouteNames.personOptionsScreen:
         final arguments = settings.arguments as AddingPersonOptionsArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeAddingPersonOptionsPage(arguments));
-        return PageRouteBuilder(
-          settings: const RouteSettings(name: MainNavigationRouteNames.scannerScreen),
-          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeAddingPersonOptionsPage(arguments),
-          transitionsBuilder: (context, Animation<double> animation,
-              Animation<double> secondaryAnimation, Widget child) {
-            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 700),
-        );
       case MainNavigationRouteNames.successInfoScreen:
         final arguments = settings.arguments as InfoScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeSuccessInfoScreen(arguments));
-        return PageRouteBuilder(
-          settings: const RouteSettings(name: MainNavigationRouteNames.successInfoScreen),
-          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeSuccessInfoScreen(arguments),
-          transitionsBuilder: (context, Animation<double> animation,
-              Animation<double> secondaryAnimation, Widget child) {
-            final tween = Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).chain(CurveTween(curve: Curves.ease));
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 700),
-        );
       case MainNavigationRouteNames.editPersonInfoScreen:
         final arguments = settings.arguments as EditPersonScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeEditPersonInfoScreen(arguments));
@@ -159,11 +94,6 @@ class MainNavigation {
       case MainNavigationRouteNames.searchPersonScreen:
         final arguments = settings.arguments as SearchPersonScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeSearchPersonScreen(arguments));
-        return PageRouteBuilder(
-          settings: const RouteSettings(name: MainNavigationRouteNames.searchPersonScreen),
-          pageBuilder: (BuildContext context, _, __) => _screenFactory.makeSearchPersonScreen(arguments),
-          transitionDuration: Duration(milliseconds: 700),
-        );
       case MainNavigationRouteNames.addNewTripScreen:
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeAddNewTripScreen());
       case MainNavigationRouteNames.allTripsScreen:
@@ -190,6 +120,8 @@ class MainNavigation {
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeEditTripPassengersStatus(arguments));
       case MainNavigationRouteNames.tripFullInfoScreen:
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripFullInfoScreen());
+      case MainNavigationRouteNames.tripSeatsScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripSeatsScreen());
       case MainNavigationRouteNames.test:
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),

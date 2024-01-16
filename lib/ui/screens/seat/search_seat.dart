@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/ui/widgets/seats/seat_widget.dart';
 import '../../../models/seat_model.dart';
@@ -9,9 +10,11 @@ import '../../widgets/theme_background.dart';
 class SeatSearchScreen extends StatefulWidget {
   final Function(Seat) onResultCallback;
   final int tripId;
+  final Person? person;
   const SeatSearchScreen({
     required this.onResultCallback,
     required this.tripId,
+    required this.person,
     super.key
   });
 
@@ -22,6 +25,7 @@ class SeatSearchScreen extends StatefulWidget {
 class _SeatSearchScreenState extends State<SeatSearchScreen> {
 
   List<Seat>? availableSeats;
+  Seat? parentSeat;
   final DBProvider db = DBProvider.db;
 
   Future<void> getAvailableSeats() async {
@@ -35,6 +39,13 @@ class _SeatSearchScreenState extends State<SeatSearchScreen> {
         availableSeats = seats;
       });
     });
+    if (widget.person != null) {
+      db.getParentTripSeat(personId: widget.person!.id, tripId: widget.tripId).then((seat) {
+        setState(() {
+          parentSeat = seat;
+        });
+      });
+    }
     super.initState();
   }
 
@@ -68,7 +79,15 @@ class _SeatSearchScreenState extends State<SeatSearchScreen> {
                       crossAxisCount: 4
                     )
                   ),
-                )
+                ),
+                const SizedBox(height: 10),
+                parentSeat != null ? Row(
+                  children: [
+                    SeatWidget(seat: parentSeat!, callback: widget.onResultCallback),
+                    Divider(),
+                    Text("Вы можете назначить ребенку одно место с родителем. Один родитель - один ребенок.")
+                  ],
+                ) : const SizedBox.shrink()
               ],
             ),
           ),
@@ -82,6 +101,7 @@ class _SeatSearchScreenState extends State<SeatSearchScreen> {
 class SeatSearchScreenArguments {
   final Function(Seat) onResultCallback;
   final int tripId;
+  final Person? person;
 
-  SeatSearchScreenArguments({required this.onResultCallback, required this.tripId});
+  SeatSearchScreenArguments({required this.onResultCallback, required this.tripId, required this.person});
 }

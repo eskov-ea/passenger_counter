@@ -38,3 +38,12 @@ class AddNewTripPassengerEvent extends CurrentTripEvent {
   AddNewTripPassengerEvent({required this.passenger, required this.baggage});
 }
 
+class ChangePassengerSeatEvent extends CurrentTripEvent {
+  final int seatId;
+  final int passengerId;
+  final int tripId;
+
+  ChangePassengerSeatEvent({required this.seatId, required this.passengerId,
+    required this.tripId});
+}
+

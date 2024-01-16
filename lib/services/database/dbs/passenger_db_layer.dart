@@ -51,6 +51,28 @@ class PassengerDBLayer {
     });
   }
 
+  Future<int> changePassengerSeat(int passengerId, int seatId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      String sql = "UPDATE passenger SET "
+          "seat_id = '$seatId', "
+          "updated_at = CURRENT_TIMESTAMP "
+          "WHERE id = '$passengerId' AND deleted_at IS NULL;";
+      return await txn.rawUpdate(sql);
+    });
+  }
+
+  Future<Passenger?> checkIfPersonRegisteredOnTrip(int personId, int tripId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      final res = await txn.rawQuery(
+          "SELECT * FROM passenger WHERE "
+          "person_id = '$personId' AND trip_id = '$tripId' AND deleted_at IS NULL;"
+      );
+      return res.isEmpty ? null : Passenger.fromJson(res.first);
+    });
+  }
+
   Future<void> deletePassenger(int passengerId) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {

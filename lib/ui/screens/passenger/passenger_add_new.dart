@@ -116,8 +116,16 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
     Navigator.of(context).pop();
   }
 
+  Future<void> _checkIfPersonAlreadyRegistered() async {
+    final passenger = await _db.checkIfPersonRegisteredOnTrip(personId: person!.id, tripId: trip!.id);
+    if (passenger != null) {
+      _showPassengerAlreadyRegisteredDialog();
+    }
+  }
+
   Future<void> _onSafe() async {
     if (person != null && personDocuments != null && trip != null && seat != null) {
+      await _checkIfPersonAlreadyRegistered();
       try {
         String document = "";
         personDocuments!.forEach((doc) {
@@ -392,7 +400,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                 onTap: () async {
                   await Navigator.of(context).pushNamed(
                       MainNavigationRouteNames.seatSearchScreen,
-                      arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id)
+                      arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
                   );
                 },
                 customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -423,7 +431,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             onTap: () async {
               await Navigator.of(context).pushNamed(
                   MainNavigationRouteNames.seatSearchScreen,
-                  arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id)
+                  arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
               );
             },
             customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),

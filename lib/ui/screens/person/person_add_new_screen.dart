@@ -1,14 +1,17 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
+import 'package:pleyona_app/storage/data_storage.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/pages/adding_person_options.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/person/adding_person_additional_info_block.dart';
 import 'package:pleyona_app/ui/widgets/person/adding_person_contact_info_block.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../../bloc/camera_bloc/camera_bloc.dart';
@@ -111,6 +114,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
   final List<BarcodeFormat> allowedScanFormat = [BarcodeFormat.qrcode];
   String? personBase64Image;
+  String? personDraft;
 
   void setQRResult(Barcode value) {
       qrResult.value = value;
@@ -340,6 +344,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         createdAt: dateFormatter(DateTime.now()),
         updatedAt: dateFormatter(DateTime.now())
       );
+      //TODO: handle cases person already exists
       final persons = await _db.findPerson(lastname: newPerson.lastname, firstname: newPerson.firstname);
       // if (persons.isEmpty) {
         final personId = await _db.addPerson(newPerson);
@@ -362,9 +367,28 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       //     personDocumentNumber: documentNumberFieldController.text)
       //   );
       // }
+    } else {
+      showPopup(context, dismissible: true, type: PopupType.warning, message: 'Не все необходимые поля заполнены. Пожалуйста заполните все требуемые поля.');
     }
   }
 
+  Future<void> _onDraftSave() async {
+    final firstname = firstnameController.text;
+    final lastname = lastnameController.text;
+    final middlename = middlenameController.text;
+    final gender = isMaleChecked ? "МУЖ" : isFemaleChecked ? "ЖЕН" : "";
+    final phone = phoneFieldController.text;
+    final email = emailFieldController.text;
+    final citizenship = citizenshipFieldController.text;
+    final comment = commentTextController.text;
+    final photo = personBase64Image;
+    final parentId = widget.parentId.toString() ?? "";
+    final bDay = dayBirthFieldController.text;
+    final bMonth = monthBirthFieldController.text;
+    final bYear = yearBirthFieldController.text;
+
+    DataProvider().setPersonDraft(firstname: firstname, lastname: lastname, middlename: middlename, gender: gender, phone: phone, email: email, citizenship: citizenship, comment: comment, photo: photo ?? "", parentId: parentId, bDay: bDay, bMonth: bMonth, bYear: bYear);
+  }
 
   Future<void> _openOnPopGuardAlert() async {
     return showDialog<void>(
@@ -391,7 +415,9 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
             ),
             TextButton(
               child: const Text('Сохранить черновик'),
-              onPressed: () {
+              onPressed: () async {
+                await _onDraftSave();
+                Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
             ),
@@ -430,6 +456,27 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     } else {
       return false;
     }
+  }
+
+  void setPersonWithDraft() {
+    log("decode $personDraft");
+    final json = jsonDecode(personDraft!);
+    log("decode $json");
+    final firstname = json["firstname"];
+    final lastname = json["lastname"];
+    final middlename = json["middlename"];
+    final gender = json["gender"];
+    final phone = json["phone"];
+    final email = json["email"];
+    final citizenship = json["citizenship"];
+    final comment = json["comment"];
+    final photo = json["photo"];
+    final parentId = json["parentId"];
+    final bDay = json["bDay"];
+    final bMonth = json["bMonth"];
+    final bYear = json["bYear"];
+
+    print("DECODE  -->  $firstname , $lastname");
   }
   
   @override
@@ -490,6 +537,14 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       }
     });
     personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
+    DataProvider().getPersonDraft().then((value) {
+      if (value != null) {
+        setState(() {
+          personDraft = value;
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -572,7 +627,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
                     const SizedBox(height: 10,),
                     PersonAddingPhotoScanOptionsWidget(onQRScanResultCallback: setQRResult,
                         allowedFormat: allowedScanFormat, setPhotoResult: setPhotoResult,
-                        personBase64Image: personBase64Image ),
+                        personBase64Image: personBase64Image, setPersonWithDraft: setPersonWithDraft,
+                        personDraft: personDraft),
                     const SizedBox(height: 5,),
                     const BlockTitle(message: "Основная информация"),
                     PersonGeneralInfoBlock(

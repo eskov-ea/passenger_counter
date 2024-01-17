@@ -50,7 +50,7 @@ class ScanButton extends StatelessWidget {
                     ),
                     const TextSpan(
                       text: "Сканировать",
-                      style: TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 20),
                     )
                   ],
 

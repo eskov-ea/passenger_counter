@@ -98,6 +98,20 @@ class PassengerStatusDBLayer {
     });
   }
 
+  Future<bool> checkStatusValuesInitialized() async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          ' SELECT * FROM passenger_status_list '
+      );
+      if (res.isEmpty) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+  }
+
   // 'SELECT * FROM passenger WHERE trip_id = $tripId AND deleted_at IS NULL '
   // 'AND id IN ('
   // ' SELECT passenger_id FROM passenger_status WHERE deleted_at IS NULL '

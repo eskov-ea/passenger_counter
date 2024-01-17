@@ -15,6 +15,7 @@ import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/passenger/passenger_bagage_info.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_fullsize.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/seats/seat_card.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
@@ -119,7 +120,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   Future<void> _checkIfPersonAlreadyRegistered() async {
     final passenger = await _db.checkIfPersonRegisteredOnTrip(personId: person!.id, tripId: trip!.id);
     if (passenger != null) {
-      _showPassengerAlreadyRegisteredDialog();
+      person = null;
+      seat = null;
+      await showPopup(context, dismissible: true, type: PopupType.warning, message: 'Пассажир уже зарегистрирован на этот рейс');
+      setState(() {});
     }
   }
 
@@ -145,11 +149,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
         BlocProvider.of<CurrentTripBloc>(context).add(AddNewTripPassengerEvent(passenger: passenger, baggage: personBagage));
         Navigator.pushReplacementNamed(context, MainNavigationRouteNames.homeScreen);
       } catch (err, stack) {
-        // TODO: error handle
-        print(err);
+        showPopup(context, dismissible: true, type: PopupType.error, message: "Произошла ошибка при обработке запроса. Попробуйте ещё раз.");
       }
     } else {
-
+      showPopup(context, dismissible: true, type: PopupType.warning, message: "Необходимо выбрать Персону, Рейс и Место для того, чтобы зарегистрировать пассажира.");
     }
   }
 
@@ -316,6 +319,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
       return Column(
         children: [
           TripCard(trip: trip!, callback: (Trip trip) {  } ),
+          const SizedBox(height: 5),
           Material(
             color: AppColors.transparent,
             child: Ink(
@@ -376,11 +380,11 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   }
 
   Widget _seatBlock() {
-    if (trip == null) {
+    if (trip == null || person == null) {
       return Container(
         width: MediaQuery.of(context).size.width - 20,
         height: 100,
-        child: Text('Выберите рейс'),
+        child: Text('Выберите рейс и персону'),
       );
     }
     if (seat != null) {

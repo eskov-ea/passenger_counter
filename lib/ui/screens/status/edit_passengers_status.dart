@@ -88,57 +88,76 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
         extendBodyBehindAppBar: true,
         appBar: CustomAppBar(child: null, scrollController: null),
         body: ThemeBackgroundWidget(
-          child: BlocBuilder<CurrentTripBloc, CurrentTripState>(
-            builder: (context, state) {
-              if (state is InitializedCurrentTripState) {
-                if (passengers != null && persons != null) {
-                  return Stack(
-                    children: [
-                      Column(
-                        children: [
-                          SizedBox(height: 80, width: MediaQuery.of(context).size.width),
-                          Text(widget.statusName, style: AppStyles.mainTitleTextStyle),
-                          const SizedBox(height: 20),
-                          Expanded(
-                              child: ListView.builder(
-                                  itemCount: passengers!.length,
-                                  itemBuilder: (context, index) {
-                                    return _passengersOptions(passengers![index], persons![index]);
-                                  })
-                          ),
-                          const SizedBox(height: 20),
-                          SaveButton(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: BlocBuilder<CurrentTripBloc, CurrentTripState>(
+              builder: (context, state) {
+                if (state is InitializedCurrentTripState) {
+                  if (passengers != null && persons != null) {
+                    return Stack(
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(height: 80, width: MediaQuery.of(context).size.width),
+                            Text(widget.statusName, style: AppStyles.mainTitleTextStyle),
+                            const SizedBox(height: 20),
+                            Expanded(
+                              child: passengers!.length > 0
+                              ? ListView.builder(
+                                itemCount: passengers!.length,
+                                itemBuilder: (context, index) {
+                                  return _passengersOptions(passengers![index], persons![index]);
+                              })
+                              : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 100,
+                                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                                    alignment: Alignment.center,
+                                    decoration: const BoxDecoration(
+                                        color: Color(0xCFFFFFFF),
+                                        borderRadius: BorderRadius.all(Radius.circular(6))
+                                    ),
+                                    child: const Text('Нет пассажиров, которым можно было бы присвоить данный статус',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                ],
+                              )
+                            ),
+                            const SizedBox(height: 20),
+                            SaveButton(
                               onTap: _updateStatuses,
                               label: "Обновить статус"
-                          ),
-                          const SizedBox(height: 5),
-                        ],
-                      ),
-                      isUpdating ? Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: const BoxDecoration(
-                          color: Color(0xBFFFFFFF),
-                          borderRadius: BorderRadius.all(Radius.circular(6))
+                            ),
+                            const SizedBox(height: 15),
+                          ],
                         ),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xBF1131FF),
+                        isUpdating ? Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                            color: Color(0xBFFFFFFF),
+                            borderRadius: BorderRadius.all(Radius.circular(6))
                           ),
-                        ),
-                      ) : const SizedBox.shrink()
-                    ],
-                  );
-                } else {
-                  return Container(
-                    child: Center(
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xBF1131FF),
+                            ),
+                          ),
+                        ) : const SizedBox.shrink()
+                      ],
+                    );
+                  } else {
+                    return const Center(
                       child: CircularProgressIndicator(),
-                    ),
-                  );
+                    );
+                  }
+                } else {
+                  return Container();
                 }
-              } else {
-                return Container();
               }
-            }
+            ),
           )
         ),
       )
@@ -147,8 +166,8 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
 
   Widget _passengersOptions(Passenger passenger, Person person) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: const BoxDecoration(
         color: Color(0xBFFFFFFF),
         borderRadius: BorderRadius.all(Radius.circular(6))

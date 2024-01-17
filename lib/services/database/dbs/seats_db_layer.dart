@@ -60,15 +60,32 @@ class SeatsDBLayer {
     });
   }
 
-  Future<Seat> getParentTripSeat(int personId, int tripId) async {
+  Future<Seat?> getParentTripSeat(int personId, int tripId) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
           'SELECT * FROM seat WHERE id IN '
           '( SELECT seat_id FROM passenger WHERE person_id = "$personId" AND trip_id = "$tripId" )'
       );
-      print(res.first);
-      return Seat.fromJson(res.first);
+      if (res.isEmpty) {
+        return null;
+      } else {
+        return Seat.fromJson(res.first);
+      }
+    });
+  }
+
+  Future<bool> checkSeatsInitialized() async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          ' SELECT * FROM seat '
+      );
+      if (res.isEmpty) {
+        return false;
+      } else {
+        return true;
+      }
     });
   }
 

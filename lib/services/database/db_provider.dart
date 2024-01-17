@@ -115,7 +115,8 @@ class DBProvider {
   Future<List<Seat>> getAvailableSeats({required int tripId}) => SeatsDBLayer().getAvailableSeats(tripId);
   Future<List<Seat>> getOccupiedTripSeats({required int tripId}) => SeatsDBLayer().getOccupiedTripSeats(tripId);
   Future<void> initializeSeats({required List<Seat> s}) => SeatsDBLayer().initializeSeats(s);
-  Future<Seat> getParentTripSeat({required int personId, required int tripId}) => SeatsDBLayer().getParentTripSeat(personId, tripId);
+  Future<Seat?> getParentTripSeat({required int personId, required int tripId}) => SeatsDBLayer().getParentTripSeat(personId, tripId);
+  Future<bool> checkSeatsInitialized() => SeatsDBLayer().checkSeatsInitialized();
 
   /// BAGAGE
 
@@ -134,7 +135,7 @@ class DBProvider {
   Future<List<PassengerStatus>> getPassengerStatuses({required int passengerId}) =>
       PassengerStatusDBLayer().getPassengerStatuses(passengerId);
   Future<void> deletePassengerStatus({required int statusId}) => PassengerStatusDBLayer().deletePassengerStatus(statusId);
-
+  Future<bool> checkStatusValuesInitialized() => PassengerStatusDBLayer().checkStatusValuesInitialized();
 
 
 

@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pleyona_app/models/mock_data/passenger_status_mock.dart';
+import 'package:pleyona_app/models/mock_data/seats_mock.dart';
 import '../../services/database/db_provider.dart';
 import 'db_event.dart';
 import 'db_state.dart';
@@ -26,6 +28,14 @@ class DBBloc extends Bloc<DBEvent, DBState> {
     if( state is NotInitializedDBState) {
       _dbProvider = DBProvider.db;
       await _dbProvider.database;
+      final seatsInited = await _dbProvider.checkSeatsInitialized();
+      final statusValuesInited = await _dbProvider.checkStatusValuesInitialized();
+      if (!seatsInited) {
+        await _dbProvider.initializeSeats(s: initialSeats);
+      }
+      if (!statusValuesInited) {
+        await _dbProvider.initializePassengerStatusValues(statuses: PassangerStatusList);
+      }
       emit(const InitializedDBState());
     }
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as d;
 import 'package:pleyona_app/models/trip_model.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 import '../../../theme.dart';
@@ -97,6 +99,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
       );
 
       final res = await _db.addTrip(trip: newTrip);
+      await showPopup(context, dismissible: false, type: PopupType.success, message: "Рейс успешно добавлен", route: MainNavigationRouteNames.homeScreen);
     }
   }
 

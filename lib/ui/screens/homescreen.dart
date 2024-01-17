@@ -1,18 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pleyona_app/bloc/camera_bloc/camera_bloc.dart';
-import 'package:pleyona_app/bloc/camera_bloc/camera_event.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_bloc.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_state.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/widgets/trip/current_trip_status_widget.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/person/person_options_sliver.dart';
 import '../../bloc/db_bloc/db_event.dart';
-import '../../navigation/navigation.dart';
-import '../widgets/buttons/gradient_button.dart';
 import '../widgets/passenger/passenger_options_sliver.dart';
 import '../widgets/trip/trip_options_sliver.dart';
 
@@ -50,26 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 100,),
                   Container(
                       padding: EdgeInsets.only(left: 15, bottom: 15, right: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Text("Пассажиры",
-                            style: AppStyles.mainTitleTextStyle,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-
-                            },
-                            child: SizedBox(
-                              height: 30,
-                              child: Text("Все пассажиры",
-                                style: TextStyle(fontSize: 16, decoration: TextDecoration.underline),
-
-                              ),
-                            ),
-                          )
-                        ],
+                      child: const Text("Пассажиры",
+                        style: AppStyles.mainTitleTextStyle,
                       )
                   ),
                   PassengerOptionsSliver(),

@@ -69,7 +69,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       ),
       leading: GestureDetector(
         onTap: () {
-          isBackArrowHidden ? () {} : Navigator.of(context).pop();
+          isBackArrowHidden ? () {} : Navigator.of(context).maybePop();
         },
         child: AnimatedOpacity(
           opacity: isBackArrowHidden ? 0 : 1,

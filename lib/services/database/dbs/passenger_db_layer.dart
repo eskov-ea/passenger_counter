@@ -6,14 +6,10 @@ class PassengerDBLayer {
 
   Future<int> addPassenger(Passenger p) async {
     final db = await DBProvider.db.database;
-    // String document = "";
-    // p.document.forEach((doc) {
-    //   document += doc.toString();
-    // });
     return await db.transaction((txn) async {
       int id = await txn.rawInsert(
-          'INSERT INTO passenger(person_id, trip_id, seat_id, document, status, comments) VALUES(?, ?, ?, ?, ?, ?)',
-          [p.personId,  p.tripId, p.seatId, p.document, p.status, p.comments]
+          'INSERT INTO passenger(person_id, trip_id, seat_id, person_document_id, status, comments) VALUES(?, ?, ?, ?, ?, ?)',
+          [p.personId,  p.tripId, p.seatId, p.personDocumentId, p.status, p.comments]
       );
       return id;
     });
@@ -44,7 +40,7 @@ class PassengerDBLayer {
     return await db.transaction((txn) async {
       String sql = "UPDATE passenger SET "
           "person_id = '${p.personId}', trip_id = '${p.tripId}', "
-          "seat_id = '${p.seatId}', document = '${p.document}', "
+          "seat_id = '${p.seatId}', document = '${p.personDocumentId}', "
           "status = '${p.status}', comments = '${p.comments}' "
           "WHERE id = '${p.id}'";
       return await txn.rawUpdate(sql);
@@ -72,6 +68,20 @@ class PassengerDBLayer {
       return res.isEmpty ? null : Passenger.fromJson(res.first);
     });
   }
+
+  Future<Passenger?> getPassengerByBarcode(String barcode, int tripId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      final res = await txn.rawQuery(
+          "SELECT * FROM passenger WHERE "
+              "trip_id = '$tripId' AND "
+              "seat_id = ( SELECT id FROM seat WHERE id IN (SELECT seat_id FROM trip "
+              "WHERE id = '$tripId') AND barcode = '$barcode' ); "
+      );
+      return res.isEmpty ? null : Passenger.fromJson(res.first);
+    });
+  }
+
 
   Future<void> deletePassenger(int passengerId) async {
     final db = await DBProvider.db.database;

@@ -6,8 +6,8 @@ import 'package:pleyona_app/ui/widgets/theme_background.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 
-class Scanner extends StatefulWidget {
-  const Scanner({
+class QRScanner extends StatefulWidget {
+  const QRScanner({
     required this.setStateCallback,
     required this.allowedFormat,
     super.key
@@ -17,12 +17,12 @@ class Scanner extends StatefulWidget {
   final List<BarcodeFormat> allowedFormat;
 
   @override
-  State<Scanner> createState() => _ScannerState();
+  State<QRScanner> createState() => _QRScannerState();
 }
 
-class _ScannerState extends State<Scanner> {
+class _QRScannerState extends State<QRScanner> {
 
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  final GlobalKey qrKey = GlobalKey(debugLabel: "QRScanner");
   Barcode? result;
   QRViewController? controller;
 
@@ -42,6 +42,7 @@ class _ScannerState extends State<Scanner> {
     controller.scannedDataStream.listen((scanData) {
       controller.pauseCamera();
       if (scanData.code != null) {
+        print("SCANNED DATA:  ${scanData.code}");
         widget.setStateCallback(scanData);
         Navigator.of(context).pop();
       } else {
@@ -98,12 +99,12 @@ class _ScannerState extends State<Scanner> {
                 ),
                 const SizedBox(height: 10,),
                 Container(
-                  width: MediaQuery.of(context).size.width - 20,
-                  height: 200,
-                  child: Text("Чтобы считать данные пассажира с QR-кода, наведите камеру на QR-код. Код должен быть читаем и освещение должно быть достаточным для распознования, в противном случае вы можете использовать фонарик камеры.",
-                    style: TextStyle(fontSize: 20, height: 1),
-                    textAlign: TextAlign.justify,
-                  )
+                    width: MediaQuery.of(context).size.width - 20,
+                    height: 200,
+                    child: Text("Чтобы считать данные с bar-кода, наведите камеру на bar-код. Код должен быть читаем и освещение должно быть достаточным для распознования, в противном случае вы можете использовать фонарик камеры.",
+                      style: TextStyle(fontSize: 20, height: 1),
+                      textAlign: TextAlign.justify,
+                    )
                 ),
                 const SizedBox(height: 10,),
                 Material(
@@ -126,7 +127,7 @@ class _ScannerState extends State<Scanner> {
                                 setState(() {});
                               },
                               customBorder: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(64)
+                                  borderRadius: BorderRadius.circular(64)
                               ),
                               splashColor: AppColors.cardColor3,
                               child: Container(
@@ -138,13 +139,13 @@ class _ScannerState extends State<Scanner> {
                                 child: Container(
                                   padding: EdgeInsets.all(13),
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
+                                      shape: BoxShape.circle,
                                       border: Border.all(width: 3, color: AppColors.backgroundMain2),
                                       color: Color(0x8CFFFFFF)
                                   ),
                                   child: snapshot.data == null
-                                    ? Image.asset("assets/icons/no-flash.png")
-                                    : Image.asset(
+                                      ? Image.asset("assets/icons/no-flash.png")
+                                      : Image.asset(
                                       snapshot.data! ? "assets/icons/flash.png" : "assets/icons/no-flash.png"
                                   ),
                                 ),

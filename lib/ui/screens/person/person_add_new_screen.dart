@@ -114,7 +114,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
   ValueNotifier<Barcode?> qrResult = ValueNotifier<Barcode?>(null);
   final List<BarcodeFormat> allowedScanFormat = [BarcodeFormat.qrcode];
   String? personBase64Image;
-  String? personDraft;
+  Map? personDraft;
 
   void setQRResult(Barcode value) {
       qrResult.value = value;
@@ -381,13 +381,68 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     final email = emailFieldController.text;
     final citizenship = citizenshipFieldController.text;
     final comment = commentTextController.text;
-    final photo = personBase64Image;
+    final photo = personBase64Image ?? "";
     final parentId = widget.parentId.toString() ?? "";
     final bDay = dayBirthFieldController.text;
     final bMonth = monthBirthFieldController.text;
     final bYear = yearBirthFieldController.text;
 
-    DataProvider().setPersonDraft(firstname: firstname, lastname: lastname, middlename: middlename, gender: gender, phone: phone, email: email, citizenship: citizenship, comment: comment, photo: photo ?? "", parentId: parentId, bDay: bDay, bMonth: bMonth, bYear: bYear);
+    final v = <String, String>{
+      "firstname" : firstname,
+      "lastname" : lastname,
+      "middlename" : middlename,
+      "gender" : gender,
+      "phone" : phone,
+      "email" : email,
+      "citizenship" : citizenship,
+      "comment" : comment,
+      "photo" : photo,
+      "parentId" : parentId,
+      "bDay" : bDay,
+      "bMonth" :bMonth,
+      "bYear" : bYear
+    };
+    final value = jsonEncode(v);
+
+    DataProvider().setPersonDraft(value: value);
+  }
+
+  void setPersonWithDraft() {
+    final firstname = personDraft!["firstname"];
+    final lastname = personDraft!["lastname"];
+    final middlename = personDraft!["middlename"];
+    final gender = personDraft!["gender"];
+    final phone = personDraft!["phone"];
+    final email = personDraft!["email"];
+    final citizenship = personDraft!["citizenship"];
+    final comment = personDraft!["comment"];
+    final photo = personDraft!["photo"];
+    final parentId = personDraft!["parentId"];
+    final bDay = personDraft!["bDay"];
+    final bMonth = personDraft!["bMonth"];
+    final bYear = personDraft!["bYear"];
+
+    firstnameController.text = firstname;
+    lastnameController.text = lastname;
+    middlenameController.text = middlename;
+    isMaleChecked ? " = МУЖ" : isFemaleChecked ? "ЖЕН" : "";
+    phoneFieldController.text = phone;
+    emailFieldController.text = email;
+    citizenshipFieldController.text = citizenship;
+    commentTextController.text = comment;
+
+    dayBirthFieldController.text = bDay;
+    monthBirthFieldController.text = bMonth;
+    yearBirthFieldController.text = bYear;
+    if (photo != "") {
+      // personBase64Image = photo;
+    }
+    if (parentId != null) {
+
+    }
+    if (gender == "МУЖ") isMaleChecked = true;
+    if (gender == "ЖЕН") isFemaleChecked = true;
+    setState(() {});
   }
 
   Future<void> _openOnPopGuardAlert() async {
@@ -457,27 +512,6 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       return false;
     }
   }
-
-  void setPersonWithDraft() {
-    log("decode $personDraft");
-    final json = jsonDecode(personDraft!);
-    log("decode $json");
-    final firstname = json["firstname"];
-    final lastname = json["lastname"];
-    final middlename = json["middlename"];
-    final gender = json["gender"];
-    final phone = json["phone"];
-    final email = json["email"];
-    final citizenship = json["citizenship"];
-    final comment = json["comment"];
-    final photo = json["photo"];
-    final parentId = json["parentId"];
-    final bDay = json["bDay"];
-    final bMonth = json["bMonth"];
-    final bYear = json["bYear"];
-
-    print("DECODE  -->  $firstname , $lastname");
-  }
   
   @override
   void initState() {
@@ -531,16 +565,17 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     qrResult.addListener(() {
       if (qrResult.value?.code != null) {
         final qr = qrResult.value!.code!;
-        final person = Person.fromQRCode(json.decode(qr));
-        final doc = PersonDocument.fromQRCode(json.decode(qr)["document"]);
+        final person = Person.fromQRCode(jsonDecode(qr));
+        final doc = PersonDocument.fromQRCode(jsonDecode(qr)["document"]);
         _fillInputsWithQRCodeData(person, doc);
       }
     });
     personClassList = PersonClass.values.map((value) => DropdownMenuEntry<String>(value: value.name, label: value.name.toUpperCase())).toList();
     DataProvider().getPersonDraft().then((value) {
       if (value != null) {
+        final draftObject = jsonDecode(value);
         setState(() {
-          personDraft = value;
+          personDraft = draftObject;
         });
       }
     });

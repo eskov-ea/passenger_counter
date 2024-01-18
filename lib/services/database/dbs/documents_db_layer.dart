@@ -26,6 +26,16 @@ class DocumentsDBLayer {
     });
   }
 
+  Future<PersonDocument> getPersonDocumentById(int documentId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM person_documents WHERE id= "$documentId"'
+      );
+      return PersonDocument.fromJson(res.first);
+    });
+  }
+
   Future<List<PersonDocument>> findPersonDocument(String name, String number) async {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {

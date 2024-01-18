@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
+import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
+import 'package:pleyona_app/ui/screens/qr_scanner.dart';
 import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 
 class PassengerOptionsSliver extends StatelessWidget {
@@ -56,6 +60,58 @@ class PassengerOptionsSliver extends StatelessWidget {
                           ),
                           SizedBox(height: 10,),
                           Text("Add", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 15,),
+                  Ink(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(MainNavigationRouteNames.scannerScreen,
+                          arguments: ScannerScreenArguments(setStateCallback: (result ) async {
+                            final barcode = result.code;
+                            final db = DBProvider.db;
+                            final state = BlocProvider.of<CurrentTripBloc>(context).state as InitializedCurrentTripState;
+                            final tripId = state.currentTrip.id;
+
+                            final passenger = await db.getPassengerByBarcode(tripId: tripId, barcode: barcode!);
+                            if (passenger == null) return;
+                            final statuses = await db.getPassengerStatuses(passengerId: passenger.id);
+                            final document = await db.getPersonDocumentById(documentId: passenger.personDocumentId);
+                            final seat = await db.getPassengerSeat(seatId: passenger.seatId);
+                            final person = await db.getPersonById(personId: passenger.personId);
+
+                            final passengerPerson = PassengerPerson(person: person, passenger: passenger, seat: seat, document: document, statuses: statuses);
+                            Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengerInfo,
+                                arguments: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
+                            );
+                          }, allowedFormat: [BarcodeFormat.code128])
+                        );
+                      },
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      splashColor: AppColors.backgroundMain5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: Image.asset(
+                              "assets/icons/barcode-icon-1.png",
+                              width: 40,
+                              height: 40,
+                              color: AppColors.textMain,
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          Text("Scan", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
                         ],
                       ),
                     ),

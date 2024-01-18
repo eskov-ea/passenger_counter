@@ -8,7 +8,7 @@ import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
 import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
-import 'package:pleyona_app/ui/widgets/scanner.dart';
+import 'package:pleyona_app/ui/screens/qr_scanner.dart';
 import '../ui/pages/adding_person_options.dart';
 import '../ui/screens/person/person_edit_info_screen.dart';
 import '../ui/screens/person/person_search_screen.dart';
@@ -38,6 +38,7 @@ abstract class MainNavigationRouteNames {
   static const tripPassengerInfo = '/trip_passenger_full_info';
   static const editTripPassengersStatus = '/edit_passenger_status';
   static const tripSeatsScreen = '/trip_seats';
+  static const barcodeScanScreen = '/scan_barcode';
   static const test = '/test';
 }
 

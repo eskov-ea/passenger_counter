@@ -42,6 +42,7 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
   bool isPassengerInitialized = false;
   bool isErrorHappened = false;
   String? errorMessage;
+  PersonDocument? personDocument;
 
 
   Future<void> _openUpdateStatusDialogWindow() async {
@@ -287,6 +288,7 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
   Widget _personInfoBloc() {
     final Person p = widget.passenger.person;
     final Seat s = widget.passenger.seat;
+    final PersonDocument d = widget.passenger.document;
     return Container(
       height: 200,
       decoration: const BoxDecoration(
@@ -300,6 +302,7 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               child: Row(
                 children: [
+                  const SizedBox(width: 10),
                   p.photo != ""
                       ? Image.memory(base64Decode(p.photo),
                     fit: BoxFit.cover,
@@ -311,12 +314,14 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
                     width: 80,
                     height: 120,
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 30),
                   Expanded(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('${p.lastname} ${p.firstname} ${p.middlename}', style: style),
                         Text('${p.birthdate}, ${p.gender} ${p.citizenship}', style: style),
+                        Text('${d.name} ${d.description}', style: style),
                         Text('${p.phone} / ${p.email}', style: style),
                         Text('Родитель: Иванов Иван'),
                         p.comment == null ? SizedBox.shrink() : Text(p.comment!),

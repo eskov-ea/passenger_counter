@@ -79,7 +79,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   bool isChildrenLoaded = false;
 
   late final List<PersonDocument> personDocuments;
-  late final List<Widget> EditableDocuments;
+  late final List<Widget> editableDocuments;
   late final CameraBloc _cameraBloc;
   List<Person>? children;
   List<String> documentNames = [];
@@ -116,6 +116,12 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
         createdAt: widget.person.createdAt,
         updatedAt: DateTime.now().toString()
       );
+      if (personDocuments.length < documentNames.length) {
+        for (var i=personDocuments.length; i<documentNames.length; ++i) {
+          final newDocument = PersonDocument(id: 0, name: documentNames[i], description: documentNumbers[i], personId: widget.person.id);
+          await DBProvider.db.addDocument(document: newDocument);
+        }
+      }
       await DBProvider.db.updatePerson(p: updatedPerson, photo: photo);
       Navigator.of(context).pop();
       Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.allPersonsScreen);
@@ -202,7 +208,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   }
 
   Widget _addEditableDocument() {
-    final docIndex = EditableDocuments.length;
+    final docIndex = editableDocuments.length;
     String documentNumber = "";
     String documentName = "";
     documentNames.add(documentName);
@@ -292,7 +298,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
     int docIndex =0;
     DBProvider.db.getPersonDocuments(personId: widget.person.id).then((documents) {
       personDocuments = documents;
-      EditableDocuments = documents.map((doc) {
+      editableDocuments = documents.map((doc) {
         ++docIndex;
         return _initEditableDocument(doc, docIndex);
       }).toList();
@@ -313,7 +319,6 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
 
   bool _checkDocsChanges() {
     for (int i=0; i < personDocuments.length; ++i) {
-    print("${personDocuments[i].description}, ${documentNumbers[i]}");
       if(personDocuments[i].name != documentNames[i] || personDocuments[i].description != documentNumbers[i]) {
         return true;
       }
@@ -322,11 +327,13 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
 
   }
 
-  void _checkNewDocsChanges() {
-    for (int j = personDocuments.length; j < documentNames.length; ++j) {
-      log(documentNames[j].trim().isEmpty.toString());
-      log(documentNumbers[j].trim().isEmpty.toString());
+  bool _checkNewDocsChanges() {
+    if (editableDocuments.isEmpty) return false;
+    final k = personDocuments.length;
+    for (int j = 0 + k; j < documentNames.length; ++j) {
+      if (documentNames[j].trim().isNotEmpty && documentNumbers[j].trim().isNotEmpty) return true;
     }
+    return false;
   }
 
   void checkIfPersonHasChanges() {
@@ -339,12 +346,15 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
       personClass != widget.person.personClass ||
       comment != widget.person.comment ||
       _checkDocsChanges() ||
+      _checkNewDocsChanges() ||
       photo != null
     ) {
+      log("checkIfPersonHasChanges ${_checkNewDocsChanges()}");
       setState(() {
         hasPersonChanges = true;
       });
     } else {
+      log("checkIfPersonHasChanges ${_checkNewDocsChanges()}");
       setState(() {
         hasPersonChanges = false;
       });
@@ -610,7 +620,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                   ),
                   SizedBox(height: 10,),
                   if (isPersonDocumentsInited)
-                    ...EditableDocuments
+                    ...editableDocuments
                   else SizedBox(height: 68,),
                   Material(
                     child: Ink(
@@ -625,7 +635,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                       child: InkWell(
                         splashColor: AppColors.cardColor5,
                         onTap: () {
-                          EditableDocuments.add(_addEditableDocument());
+                          editableDocuments.add(_addEditableDocument());
                           setState(() {});
                         },
                         child: Icon(Icons.add)

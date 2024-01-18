@@ -9,7 +9,7 @@ class Seat extends Equatable {
   final String side;
   final String barcode;
   final int seatClass;
-  final String status;
+  final int status;
   final String comment;
   final String createdAt;
   final String updatedAt;

@@ -88,7 +88,7 @@ class PassengerCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("${passengerPerson.person.lastname} ${passengerPerson.person.firstname} ${passengerPerson.person.middlename}"),
-                      Text("${passengerPerson.passenger.document}"),
+                      Text("${passengerPerson.passenger.personDocumentId}"),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

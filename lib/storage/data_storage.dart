@@ -20,34 +20,8 @@ class DataProvider {
 
   Future<String?> getPersonDraft() => _secureStorage.read(key: _Keys.personDraft);
   Future<void> setPersonDraft({
-    required String firstname,
-    required String lastname,
-    required String middlename,
-    required String gender,
-    required String phone,
-    required String email,
-    required String citizenship,
-    required String comment,
-    required String photo,
-    required String parentId,
-    required String bDay,
-    required String bMonth,
-    required String bYear
-  }) => _secureStorage.write(key: _Keys.personDraft, value: <String, String>{
-          "firstname" : firstname,
-          "lastname" : lastname,
-          "middlename" : middlename,
-          "gender" : gender,
-          "phone" : phone,
-          "email" : email,
-          "citizenship" : citizenship,
-          "comment" : comment,
-          "photo" : photo,
-          "parentId" : parentId,
-          "bDay" : bDay,
-          "bMonth" :bMonth,
-          "bYear" : bYear
-        }.toString());
+    required String value
+  }) => _secureStorage.write(key: _Keys.personDraft, value: value);
   Future<void> deletePersonDraft() => _secureStorage.delete(key: _Keys.personDraft);
 
 }

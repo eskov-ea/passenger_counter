@@ -11,7 +11,7 @@ import 'package:pleyona_app/ui/screens/person/person_search_screen.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
-import 'package:pleyona_app/ui/widgets/scanner.dart';
+import 'package:pleyona_app/ui/screens/qr_scanner.dart';
 import '../ui/pages/adding_person_options.dart';
 import '../ui/pages/loader_widget.dart';
 import '../ui/screens/auth_screen.dart';
@@ -49,7 +49,7 @@ class ScreenFactory {
   }
 
   Widget makeScannerScreen(ScannerScreenArguments arguments) {
-    return Scanner(setStateCallback: arguments.setStateCallback, allowedFormat: arguments.allowedFormat);
+    return QRScanner(setStateCallback: arguments.setStateCallback, allowedFormat: arguments.allowedFormat);
   }
 
   Widget makeAddingPersonOptionsPage(AddingPersonOptionsArguments arguments) {

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/scan_button.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -21,7 +22,17 @@ class PersonAddingPhotoScanOptionsWidget extends StatelessWidget {
   final Function() setPersonWithDraft;
   final List<BarcodeFormat>  allowedFormat;
   final String?  personBase64Image;
-  final String?  personDraft;
+  final Map? personDraft;
+
+  Widget _getPersonDraftName() {
+    if (personDraft != null && personDraft!["lastname"] != "") {
+      return Text("[ ${personDraft!["lastname"]} ${personDraft!["firstname"]} ]",
+        style: TextStyle(fontSize: 12, color: Color(0xFF000000)),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +49,32 @@ class PersonAddingPhotoScanOptionsWidget extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              GestureDetector(
-                onTap: (){
-                  if (personDraft != null) {
-                    setPersonWithDraft();
-                  }
-                },
-                child: Container(
+              Material(
+                color: Colors.transparent,
+                child: Ink(
                   width: MediaQuery.of(context).size.width / 5 * 3 - 20,
                   height: 55,
-                  alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(6)),
                     color: personDraft == null ? Color(0xCFFFFFFF) : Color(0xFFFFFFFF),
                     border: Border.all(width: 1, color: Color(0xFF000000))
                   ),
-                  child: Text("Восстановть черновик", style: TextStyle(fontSize: 18)),
+                  child: InkWell(
+                    customBorder: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    onTap: (){
+                      if (personDraft != null) {
+                        setPersonWithDraft();
+                      }
+                    },
+                    child: Column(
+                      children: [
+                        Text("Восстановть черновик", style: TextStyle(fontSize: 18)),
+                        _getPersonDraftName()
+                      ],
+                    )
+                  ),
                 ),
               ),
               const SizedBox(height: 20),

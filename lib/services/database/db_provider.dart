@@ -86,7 +86,7 @@ class DBProvider {
   Future<List<PersonDocument>> findPersonDocument({
     required String name, required String number
   }) => DocumentsDBLayer().findPersonDocument(name, number);
-
+  Future<PersonDocument> getPersonDocumentById({required int documentId}) => DocumentsDBLayer().getPersonDocumentById(documentId);
 
   /// TRIPS
 
@@ -108,6 +108,7 @@ class DBProvider {
   Future<void> deletePassenger({required int passengerId}) => PassengerDBLayer().deletePassenger(passengerId);
   Future<int> changePassengerSeat({required int passengerId, required int seatId}) => PassengerDBLayer().changePassengerSeat(passengerId, seatId);
   Future<Passenger?> checkIfPersonRegisteredOnTrip({required int personId, required int tripId}) => PassengerDBLayer().checkIfPersonRegisteredOnTrip(personId, tripId);
+  Future<Passenger?> getPassengerByBarcode({required String barcode, required int tripId}) => PassengerDBLayer().getPassengerByBarcode(barcode, tripId);
 
   /// SEAT
 
@@ -141,9 +142,9 @@ class DBProvider {
 
   Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;
-    await db.execute("DROP TABLE IF EXISTS person");
-    await db.execute("DROP TABLE IF EXISTS trip");
-    await db.execute("DROP TABLE IF EXISTS person_documents");
+    // await db.execute("DROP TABLE IF EXISTS person");
+    // await db.execute("DROP TABLE IF EXISTS trip");
+    // await db.execute("DROP TABLE IF EXISTS person_documents");
     await db.execute("DROP TABLE IF EXISTS passenger");
   }
 

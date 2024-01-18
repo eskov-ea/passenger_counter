@@ -85,6 +85,7 @@ class _EditableDocumentTextFieldWidgetState extends State<EditableDocumentTextFi
                   height: 48,
                   child: isEditing
                   ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         height: 48,
@@ -135,7 +136,12 @@ class _EditableDocumentTextFieldWidgetState extends State<EditableDocumentTextFi
                           keyboardType: widget.inputType,
                           cursorHeight: 25,
                           onChanged: widget.valueNumberSetter,
-                          onEditingComplete: validate,
+                          onEditingComplete: () {
+                            validate();
+                            setState(() {
+                              isEditing = !isEditing;
+                            });
+                          },
                           cursorColor: Color(0xFF000000),
                           style: TextStyle(fontSize: 24, color: Color(0xFF000000), decoration: TextDecoration.none, height: 1),
                           decoration: InputDecoration(

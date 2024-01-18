@@ -5,7 +5,7 @@ class Passenger {
   final int tripId;
   final int personId;
   final int seatId;
-  final String document;
+  final int personDocumentId;
   final int status;
   final String comments;
   final String createdAt;
@@ -17,7 +17,7 @@ class Passenger {
     required this.tripId,
     required this.personId,
     required this.seatId,
-    required this.document,
+    required this.personDocumentId,
     required this.status,
     required this.comments,
     required this.createdAt,
@@ -29,7 +29,7 @@ class Passenger {
       tripId: json["trip_id"],
       personId: json["person_id"],
       seatId: json["seat_id"],
-      document: json["document"],
+      personDocumentId: json["person_document_id"],
       status: json["status"],
       comments: json["comments"],
       createdAt: json["created_at"],
@@ -37,14 +37,14 @@ class Passenger {
     );
 
   @override
-  String toString() => "Passenger: $id, $tripId, $personId, $seatId, $document";
+  String toString() => "Passenger: $id, $tripId, $personId, $personDocumentId, $seatId, $personDocumentId";
 
   static Passenger updatePassengerId(Passenger p, id) => Passenger(
     id: id,
     tripId: p.tripId,
     personId: p.personId,
     seatId: p.seatId,
-    document: p.document,
+    personDocumentId: p.personDocumentId,
     status: p.status,
     comments: p.comments,
     createdAt: p.createdAt,

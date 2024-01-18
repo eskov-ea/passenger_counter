@@ -8,11 +8,13 @@ class PassengerPerson {
   final Person person;
   final Seat seat;
   final List<PassengerStatus> statuses;
+  final PersonDocument document;
 
   const PassengerPerson({
     required this.person,
     required this.passenger,
     required this.seat,
+    required this.document,
     required this.statuses
   });
 }

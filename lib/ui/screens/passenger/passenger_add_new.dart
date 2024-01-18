@@ -37,6 +37,8 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   final ScrollController _scrollController = ScrollController();
   Person? person;
   List<PersonDocument>? personDocuments;
+  PersonDocument? currentPersonDocument;
+  int? activePersonDocument;
   Trip? trip;
   Seat? seat;
   final DBProvider _db = DBProvider.db;
@@ -130,6 +132,11 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   Future<void> _onSafe() async {
     if (person != null && personDocuments != null && trip != null && seat != null) {
       await _checkIfPersonAlreadyRegistered();
+      if (personDocuments!.length > 1) {
+        await _openChoosePersonDocument();
+      } else {
+        currentPersonDocument = personDocuments!.first;
+      }
       try {
         String document = "";
         personDocuments!.forEach((doc) {
@@ -140,7 +147,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             tripId: trip!.id,
             personId: person!.id,
             seatId: seat!.id,
-            document: document,
+            personDocumentId: currentPersonDocument!.id!,
             status: 1,
             comments: commentTextController.text,
             createdAt: "",
@@ -154,6 +161,76 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
     } else {
       showPopup(context, dismissible: true, type: PopupType.warning, message: "Необходимо выбрать Персону, Рейс и Место для того, чтобы зарегистрировать пассажира.");
     }
+  }
+
+  Future<void> _openChoosePersonDocument() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text("Выберите документ"),
+              content: Column(
+                children: [
+                  Text("Выберите документ для регистрации пассажира на рейс из ранее зарегистрированных."),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 300,
+                    child: ListView.builder(
+                        itemCount: personDocuments!.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                activePersonDocument = index;
+                              });
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xBBFFFFFF),
+                                  borderRadius: BorderRadius.all(Radius.circular(6))
+                              ),
+                              child: Text("${personDocuments![index].name} ${personDocuments![index].description}"),
+                            ),
+                          );
+                        }
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Выбрать документ',
+                    style: TextStyle(color: activePersonDocument == null ? const Color(0x666f1dbb) : const Color(0xff6f1dbb),
+                        fontSize: 18, fontWeight: FontWeight.w500
+                    ),
+                  ),
+                  onPressed: () {
+                    if (activePersonDocument == null) return;
+                    currentPersonDocument = personDocuments![activePersonDocument!];
+                    activePersonDocument = null;
+                    Navigator.of(context).pop();
+                    setState(() {});
+                  },
+                ),
+                TextButton(
+                  child: const Text('Назад'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      activePersonDocument = null;
+                    });
+                  },
+                ),
+              ],
+            );
+          }
+        );
+      }
+    );
   }
 
   @override

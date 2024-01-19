@@ -37,6 +37,7 @@ class TripsResultList extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             itemCount: trips!.length,
+            itemExtent: 100,
             padding: EdgeInsets.all(0),
             itemBuilder: (BuildContext context, int index) {
               return TripCard(trip: trips![index], index: index, callback: callback);

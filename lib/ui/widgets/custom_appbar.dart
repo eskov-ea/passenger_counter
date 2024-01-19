@@ -8,6 +8,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget{
     required this.scrollController,
     this.height = 40,
     this.leadingWidth = 50,
+    this.hideHomeButton = false,
     Key? key
   }) : super(key: key);
 
@@ -15,6 +16,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget{
   final double height;
   final double leadingWidth;
   final ScrollController? scrollController;
+  final bool hideHomeButton;
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
@@ -31,7 +33,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     required ScrollController scrollController, Function? onAtTop
   }) {
     scrollController.addListener(() {
-      if(scrollController.offset > 250) {
+      if(scrollController.offset > 50) {
         _hideBackArrow(true);
       } else {
         _hideBackArrow(false);
@@ -84,19 +86,27 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       actions: [
-        GestureDetector(
+        widget.hideHomeButton ? const SizedBox.shrink() : GestureDetector(
           onTap: () {
             Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
           },
-          child: Container(
-            padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
-            child: Image.asset("assets/icons/homescreen_icon.png",
-              fit: BoxFit.contain,
+          child: AnimatedOpacity(
+            opacity: isBackArrowHidden ? 0 : 1,
+            duration: const Duration(milliseconds: 200),
+            child: Container(
+              padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
+              child: Image.asset("assets/icons/homescreen_icon.png",
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         )
       ],
-      title: widget.child
+      title: AnimatedOpacity(
+        opacity: isBackArrowHidden ? 0 : 1,
+        duration: const Duration(milliseconds: 200),
+        child: widget.child,
+      )
     );
   }
 }

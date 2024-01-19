@@ -39,6 +39,7 @@ abstract class MainNavigationRouteNames {
   static const editTripPassengersStatus = '/edit_passenger_status';
   static const tripSeatsScreen = '/trip_seats';
   static const barcodeScanScreen = '/scan_barcode';
+  static const tripsCalendarScreen = '/trips_calendar';
   static const test = '/test';
 }
 
@@ -123,6 +124,8 @@ class MainNavigation {
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripFullInfoScreen());
       case MainNavigationRouteNames.tripSeatsScreen:
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripSeatsScreen());
+      case MainNavigationRouteNames.tripsCalendarScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripsCalendarsScreen());
       case MainNavigationRouteNames.test:
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),

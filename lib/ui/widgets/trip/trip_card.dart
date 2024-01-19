@@ -77,8 +77,7 @@ class TripCard extends StatelessWidget {
       child: GestureDetector(
         onTap: callFunction,
         child: Container(
-          height: 100,
-          margin: EdgeInsets.only(bottom: 0),
+          margin: EdgeInsets.only(bottom: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(6)),
             color: index % 2 == 0 ? firstColor : secondColor,

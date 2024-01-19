@@ -16,18 +16,18 @@ class PersonOptionsSliver extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.transparent,
-      child: Container(
-        height: 200,
+      child: SizedBox(
+        height: 120,
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
-            SizedBox(width: 15,),
+            const SizedBox(width: 15),
             Ink(
               width: 100,
-              height: 100,
+              height: 120,
               decoration: BoxDecoration(
                 color: cardColor,
-                borderRadius: BorderRadius.all(Radius.circular(15)),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
                 onTap: () {
@@ -42,27 +42,25 @@ class PersonOptionsSliver extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      child: Image.asset(
-                        "assets/icons/add-person.png",
-                        width: 90,
-                        height: 90,
-                        color: AppColors.textMain,
-                      ),
+                    Image.asset(
+                      "assets/icons/add-person.png",
+                      width: 40,
+                      height: 40,
+                      color: AppColors.textMain,
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10),
                     Text("Add", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
                   ],
                 ),
               ),
             ),
-            SizedBox(width: 15,),
+            const SizedBox(width: 15,),
             Ink(
-              width: 200,
-              height: 200,
+              width: 150,
+              height: 120,
               decoration: BoxDecoration(
                 color: cardColor,
-                borderRadius: BorderRadius.all(Radius.circular(15)),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
               ),
               child: InkWell(
                 onTap: () async {
@@ -75,21 +73,19 @@ class PersonOptionsSliver extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      child: Image.asset(
-                        "assets/icons/search-person.png",
-                        width: 90,
-                        height: 90,
-                        color: AppColors.textMain,
-                      ),
+                    Image.asset(
+                      "assets/icons/search-person.png",
+                      width: 40,
+                      height: 40,
+                      color: AppColors.textMain,
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10),
                     Text("Все люди", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
                   ],
                 ),
               ),
             ),
-            SizedBox(width: 15,),
+            const SizedBox(width: 15),
           ],
         ),
       ),

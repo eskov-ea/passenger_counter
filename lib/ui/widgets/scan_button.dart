@@ -27,7 +27,7 @@ class ScanButton extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(6)),
-          border: Border.all(width: 2, color: AppColors.accent2),
+          border: Border.all(width: 2, color: Color(0xFF487ABB)),
           color: AppColors.backgroundMain5,
         ),
         child: InkWell(

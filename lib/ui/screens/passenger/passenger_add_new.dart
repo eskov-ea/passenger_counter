@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
@@ -120,28 +122,30 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   }
 
   Future<void> _checkIfPersonAlreadyRegistered() async {
-    final passenger = await _db.checkIfPersonRegisteredOnTrip(personId: person!.id, tripId: trip!.id);
-    if (passenger != null) {
-      person = null;
-      seat = null;
-      await showPopup(context, dismissible: true, type: PopupType.warning, message: 'Пассажир уже зарегистрирован на этот рейс');
-      setState(() {});
-    }
+
   }
 
-  Future<void> _onSafe() async {
+  Future<void> _onSave() async {
+    /// check if all needed information filled in
     if (person != null && personDocuments != null && trip != null && seat != null) {
-      await _checkIfPersonAlreadyRegistered();
       if (personDocuments!.length > 1) {
         await _openChoosePersonDocument();
       } else {
         currentPersonDocument = personDocuments!.first;
       }
+      /// check if the person has not registered yet
       try {
-        String document = "";
-        personDocuments!.forEach((doc) {
-          document += doc.toString();
-        });
+        PopupManager.showLoadingPopup(context);
+        final personOnThisTrip = await _db.checkIfPersonRegisteredOnTrip(personId: person!.id, tripId: trip!.id);
+        if (personOnThisTrip != null) {
+          person = null;
+          seat = null;
+          PopupManager.closePopup(context);
+          PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.warning, message: 'Пассажир уже зарегистрирован на этот рейс');
+          setState(() {});
+          return;
+        }
+        /// create new passenger, send event to the bloc and navigate to homescreen with info popup
         final passenger = Passenger(
             id: 0,
             tripId: trip!.id,
@@ -155,11 +159,16 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
         );
         BlocProvider.of<CurrentTripBloc>(context).add(AddNewTripPassengerEvent(passenger: passenger, baggage: personBagage));
         Navigator.pushReplacementNamed(context, MainNavigationRouteNames.homeScreen);
+        PopupManager.closePopup(context);
+        PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.error, message: "Произошла ошибка при обработке запроса. Попробуйте ещё раз.");
       } catch (err, stack) {
-        showPopup(context, dismissible: true, type: PopupType.error, message: "Произошла ошибка при обработке запроса. Попробуйте ещё раз.");
+        log(err.toString(), stackTrace: stack);
+        PopupManager.closePopup(context);
+        PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.error, message: "Произошла ошибка при обработке запроса. Попробуйте ещё раз.");
       }
     } else {
-      showPopup(context, dismissible: true, type: PopupType.warning, message: "Необходимо выбрать Персону, Рейс и Место для того, чтобы зарегистрировать пассажира.");
+      PopupManager.closePopup(context);
+      PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.warning, message: "Необходимо выбрать Персону, Рейс и Место для того, чтобы зарегистрировать пассажира.");
     }
   }
 
@@ -248,7 +257,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: const CustomAppBar(scrollController: null, child: Text("Новый пассажир", style: AppStyles.mainTitleTextStyle)),
+      appBar: CustomAppBar(scrollController: _scrollController, child: Text("Новый пассажир", style: AppStyles.mainTitleTextStyle)),
       body: ThemeBackgroundWidget(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -262,7 +271,6 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 90),
-                      const Divider(height: 1),
                       const BlockTitle(message: "Персона", bottomPadding: 0),
                       _personBlock(),
                       const SizedBox(height: 10),
@@ -316,7 +324,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 10),
                 child: trip != null && person != null && personDocuments != null
-                  ? SaveButton(onTap: _onSafe, label: "Сохранить")
+                  ? SaveButton(onTap: _onSave, label: "Сохранить")
                   : SaveButton(onTap: () {}, label: "Сохранить", color: Color(0xBBFFFFFF),)
               )
             ],
@@ -396,7 +404,6 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
       return Column(
         children: [
           TripCard(trip: trip!, callback: (Trip trip) {  } ),
-          const SizedBox(height: 5),
           Material(
             color: AppColors.transparent,
             child: Ink(
@@ -431,11 +438,11 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
           width: MediaQuery.of(context).size.width - 20,
           height: 100,
           decoration: const BoxDecoration(
-              color: Color(0x80FFFFFF),
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              image: DecorationImage(image: AssetImage("assets/icons/search.png"),
-                  opacity: 0.5, fit: BoxFit.scaleDown, scale: 8
-              )
+            color: Color(0x80FFFFFF),
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            image: DecorationImage(image: AssetImage("assets/icons/search.png"),
+                opacity: 0.5, fit: BoxFit.scaleDown, scale: 8
+            )
           ),
           child: InkWell(
             onTap: () async {
@@ -459,8 +466,13 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
   Widget _seatBlock() {
     if (trip == null || person == null) {
       return Container(
-        width: MediaQuery.of(context).size.width - 20,
         height: 100,
+        width: MediaQuery.of(context).size.width - 20,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          color: Color(0x80FFFFFF),
+          borderRadius: BorderRadius.all(Radius.circular(8))
+        ),
         child: Text('Выберите рейс и персону'),
       );
     }
@@ -492,7 +504,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       );
     } else {

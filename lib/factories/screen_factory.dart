@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:pleyona_app/ui/screens/calendar_screen.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_add_new.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/person/all_persons_screen.dart';
@@ -113,5 +114,9 @@ class ScreenFactory {
 
   Widget makeTripSeatsScreen() {
     return const TripSeatsScreen();
+  }
+
+  Widget makeTripsCalendarsScreen() {
+    return const TripsCalendarScreen();
   }
 }

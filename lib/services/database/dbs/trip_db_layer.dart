@@ -35,13 +35,13 @@ class TripDBLayer {
     });
   }
 
-  Future<List<Trip>> searchTripsByDate(DateTime date) async {
+  Future<List<Trip>> searchTripForToday(DateTime date) async {
     final db = await DBProvider.db.database;
-    final DateTime dateRange = date.add(Duration(days: 1));
-    print("SEARCH:::::: \r\n $date \r\n $dateRange");
+    final DateTime dateStart = DateTime(date.year, date.month, date.day).subtract(const Duration(minutes: 1));
+    final DateTime dateEnd = dateStart.add(const Duration(days: 1));
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM trip WHERE start_trip BETWEEN "$date" and "$dateRange" '
+          'SELECT * FROM trip WHERE start_trip BETWEEN "${dateStart.toIso8601String()}" AND "${dateEnd.toIso8601String()}" '
           'ORDER BY updated_at ASC'
       );
       print(res);
@@ -59,6 +59,19 @@ class TripDBLayer {
       String sqlWhere = " WHERE id = '$id';";
       final sql = sqlGeneral + sqlStatus + sqlComment + sqlWhere;
       return await txn.rawUpdate(sql);
+    });
+  }
+
+  Future<List<Trip>> searchTripByDateRange(DateTime dateStart, DateTime dateEnd) async {
+    final db = await DBProvider.db.database;
+    print("SEARCH:::::: \r\n $dateStart \r\n $dateEnd");
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM trip WHERE start_trip BETWEEN "$dateStart" and "$dateEnd" '
+              'ORDER BY updated_at ASC'
+      );
+      print(res);
+      return res.map((el) => Trip.fromJson(el)).toList();
     });
   }
 

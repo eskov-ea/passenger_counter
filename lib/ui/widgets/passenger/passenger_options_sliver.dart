@@ -11,6 +11,7 @@ import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/qr_scanner.dart';
 import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 
@@ -282,6 +283,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
+                        // DBProvider.db.DeveloperModeClearPersonTable();
                         Navigator.of(context).pushNamed(MainNavigationRouteNames.passengerAddNewScreen);
                       },
                       customBorder: RoundedRectangleBorder(

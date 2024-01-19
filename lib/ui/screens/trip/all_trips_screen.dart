@@ -54,7 +54,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
     });
     List<Trip> result = [];
     if (date != null) {
-      result = await _db.searchTripsByDate(date: date);
+      result = await _db.searchTripForToday(date: date);
     } else {
       result = await _db.getTrips();
     }

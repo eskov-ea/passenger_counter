@@ -7,7 +7,7 @@ class SaveButton extends StatelessWidget {
   const SaveButton({
     required this.onTap,
     required this.label,
-    Color this.color = const Color(0xFF35D2AB),
+    this.color = const Color(0xFF35D2AB),
     super.key
   });
 
@@ -24,7 +24,7 @@ class SaveButton extends StatelessWidget {
         height: 60,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(6)),
-          border: Border.all(width: 2, color: AppColors.accent2),
+          // border: Border.all(width: 2, color: AppColors.accent2),
           color: color,
         ),
         child: InkWell(

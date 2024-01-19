@@ -36,6 +36,7 @@ class PersonAddingPhotoScanOptionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("DRAFT:::  $personDraft");
     return Container(
       height: 200,
       width: MediaQuery.of(context).size.width - 20,
@@ -56,8 +57,8 @@ class PersonAddingPhotoScanOptionsWidget extends StatelessWidget {
                   height: 55,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(6)),
-                    color: personDraft == null ? Color(0xCFFFFFFF) : Color(0xFFFFFFFF),
-                    border: Border.all(width: 1, color: Color(0xFF000000))
+                    color: personDraft == null ? Color(0x80ffffff) : Color(0xFFFFFFFF),
+                    border: Border.all(width: 1, color: personDraft == null ? Color(0xffa9a9a9) : Color(0xFF000000))
                   ),
                   child: InkWell(
                     customBorder: RoundedRectangleBorder(
@@ -69,15 +70,21 @@ class PersonAddingPhotoScanOptionsWidget extends StatelessWidget {
                       }
                     },
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Восстановть черновик", style: TextStyle(fontSize: 18)),
+                        Text("Восстановть черновик",
+                            style: TextStyle(
+                              color: personDraft == null ? Color(0xffa9a9a9) : Color(0xFF000000),
+                              fontSize: 18
+                            )
+                        ),
                         _getPersonDraftName()
                       ],
                     )
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               ScanButton(onQRScanResultCallback: onQRScanResultCallback, allowedFormat: allowedFormat,
                 width: MediaQuery.of(context).size.width / 5 * 3 - 20, height: 110,
               )

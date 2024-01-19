@@ -12,7 +12,7 @@ class SeatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 100,
-      margin: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)),
         color: const Color(0xF2FFFFFF),

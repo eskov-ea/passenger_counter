@@ -93,7 +93,7 @@ class DBProvider {
   Future<List<Trip>> getTrips() => TripDBLayer().getTrips();
   Future<Trip> getTripById({required int tripId}) => TripDBLayer().getTripById(tripId);
   Future<int> addTrip({required Trip trip}) => TripDBLayer().addTrip(trip);
-  Future<List<Trip>> searchTripsByDate({required DateTime date}) => TripDBLayer().searchTripsByDate(date);
+  Future<List<Trip>> searchTripForToday({required DateTime date}) => TripDBLayer().searchTripForToday(date);
   Future updateTrip({
     required int id, required String tripName, required DateTime tripStartDate, required DateTime tripEndDate, int? status, String? comment,
   }) => TripDBLayer().updateTrip(id, tripName, tripStartDate, tripEndDate, status, comment);
@@ -145,7 +145,7 @@ class DBProvider {
     // await db.execute("DROP TABLE IF EXISTS person");
     // await db.execute("DROP TABLE IF EXISTS trip");
     // await db.execute("DROP TABLE IF EXISTS person_documents");
-    await db.execute("DROP TABLE IF EXISTS passenger");
+    await db.execute("DROP TABLE IF EXISTS seat");
   }
 
 

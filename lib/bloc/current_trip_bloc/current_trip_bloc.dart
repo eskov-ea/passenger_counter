@@ -39,7 +39,7 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
     if (state is! InitializingCurrentTripState) return;
     emit(InitializingCurrentTripState());
     final db = DBProvider.db;
-    final trips = await db.searchTripsByDate(date: DateTime.now());
+    final trips = await db.searchTripForToday(date: DateTime.now());
     if (trips.isEmpty) {
       emit(NoCurrentTripState());
     } else {
@@ -154,27 +154,33 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
       ) async {
     final db = DBProvider.db;
     final passengerId = await db.addPassenger(p: event.passenger);
-    final passenger = Passenger.updatePassengerId(event.passenger, passengerId);
     await db.addPassengerStatus(passengerId: passengerId, statusName: 'CheckIn');
     for (var baggageWeight in event.baggage) {
       await db.addPassengerBagage(passengerId: passengerId, weight: baggageWeight);
     }
 
-    final Person person = await db.getPersonById(personId: event.passenger.personId);
-    final Seat seat = await db.getPassengerSeat(seatId: event.passenger.seatId);
-    final statuses = await db.getPassengerStatuses(passengerId: passengerId);
-    final document = await db.getPersonDocumentById(documentId: passenger.personDocumentId);
+    if (state is InitializedCurrentTripState) {
+      final passenger = Passenger.updatePassengerId(event.passenger, passengerId);
+      final Person person = await db.getPersonById(personId: event.passenger.personId);
+      final Seat seat = await db.getPassengerSeat(seatId: event.passenger.seatId);
+      final statuses = await db.getPassengerStatuses(passengerId: passengerId);
+      final document = await db.getPersonDocumentById(documentId: passenger.personDocumentId);
 
-    final newPassengerPerson = PassengerPerson(person: person, passenger: passenger, seat: seat, statuses: statuses, document: document);
-    final s = state as InitializedCurrentTripState;
-    s.tripPassengers.insert(0, newPassengerPerson);
-    final List<Seat> availableSeats = await db.getAvailableSeats(tripId: s.currentTrip.id);
+      final newPassengerPerson = PassengerPerson(
+          person: person,
+          passenger: passenger,
+          seat: seat,
+          statuses: statuses,
+          document: document);
+      final s = state as InitializedCurrentTripState;
+      s.tripPassengers.insert(0, newPassengerPerson);
+      final List<Seat> availableSeats = await db.getAvailableSeats(tripId: s.currentTrip.id);
 
-    emit(s.copyWith(
-        currentTrip: s.currentTrip,
-        tripPassengers: s.tripPassengers,
-        availableSeats: availableSeats
-    ));
+      emit(s.copyWith(
+          currentTrip: s.currentTrip,
+          tripPassengers: s.tripPassengers,
+          availableSeats: availableSeats));
+    }
   }
 
   Future<void> _onChangePassengerSeatEvent(

@@ -99,7 +99,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
       );
 
       final res = await _db.addTrip(trip: newTrip);
-      await showPopup(context, dismissible: false, type: PopupType.success, message: "Рейс успешно добавлен", route: MainNavigationRouteNames.homeScreen);
+      await PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.success, message: "Рейс успешно добавлен", route: MainNavigationRouteNames.homeScreen);
     }
   }
 

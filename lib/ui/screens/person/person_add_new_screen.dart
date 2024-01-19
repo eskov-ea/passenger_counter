@@ -327,6 +327,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     if(!isLastnameFieldHasError && !isFirstnameFieldHasError && !isMiddlenameFieldHasError &&
         !isDayBirthFieldHasError && !isDateInputHasError && !isMonthBirthFieldHasError
       && !isDocumentNameFieldHasError && !isDocumentNumberFieldsHasError && !isYearBirthFieldHasError) {
+      PopupManager.showLoadingPopup(context);
       final newPerson = Person(
         id: 0,
         firstname: firstnameController.text,
@@ -356,7 +357,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         );
         await _db.addDocument(document: newDoc);
         // TODO: handle error
-        Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
+      PopupManager.closePopup(context);
+      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
           arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: widget.routeName ?? MainNavigationRouteNames.homeScreen,
           person: newPerson, personDocuments: [ newDoc ])
         );
@@ -368,7 +370,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       //   );
       // }
     } else {
-      showPopup(context, dismissible: true, type: PopupType.warning, message: 'Не все необходимые поля заполнены. Пожалуйста заполните все требуемые поля.');
+      PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.warning, message: 'Не все необходимые поля заполнены. Пожалуйста заполните все требуемые поля.');
     }
   }
 
@@ -442,6 +444,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
     }
     if (gender == "МУЖ") isMaleChecked = true;
     if (gender == "ЖЕН") isFemaleChecked = true;
+    DataProvider().deletePersonDraft();
+    personDraft = null;
     setState(() {});
   }
 
@@ -649,7 +653,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
       child: Scaffold(
         backgroundColor: AppColors.backgroundNeutral,
         extendBodyBehindAppBar: true,
-        appBar: CustomAppBar(scrollController: _scrollController, child: null,),
+        appBar: CustomAppBar(scrollController: _scrollController, child: null, hideHomeButton: true),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Stack(

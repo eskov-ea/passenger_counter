@@ -158,13 +158,13 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             updatedAt: ""
         );
         BlocProvider.of<CurrentTripBloc>(context).add(AddNewTripPassengerEvent(passenger: passenger, baggage: personBagage));
-        Navigator.pushReplacementNamed(context, MainNavigationRouteNames.homeScreen);
         PopupManager.closePopup(context);
-        PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.error, message: "Произошла ошибка при обработке запроса. Попробуйте ещё раз.");
+        Navigator.pushReplacementNamed(context, MainNavigationRouteNames.homeScreen);
+        PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.success, message: "Пассажир зарегистрирован на рейс.");
       } catch (err, stack) {
         log(err.toString(), stackTrace: stack);
         PopupManager.closePopup(context);
-        PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.error, message: "Произошла ошибка при обработке запроса. Попробуйте ещё раз.");
+        PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.error, message: "Произошла ошибка при обработке запроса. Попробуйте ещё раз.");
       }
     } else {
       PopupManager.closePopup(context);

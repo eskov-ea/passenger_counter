@@ -8,6 +8,7 @@ import 'package:pleyona_app/view_models/auth_view_cubit/auth_view_cubit.dart';
 import 'package:pleyona_app/view_models/auth_view_cubit/auth_view_cubit_state.dart';
 import 'package:pleyona_app/view_models/loader_view_cubit/loader_view_cubit.dart';
 import 'navigation/navigation.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 void main() {
@@ -49,6 +50,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
+          // textTheme: GoogleFonts.robotoMonoTextTheme(Theme.of(context).textTheme)
+          textTheme: GoogleFonts.nunitoTextTheme(Theme.of(context).textTheme)
         ),
         themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,

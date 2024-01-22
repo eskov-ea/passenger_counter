@@ -7,6 +7,7 @@ import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
 import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
+import 'package:pleyona_app/ui/screens/trip/trip_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/screens/qr_scanner.dart';
 import '../ui/pages/adding_person_options.dart';
@@ -33,11 +34,12 @@ abstract class MainNavigationRouteNames {
   static const passengerAddNewScreen = '/add_passenger';
   static const tripSearchScreen = '/search_trip';
   static const seatSearchScreen = '/search_seat';
+  static const currentTripFullInfoScreen = '/current_trip_full_info';
   static const tripFullInfoScreen = '/trip_full_info';
   static const tripPassengers = '/trip_passengers';
   static const tripPassengerInfo = '/trip_passenger_full_info';
   static const editTripPassengersStatus = '/edit_passenger_status';
-  static const tripSeatsScreen = '/trip_seats';
+  static const currentTripSeatsScreen = '/trip_seats';
   static const barcodeScanScreen = '/scan_barcode';
   static const tripsCalendarScreen = '/trips_calendar';
   static const test = '/test';
@@ -120,10 +122,13 @@ class MainNavigation {
       case MainNavigationRouteNames.editTripPassengersStatus:
         final arguments = settings.arguments as EditTripPassengersStatusScreenArguments;
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeEditTripPassengersStatus(arguments));
+      case MainNavigationRouteNames.currentTripFullInfoScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeCurrentTripFullInfoScreen());
       case MainNavigationRouteNames.tripFullInfoScreen:
-        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripFullInfoScreen());
-      case MainNavigationRouteNames.tripSeatsScreen:
-        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripSeatsScreen());
+        final arguments = settings.arguments as TripFullInfoScreenArguments;
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripFullInfoScreen(arguments));
+      case MainNavigationRouteNames.currentTripSeatsScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeCurrentTripSeatsScreen());
       case MainNavigationRouteNames.tripsCalendarScreen:
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripsCalendarsScreen());
       case MainNavigationRouteNames.test:

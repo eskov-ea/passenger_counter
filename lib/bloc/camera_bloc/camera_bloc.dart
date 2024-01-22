@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'camera_event.dart';
@@ -22,14 +24,14 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           CameraController(cameras[0], ResolutionPreset.medium);
       await controller.initialize();
       emit(InitializedCameraState(cameras: cameras, controller: controller));
-    } catch(e) {
+    } catch(e, stack) {
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-          // Handle access errors here.
+            log("Error", stackTrace: stack, level: 8);
             break;
           default:
-          // Handle other errors here.
+            log("Error", stackTrace: stack, level: 8);
             break;
         }
       }

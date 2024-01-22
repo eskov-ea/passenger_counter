@@ -6,8 +6,6 @@ import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/models/passenger/passenger_status.dart';
-import 'package:pleyona_app/models/person_model.dart';
-import 'package:pleyona_app/models/seat_model.dart';
 import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
@@ -16,48 +14,52 @@ import 'package:pleyona_app/ui/screens/passenger/all_trip_passengers.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
-class TripFullInfoScreenArguments {
-  final Trip trip;
-  TripFullInfoScreenArguments({required this.trip});
-}
-
-class TripFullInfoScreen extends StatefulWidget {
-  final Trip trip;
-  const TripFullInfoScreen({
-    required this.trip,
-    super.key
-  });
+class CurrentTripFullInfoScreen extends StatefulWidget {
+  const CurrentTripFullInfoScreen({super.key});
 
   @override
-  State<TripFullInfoScreen> createState() => _TripFullInfoScreenState();
+  State<CurrentTripFullInfoScreen> createState() => _CurrentTripFullInfoScreenState();
 }
 
-class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
+class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
 
   bool isInitialized = false;
+  Trip? currentTrip;
   final DBProvider _db = DBProvider.db;
+  late final CurrentTripBloc _bloc;
   late final List<PassengerStatusValue> statuses;
   late final List<PassengerPerson> passengers;
   final Map<String, List<PassengerPerson>> passengersByStatuses = {};
 
 
-  void initializeTrip() async {
-    final tripPassengers = await _db.getPassengers(tripId: widget.trip.id);
-    final List<PassengerPerson> passengerPerson = [];
-    for (var passenger in tripPassengers) {
-      final Person person = await _db.getPersonById(personId: passenger.personId);
-      final Seat seat = await _db.getPassengerSeat(seatId: passenger.seatId);
-      final statuses = await _db.getPassengerStatuses(passengerId: passenger.id);
-      final document = await _db.getPersonDocumentById(documentId: passenger.personDocumentId);
-      passengerPerson.add(PassengerPerson(person: person, passenger: passenger,
-          seat: seat, statuses: statuses, document: document));
-    }
-    statuses = await _db.getAvailableStatuses();
+  void initializeCurrentTrip() async {
+    if(_bloc.state is InitializedCurrentTripState) {
+      final bstate = _bloc.state as InitializedCurrentTripState;
+      currentTrip = bstate.currentTrip;
+      passengers = bstate.tripPassengers;
+      await _readStatusValues();
+      for (var status in statuses) {
+        for (var tp in bstate.tripPassengers) {
+          if (tp.statuses.first.status == status.statusName) {
 
-    setState(() {
-      passengers = passengerPerson;
-      isInitialized = true;
-    });
+            if (passengersByStatuses.containsKey(status.statusName)) {
+              passengersByStatuses[status.statusName]!.add(tp);
+            } else {
+              passengersByStatuses.addAll({
+                status.statusName: [tp]
+              });
+            }
+          }
+        }
+      }
+      setState(() {
+        isInitialized = true;
+      });
+    }
+  }
+
+  Future<void> _readStatusValues() async {
+    statuses = await _db.getAvailableStatuses();
   }
   void _openAllTripPassengersScreen() {
     Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengers,
@@ -70,7 +72,8 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
 
   @override
   void initState() {
-    initializeTrip();
+    _bloc = BlocProvider.of<CurrentTripBloc>(context);
+    initializeCurrentTrip();
     super.initState();
   }
 
@@ -140,9 +143,9 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
         ? Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(widget.trip.tripName, style: const TextStyle(fontSize: 20, color: Color(0xFF000000), fontWeight: FontWeight.w500)),
-          Text("Начало: ${dateToFullDateString(widget.trip.tripStartDate)}", style: const TextStyle(fontSize: 20, color: Color(0xFF000000), fontWeight: FontWeight.w400)),
-          Text("Конец: ${dateToFullDateString(widget.trip.tripEndDate)}", style: const TextStyle(fontSize: 20, color: Color(0xFF000000), fontWeight: FontWeight.w400)),
+          Text(currentTrip!.tripName, style: const TextStyle(fontSize: 20, color: Color(0xFF000000), fontWeight: FontWeight.w500)),
+          Text("Начало: ${dateToFullDateString(currentTrip!.tripStartDate)}", style: const TextStyle(fontSize: 20, color: Color(0xFF000000), fontWeight: FontWeight.w400)),
+          Text("Конец: ${dateToFullDateString(currentTrip!.tripEndDate)}", style: const TextStyle(fontSize: 20, color: Color(0xFF000000), fontWeight: FontWeight.w400)),
         ],
       )
         : CircularProgressIndicator(color: AppColors.backgroundMain2)

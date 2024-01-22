@@ -10,6 +10,7 @@ import 'package:pleyona_app/ui/screens/trip/all_trips_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/screens/person/person_search_screen.dart';
 import 'package:pleyona_app/ui/screens/success_info_screen.dart';
+import 'package:pleyona_app/ui/screens/trip/current_trip_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_search_screen.dart';
 import 'package:pleyona_app/ui/screens/qr_scanner.dart';
@@ -96,8 +97,12 @@ class ScreenFactory {
     return SeatSearchScreen(onResultCallback: arguments.onResultCallback, tripId: arguments.tripId, person: arguments.person);
   }
 
-  Widget makeTripFullInfoScreen() {
-    return const TripFullInfoScreen();
+  Widget makeCurrentTripFullInfoScreen() {
+    return const CurrentTripFullInfoScreen();
+  }
+
+  Widget makeTripFullInfoScreen(TripFullInfoScreenArguments arguments) {
+    return TripFullInfoScreen(trip: arguments.trip);
   }
 
   Widget makeTripPassengersScreen(TripPassengersScreenArguments arguments) {
@@ -112,7 +117,7 @@ class ScreenFactory {
     return EditTripPassengersStatus(statusName: arguments.statusName, tripId: arguments.tripId);
   }
 
-  Widget makeTripSeatsScreen() {
+  Widget makeCurrentTripSeatsScreen() {
     return const TripSeatsScreen();
   }
 

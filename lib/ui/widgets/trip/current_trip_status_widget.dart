@@ -33,9 +33,10 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
       if (state is NoCurrentTripState) {
         return Material(
           color: AppColors.transparent,
-          child: Ink(
-            decoration: BoxDecoration(
-                color: AppColors.backgroundMainCard,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: const BoxDecoration(
+                color: Color(0xF2576D8A),
                 borderRadius: BorderRadius.all(Radius.circular(20))),
             child: InkWell(
               onTap: () {},
@@ -53,18 +54,27 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                     const Text("На данную дату не найдено рейса",
                       style: TextStyle(fontSize: 20, color: Color(0xE6FFFFFF))
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     const Divider(),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () async {
                         await Navigator.of(context).pushNamed(
                             MainNavigationRouteNames.tripSearchScreen,
                             arguments: TripSearchScreenArguments(onResultCallback: onCurrentTripSet)
                         );
                       },
-                      child: Text("Установить текущий рейс",
-                        style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2)
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          color: Color(0xF2FFFFFF),
+                          borderRadius: BorderRadius.all(Radius.circular(6))
+                        ),
+                        child: Text("Установить текущий рейс",
+                          style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2, fontWeight: FontWeight.w600)
+                        ),
                       )
                     )
                   ],
@@ -82,7 +92,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                 borderRadius: BorderRadius.all(Radius.circular(20))),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed(MainNavigationRouteNames.tripFullInfoScreen);
+                Navigator.of(context).pushNamed(MainNavigationRouteNames.currentTripFullInfoScreen);
               },
               customBorder: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),

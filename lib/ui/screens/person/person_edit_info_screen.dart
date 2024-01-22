@@ -5,11 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pleyona_app/bloc/camera_bloc/camera_state.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/editable_text_fields/editable_text_field_widget.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import '../../../bloc/camera_bloc/camera_bloc.dart';
 import '../../../bloc/camera_bloc/camera_event.dart';
@@ -477,8 +479,17 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          final cameraBloc = BlocProvider.of<CameraBloc>(context);
-                          _openCamera(context, cameraBloc.state.cameras!, cameraBloc.state.controller!);
+                          if (_cameraBloc.state.cameras == null || _cameraBloc.state.controller == null) {
+                            PopupManager.showLoadingPopup(context);
+                            BlocProvider.of<CameraBloc>(context).stream.listen((state) {
+                              if (state is InitializedCameraState) {
+                                _openCamera(context, state.cameras!, state.controller!);
+                                return;
+                              }
+                            });
+                            PopupManager.closePopup(context);
+                          }
+                          _openCamera(context, _cameraBloc.state.cameras!, _cameraBloc.state.controller!);
                         },
                         child: Container(
                           height: 130,
@@ -513,19 +524,19 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                         ),
                       ),
                       Container(
-                        height: 130,
+                        height: 150,
                         width: MediaQuery.of(context).size.width * 0.7 - 15,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             EditableTextFieldWidget(
-                              label: "Телефон", value: phone, valueSetter: phoneSetter, error: phoneHasError, small: true,
+                              label: "Телефон", value: phone, valueSetter: phoneSetter, error: phoneHasError, small: false,
                               errorSetter: phoneErrorSetter, errorMessage: phoneErrorMessage,
                               inputType: TextInputType.phone,
                             ),
                             SizedBox(height: 10,),
                             EditableTextFieldWidget(
-                              label: "Email", value: email, valueSetter: emailSetter, error: emailHasError, small: true,
+                              label: "Email", value: email, valueSetter: emailSetter, error: emailHasError, small: false,
                               errorSetter: emailErrorSetter, errorMessage: emailErrorMessage,
                                 inputType: TextInputType.emailAddress
                             ),
@@ -541,7 +552,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                                         height: 24,
                                         child: Checkbox(
                                             value: isMaleChecked,
-                                            fillColor: isMaleChecked ? MaterialStateProperty.all<Color>(AppColors.backgroundMain5) : MaterialStateProperty.all<Color>(const Color(0xFFEFEFEF)),
+                                            fillColor: MaterialStateProperty.all<Color>(const Color(0xFFB0B0B0)),
                                             side: BorderSide.none,
                                             splashRadius: 20.0,
                                             onChanged: onCheckboxMaleChecked
@@ -562,8 +573,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
                                         height: 24,
                                         child: Checkbox(
                                           value: isFemaleChecked,
-                                          fillColor: isFemaleChecked ? MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus) : MaterialStateProperty.all<Color>(const Color(0xFFEFEFEF)),
-                                          checkColor: AppColors.errorMain,
+                                          fillColor: MaterialStateProperty.all<Color>(const Color(0xFFB0B0B0)),
                                           side: BorderSide.none,
                                           onChanged: onCheckboxFemaleChecked,
                                           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

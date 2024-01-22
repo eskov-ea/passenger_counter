@@ -178,7 +178,7 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
         Transform.translate(
           offset: Offset(9, 0),
           child: Container(
-            width: _textSize(widget.label, const TextStyle(fontSize: 17, color: Color(0xFF242424))).width * 1.5,
+            width: _textSize(widget.label, TextStyle(fontSize: 17, color: AppColors.labelColor1)).width * 1.5,
             height: 5,
             color: widget.error ? widget.errorBackgroundColor : widget.backgroundColor,
           ),
@@ -188,7 +188,7 @@ class _EditableTextFieldWidgetState extends State<EditableTextFieldWidget> {
           child: Container(
             color: Colors.transparent,
             child: Text(widget.label,
-              style: const TextStyle(fontSize: 17, color: Color(0xFF242424)),
+              style: TextStyle(fontSize: 17, color: AppColors.labelColor1),
             ),
           ),
         )

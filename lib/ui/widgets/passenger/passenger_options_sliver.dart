@@ -311,8 +311,8 @@ class PassengerOptionsSliver extends StatelessWidget {
                   Ink(
                     width: MediaQuery.of(context).size.width - 45 - 100,
                     height: 120,
-                    decoration: BoxDecoration(
-                      color: Color(0x80304764),
+                    decoration: const BoxDecoration(
+                      color: Color(0xF2576D8A),
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     child: InkWell(

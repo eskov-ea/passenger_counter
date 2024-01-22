@@ -108,12 +108,14 @@ abstract class AppColors {
   static Color cardColor3 = isDark ? DarkColors.cardColor3 : Color(0xFFFFF7F7);
   static Color cardColor4 = isDark ? DarkColors.cardColor4 : Color(0xFFEAEDFF);
   static Color cardColor5 = isDark ? DarkColors.cardColor5 : Color(0xFFA4C5EF);
+
+  static Color labelColor1 = const Color(0xB3000000);
 }
 
 
 abstract class AppStyles {
 
-  static const mainTitleTextStyle = TextStyle(fontSize: 34, color: Color(0xFF000000), fontWeight: FontWeight.w600);
+  static const mainTitleTextStyle = TextStyle(fontSize: 28, color: Color(0xFF000000), fontWeight: FontWeight.w600);
   static final submainTitleTextStyle = TextStyle(fontSize: 20, color: AppColors.backgroundMain2);
 
   static const secondaryTextStyle = TextStyle(fontSize: 16, color: Color(0xFF242424));

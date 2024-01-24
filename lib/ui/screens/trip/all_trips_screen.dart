@@ -10,7 +10,7 @@ import 'package:pleyona_app/ui/widgets/search_date_widget.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 import 'package:pleyona_app/ui/widgets/trip/trips_result_list_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
-
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as d;
 import '../../../models/trip_model.dart';
 import '../../../navigation/navigation.dart';
 
@@ -57,6 +57,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
       result = await _db.searchTripForToday(date: date);
     } else {
       result = await _db.getTrips();
+      _selectedDay = DateTime.now();
     }
     String? filter;
     if (date != null) filter = "${date.day}.${date.month}.${date.year}";
@@ -65,6 +66,28 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
       isSearching = false;
       filterDate = filter;
     });
+  }
+
+  Future<DateTime?> _datePicker(Function(DateTime) callback) {
+    return d.DatePicker.showDatePicker(context,
+        showTitleActions: true,
+        minTime: DateTime(2015, 1, 1),
+        maxTime: DateTime(2030, 12, 31),
+        onChanged: (date) {
+          print('change $date');
+        }, onConfirm: (date) {
+          callback(date);
+        },
+        currentTime: DateTime.now(),
+        locale: d.LocaleType.ru,
+        theme: d.DatePickerTheme(
+            containerHeight: MediaQuery.of(context).size.height * 0.4 - 100,
+            titleHeight: 100,
+            itemHeight: 60));
+  }
+
+  void _onConfirmStartTripDate(DateTime date) {
+    searchTrips(DateTime(date.year, date.month, date.day));
   }
 
   void openEditTripScreen(Trip trip) {
@@ -83,7 +106,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(scrollController: _scrollController, child: null,),
+      appBar: CustomAppBar(scrollController: _scrollController, child: Text('Поиск рейсов', style: AppStyles.mainTitleTextStyle)),
       body: ThemeBackgroundWidget(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -95,50 +118,49 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 90),
-                  child: Text("Перейти к дате:",
-                    style: TextStyle(fontSize: 20, color: AppColors.textMain),
-                  ),
+                  margin: EdgeInsets.only(top: 120)
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 10),
-                  child: InputDateToSearchWidget(calendarCallback: searchTrips),
-                ),
-                Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: Color(0x80FFFFFF),
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      border: Border.all(width: 1, color: AppColors.backgroundMain1)
-                  ),
-                  padding: EdgeInsets.only(left: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Календарь",
-                        style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width * 0.50,
+                      decoration: BoxDecoration(
+                          color: Color(0x80FFFFFF),
+                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                          border: Border.all(width: 1, color: AppColors.backgroundMain1)
                       ),
-                      GestureDetector(
-                        onTap: toggleCalendar,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            color: Color(0x9FFFFFFF),
-                            borderRadius: BorderRadius.all(Radius.circular(6)),
-                            // shape: BoxShape.circle
+                      padding: EdgeInsets.only(left: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Календарь",
+                            style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2),
                           ),
-                          width: 50,
-                          height: 50,
-                          child: Transform.rotate(
-                            angle: isCalendarOpen ? pi : 2*pi,
-                            child: Image.asset("assets/icons/down-arrow.png",
-                              scale: 0.5, width: 30, height: 30,
+                          GestureDetector(
+                            onTap: toggleCalendar,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Color(0x9FFFFFFF),
+                                borderRadius: BorderRadius.all(Radius.circular(6)),
+                                // shape: BoxShape.circle
+                              ),
+                              width: 50,
+                              height: 50,
+                              child: Transform.rotate(
+                                angle: isCalendarOpen ? pi : 2*pi,
+                                child: Image.asset("assets/icons/down-arrow.png",
+                                  scale: 0.5, width: 30, height: 30,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                          )
+                        ],
+                      ),
+                    ),
+                    searchedDateByChoosing()
+                  ],
                 ),
                 isCalendarOpen ? Container(
                   margin: EdgeInsets.only(top: 10),
@@ -215,6 +237,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
               child: InkWell(
                 onTap: () {
                   searchTrips(null);
+
                 },
                 child: Icon(Icons.close),
               ),
@@ -225,4 +248,31 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
     )
     : const SizedBox(height: 30);
   }
+
+  Widget searchedDateByChoosing() {
+    return Material(
+      color: AppColors.transparent,
+      child: Ink(
+        height: 50,
+        width: MediaQuery.of(context).size.width * 0.45 - 20,
+        decoration: BoxDecoration(
+            border: Border.all(
+                color: AppColors.backgroundMain2, width: 1),
+            color: AppColors.backgroundMain2,
+            borderRadius: BorderRadius.all(Radius.circular(6))),
+        child: InkWell(
+          onTap: () {
+            _datePicker(_onConfirmStartTripDate);
+          },
+          splashColor: AppColors.backgroundMain5,
+          child: Center(
+            child: Text("Выбрать  дату",
+              style: TextStyle(fontSize: 20, color: AppColors.textMain),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }

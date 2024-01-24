@@ -20,13 +20,13 @@ class SeatWidget extends StatelessWidget {
       },
       child: Container(
         width: 80,
-        height: 30,
+        height: 80,
         decoration: BoxDecoration(
           color: AppColors.secondary4,
           borderRadius: const BorderRadius.all(Radius.circular(8))
         ),
         alignment: Alignment.center,
-        margin: const EdgeInsets.only(bottom: 6, left: 3, right: 3),
+        // margin: const EdgeInsets.only(bottom: 6, left: 3, right: 3),
         child: Text("${seat.cabinNumber} ${seat.placeNumber}",
           style: TextStyle(fontSize: 20, color: AppColors.textSecondary),
         ),

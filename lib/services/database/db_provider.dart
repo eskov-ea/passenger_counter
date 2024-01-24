@@ -97,7 +97,8 @@ class DBProvider {
   Future updateTrip({
     required int id, required String tripName, required DateTime tripStartDate, required DateTime tripEndDate, int? status, String? comment,
   }) => TripDBLayer().updateTrip(id, tripName, tripStartDate, tripEndDate, status, comment);
-
+  Future<List<Trip>> searchTripByDateRange({required DateTime dateStart,
+    required DateTime dateEnd}) => TripDBLayer().searchTripByDateRange(dateStart, dateEnd);
 
   /// PASSENGERS
 

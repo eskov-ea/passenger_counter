@@ -49,18 +49,16 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: AppColors.backgroundNeutral,
-        appBar: CustomAppBar(child: null, scrollController: null),
+        appBar: CustomAppBar(child: const Text("Все персоны",
+          style: AppStyles.mainTitleTextStyle,
+        ), scrollController: null, hideHomeButton: true,),
         body: ThemeBackgroundWidget(
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
-                const SizedBox(height: 70,),
-                const Text("Все персоны",
-                  style: AppStyles.mainTitleTextStyle,
-                ),
-                const SizedBox(height: 20,),
+                const SizedBox(height: 50,),
                 Expanded(
                   child: ListView.builder(
                     itemCount: persons.length,

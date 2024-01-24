@@ -52,26 +52,7 @@ class PersonAdditionalInfoBlock extends StatelessWidget {
             maxLines: null,
             minLines: 3,
           ),
-          const SizedBox(height: 10,),
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).pushNamed(MainNavigationRouteNames.searchPersonScreen,
-              arguments: SearchPersonScreenArguments(callback: (person){}));
-            },
-            child: Row(
-              children: [
-                Text("Привязать к родителю",
-                  style: TextStyle(
-                    fontSize: 20, color: AppColors.backgroundMain2,
-                    fontStyle: FontStyle.italic,
-                    decoration: TextDecoration.underline
-                  ),
-                ),
-                SizedBox(width: 5,),
-                Icon(Icons.person, size: 20,)
-              ],
-            ),
-          )
+          const SizedBox(height: 10)
         ],
       ),
     );

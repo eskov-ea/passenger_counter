@@ -90,4 +90,13 @@ class SeatsDBLayer {
     });
   }
 
+  Future<void> disableSeats(List<int> ids) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      final res = await txn.rawUpdate(
+          'UPDATE seat SET status = 0 WHERE seat.id IN ("$ids")');
+      return res;
+    });
+  }
+
 }

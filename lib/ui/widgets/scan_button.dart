@@ -19,6 +19,8 @@ class ScanButton extends StatelessWidget {
   final double height;
   final double width;
 
+  final String description = "Чтобы считать данные с bar-кода, наведите камеру на bar-код. Код должен быть читаем и освещение должно быть достаточным для распознования, в противном случае вы можете использовать фонарик камеры.";
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -34,7 +36,9 @@ class ScanButton extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pushNamed(
                 MainNavigationRouteNames.scannerScreen,
-                arguments: ScannerScreenArguments(setStateCallback: onQRScanResultCallback, allowedFormat: allowedFormat)
+                arguments: ScannerScreenArguments(setStateCallback: onQRScanResultCallback,
+                    allowedFormat: allowedFormat, description: description
+                )
               );
             },
             splashColor: AppColors.backgroundMain4,

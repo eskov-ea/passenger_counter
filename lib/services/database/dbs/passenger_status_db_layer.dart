@@ -39,7 +39,6 @@ class PassengerStatusDBLayer {
         'WHERE passenger.id IN '
         '(SELECT passenger.id FROM passenger WHERE passenger.trip_id = $tripId) '
       );
-      log('getPassengersByStatusName' + res.toString());
       return res.map((el) => Passenger.fromJson(el)).toList();
     });
   }
@@ -111,22 +110,4 @@ class PassengerStatusDBLayer {
       }
     });
   }
-
-  // 'SELECT * FROM passenger WHERE trip_id = $tripId AND deleted_at IS NULL '
-  // 'AND id IN ('
-  // ' SELECT passenger_id FROM passenger_status WHERE deleted_at IS NULL '
-  // ' GROUP BY passenger_id ORDER BY created_at DESC '
-  // ') '
-
-  // /'SELECT * FROM passenger_status LEFT JOIN '
-  // 'passenger ON passenger_status.passenger_id = passenger.id '
-  // 'WHERE passenger.id IN '
-  // '(SELECT passenger.id FROM passenger WHERE passenger.trip_id = $tripId) '
-  // 'AND passenger_status.status = $statusName'
-
-
-  // 'SELECT  * FROM passenger LEFT JOIN passenger_status '
-  // 'ON passenger_status.passenger_id = passenger.id '
-  // 'WHERE trip_id = $tripId AND passenger_status.deleted_at IS NULL AND passenger.deleted_at IS NULL '
-  // 'GROUP BY passenger_status.status ORDER BY passenger_status.created_at DESC '
 }

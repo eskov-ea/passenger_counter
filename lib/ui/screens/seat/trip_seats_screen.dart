@@ -9,6 +9,7 @@ import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/models/seat_model.dart';
+import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 
@@ -55,7 +56,8 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
     }
   }
 
-  Future<void> _openSeatInformation(Seat seat, PassengerPerson? passenger, List<Seat> availableSeats) async {
+  Future<void> _openSeatInformation(Seat seat, List<PassengerPerson> passengers,
+      List<Seat> availableSeats, List<PassengerPerson> allTripPassengers) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -74,26 +76,39 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
                     Text('Сторона: ${seat.side}, дек: ${seat.deck}, статус: ${seat.status}'),
                     seat.comment != '' ? Text(seat.comment) : const SizedBox.shrink(),
                     const Divider(height: 30, thickness: .8, color: Color(0x80000000)),
-                    passenger == null ? Container(
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.center,
-                      child: Text("Место свободно"),
-                    ) : Container(
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.center,
-                      child: Column(
-                        children: [
-                          Text("ФИО: ${passenger.person.lastname} ${passenger.person.firstname.characters.first.toUpperCase()}. ${passenger.person.middlename.characters.first.toUpperCase()}."),
-                          Text("${passenger.person.gender}, ${passenger.person.birthdate}, ${passenger.person.citizenship}"),
-                        ],
-                      ),
+                    passengers.isEmpty
+                        ? Container(
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          child: Text("Место свободно"),
+                        )
+                        : Column(
+                      children: [
+                        ...passengers.map((p) => Container(
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Text("ФИО: ${p.person.lastname} ${p.person.firstname.characters.first.toUpperCase()}. ${p.person.middlename.characters.first.toUpperCase()}."),
+                              Text("${p.person.gender}, ${p.person.birthdate}, ${p.person.citizenship}"),
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  Person? parent;
+                                  for (final tp in allTripPassengers) {
+                                    if (tp.person.id == p.person.parentId) parent = tp.person;
+                                  }
+
+                                  final parentSeat = parent == null ? null : await DBProvider.db.getParentTripSeat(personId: parent.id, tripId: p.passenger.tripId);
+                                  _openChangePassengerSeatDialog(availableSeats, parentSeat, p.passenger.id, p.passenger.tripId);
+                                },
+                                child: Text("Изменить место")
+                              )
+                            ],
+                          ),
+                        )).toList()
+                      ],
                     ),
-                    passenger == null ? SizedBox.shrink() : ElevatedButton(
-                      onPressed: () {
-                        _openChangePassengerSeatDialog(availableSeats, passenger.passenger.id, passenger.passenger.tripId);
-                      },
-                      child: Text("Изменить место")
-                    )
                   ],
                 ),
                 actions: <Widget>[
@@ -114,7 +129,7 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
       });
   }
 
-  Future<void> _openChangePassengerSeatDialog(List<Seat> s, int passengerId, int tripId) async {
+  Future<void> _openChangePassengerSeatDialog(List<Seat> as, Seat? os, int passengerId, int tripId) async {
     return showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -128,30 +143,79 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
                   content: Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.5,
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, mainAxisExtent: 60, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                      itemCount: s.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3, mainAxisExtent: 60, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                              itemCount: as.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      changingSeatPlace = as[index];
+                                    });
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: as[index].id == changingSeatPlace?.id ? const Color(0xFFF7FF02) : const Color(0xcc33d33a),
+                                        borderRadius: const BorderRadius.all(Radius.circular(6)),
+                                        border: Border.all(width: 1, color: Color(0xC0000000))
+                                    ),
+                                    child: Text("${as[index].cabinNumber}${as[index].placeNumber}",
+                                      style: AppStyles.submainTitleTextStyle,
+                                    ),
+                                  ),
+                                );
+                              }
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        os != null ? GestureDetector(
                           onTap: () {
                             setState(() {
-                              changingSeatPlace = s[index];
+                              changingSeatPlace = os;
                             });
                           },
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                color: s[index].id == changingSeatPlace?.id ? const Color(0xFFE7CB32) : const Color(0xcc33d33a),
-                                borderRadius: const BorderRadius.all(Radius.circular(6)),
-                                border: Border.all(width: 1, color: Color(0xC0000000))
-                            ),
-                            child: Text("${s[index].cabinNumber}${s[index].placeNumber}",
-                              style: AppStyles.submainTitleTextStyle,
+                          child: SizedBox(
+                            height: 80,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 70,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      color: changingSeatPlace?.id == os.id ? const Color(0xFFF7FF02) : const Color(0xcce80606),
+                                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                                      border: Border.all(width: 1, color: Color(0xC0000000))
+                                  ),
+                                  child: Text("${os.cabinNumber}${os.placeNumber}",
+                                    style: AppStyles.submainTitleTextStyle,
+                                  ),
+                                ),
+                                const VerticalDivider(width: 30, thickness: 2, color: Colors.white24),
+                                Expanded(
+                                    child: Container(
+                                      height: 80,
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                                          color: Colors.white
+                                      ),
+                                      child: const Text(
+                                        "Вы можете назначить ребенку одно место с родителем. Один родитель - один ребенок.",
+                                        style: TextStyle(fontSize: 15, height: 1.1),
+                                      ),
+                                    )
+                                )
+                              ],
                             ),
                           ),
-                        );
-                      }
+                        ) : SizedBox.shrink()
+                      ]
                     ),
                   ),
                   actions: <Widget>[
@@ -208,14 +272,14 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xFFFFFFFF),
-        appBar: CustomAppBar(child: null, scrollController: null),
+        backgroundColor: const Color(0xFFF0F0F0),
+        appBar: const CustomAppBar(child: null, scrollController: null),
         body: Material(
-          color: Color(0xFFFFFFFF),
+          color: const Color(0xFFF9F9F9),
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: BlocBuilder<CurrentTripBloc, CurrentTripState>(
               builder: (context, state) {
                 if (state is InitializedCurrentTripState) {
@@ -245,9 +309,11 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
     return Container(
       child: Column(
         children: [
+          const SizedBox(height: 30),
           Text("Менеджер кают",
             style: AppStyles.mainTitleTextStyle,
           ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -255,7 +321,7 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
                 width: MediaQuery.of(context).size.width * 0.5 - 23,
                 height: 30,
                 decoration: const BoxDecoration(
-                  color: Color(0xBCDEDEDE),
+                  color: Color(0xFFE8E8E8),
                   borderRadius: BorderRadius.all(Radius.circular(6))
                 ),
                 alignment: Alignment.center,
@@ -314,13 +380,13 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
               int key = seats!.keys.elementAt(index);
               return GestureDetector(
                 onTap: () async {
-                  PassengerPerson? passenger;
+                  List<PassengerPerson> passengers = [];
                   for (final p in state.tripPassengers) {
                     if (p.passenger.seatId == seats![key]!.seat.id) {
-                      passenger = p;
+                      passengers.add(p);
                     }
                   }
-                  await _openSeatInformation(seats![key]!.seat, passenger, state.availableSeats);
+                  await _openSeatInformation(seats![key]!.seat, passengers, state.availableSeats, state.tripPassengers);
                 },
                 child: Container(
                   alignment: Alignment.center,

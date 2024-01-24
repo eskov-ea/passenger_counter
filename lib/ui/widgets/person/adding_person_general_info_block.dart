@@ -519,7 +519,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
                   children: [
                     Checkbox(
                         value: isMaleChecked,
-                        fillColor: MaterialStateProperty.all<Color>(AppColors.backgroundMain5),
+                        fillColor: MaterialStateProperty.all<Color>(const Color(0xFFB0B0B0)),
                         side: BorderSide.none,
                         focusNode: genderCheckboxFieldFocus,
                         splashRadius: 20.0,
@@ -537,8 +537,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
                   children: [
                     Checkbox(
                         value: isFemaleChecked,
-                        fillColor: MaterialStateProperty.all<Color>(AppColors.suiteNotAvailableStatus),
-                        checkColor: AppColors.errorMain,
+                        fillColor: MaterialStateProperty.all<Color>(const Color(0xFFB0B0B0)),
                         side: BorderSide.none,
                         onChanged: onCheckboxFemaleChecked
                     ),

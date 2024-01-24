@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
+import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_card.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/form_block_title.dart';
@@ -27,13 +28,13 @@ class _AllTripPassengersState extends State<AllTripPassengers> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(child: null, scrollController: null),
+      appBar: CustomAppBar(child: const Text("Все пассажиры",
+          style: AppStyles.mainTitleTextStyle), scrollController: null),
       body: ThemeBackgroundWidget(
         child: Container(
           child: Column(
             children: [
-              SizedBox(height: 100),
-              BlockTitle(message: "Все пассажиры", alignment: Alignment.center),
+              SizedBox(height: 150),
               Expanded(
                 child: BlocBuilder<CurrentTripBloc, CurrentTripState>(
                   builder: (context, state) {

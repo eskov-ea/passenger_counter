@@ -8,7 +8,8 @@ class TripDBLayer {
     final db = await DBProvider.db.database;
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM trip'
+          'SELECT * FROM trip WHERE '
+          'deleted_at IS NULL '
       );
       return res.map((el) => Trip.fromJson(el)).toList();
     });
@@ -35,16 +36,28 @@ class TripDBLayer {
     });
   }
 
+  // Future<List<Trip>> searchTripForToday(DateTime date) async {
+  //   final db = await DBProvider.db.database;
+  //   final DateTime dateStart = DateTime(date.year, date.month, date.day).subtract(const Duration(minutes: 1));
+  //   final DateTime dateEnd = dateStart.add(const Duration(days: 1));
+  //   return await db.transaction((txn) async {
+  //     List<Object> res = await txn.rawQuery(
+  //         'SELECT * FROM trip WHERE start_trip BETWEEN "${dateStart.toIso8601String()}" AND "${dateEnd.toIso8601String()}" '
+  //         'ORDER BY updated_at ASC'
+  //     );
+  //     print("searchTripForToday  $date  --  $res");
+  //     return res.map((el) => Trip.fromJson(el)).toList();
+  //   });
+  // }
+
   Future<List<Trip>> searchTripForToday(DateTime date) async {
     final db = await DBProvider.db.database;
-    final DateTime dateStart = DateTime(date.year, date.month, date.day).subtract(const Duration(minutes: 1));
-    final DateTime dateEnd = dateStart.add(const Duration(days: 1));
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
-          'SELECT * FROM trip WHERE start_trip BETWEEN "${dateStart.toIso8601String()}" AND "${dateEnd.toIso8601String()}" '
-          'ORDER BY updated_at ASC'
+          'SELECT * FROM trip WHERE "${date.toIso8601String()}" BETWEEN start_trip AND end_trip '
+          'AND deleted_at IS NULL '
+          'ORDER BY start_trip ASC'
       );
-      print(res);
       return res.map((el) => Trip.fromJson(el)).toList();
     });
   }
@@ -68,9 +81,9 @@ class TripDBLayer {
     return await db.transaction((txn) async {
       List<Object> res = await txn.rawQuery(
           'SELECT * FROM trip WHERE start_trip BETWEEN "$dateStart" and "$dateEnd" '
-              'ORDER BY updated_at ASC'
+          'AND deleted_at IS NULL '
+          'ORDER BY start_trip ASC'
       );
-      print(res);
       return res.map((el) => Trip.fromJson(el)).toList();
     });
   }

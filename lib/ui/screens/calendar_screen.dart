@@ -40,7 +40,6 @@ class _TripsCalendarScreenState extends State<TripsCalendarScreen> {
   List<Trip> _currentDateTrips = [];
   late String monthTitle;
   final EventList<TripEvent> _markedDateMap = EventList<TripEvent>(events: {});
-  late final CalendarCarousel<Event> _calendarCarousel;
   final DBProvider _db = DBProvider.db;
   bool isTripsProcessed = false;
 
@@ -72,6 +71,8 @@ class _TripsCalendarScreenState extends State<TripsCalendarScreen> {
             )
         );
       }
+      final now = DateTime.now();
+      _currentDateTrips = _markedDateMap.events[DateTime(now.year, now.month, now.day)]?.map((el) => el.trip).toList() ?? [];
       isTripsProcessed = true;
       setState(() {});
     });
@@ -196,7 +197,7 @@ class _TripsCalendarScreenState extends State<TripsCalendarScreen> {
                         ),
                     )
                     : Container (
-                        height: 100,
+                        height: 65,
                         decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(6)),
                           color: Color(0xf2ffffff),

@@ -660,7 +660,7 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
             children: [
               SingleChildScrollView(
                 controller: _scrollController,
-                padding: EdgeInsets.only(top: 50),
+                padding: EdgeInsets.only(top: 90),
                 child: Column(
                   children: [
                     const SizedBox(height: 10,),

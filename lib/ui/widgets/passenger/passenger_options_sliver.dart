@@ -76,24 +76,32 @@ class PassengerOptionsSliver extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).pushNamed(MainNavigationRouteNames.scannerScreen,
-                          arguments: ScannerScreenArguments(setStateCallback: (result ) async {
-                            final barcode = result.code;
-                            final db = DBProvider.db;
-                            final state = BlocProvider.of<CurrentTripBloc>(context).state as InitializedCurrentTripState;
-                            final tripId = state.currentTrip.id;
+                          arguments: ScannerScreenArguments(
+                            setStateCallback: (result ) async {
+                              final barcode = result.code;
+                              final db = DBProvider.db;
+                              final state = BlocProvider.of<CurrentTripBloc>(context).state as InitializedCurrentTripState;
+                              final tripId = state.currentTrip.id;
 
-                            final passenger = await db.getPassengerByBarcode(tripId: tripId, barcode: barcode!);
-                            if (passenger == null) return;
-                            final statuses = await db.getPassengerStatuses(passengerId: passenger.id);
-                            final document = await db.getPersonDocumentById(documentId: passenger.personDocumentId);
-                            final seat = await db.getPassengerSeat(seatId: passenger.seatId);
-                            final person = await db.getPersonById(personId: passenger.personId);
+                              final passenger = await db.getPassengerByBarcode(tripId: tripId, barcode: barcode!);
+                              if (passenger == null) {
+                                PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.warning,
+                                    message: "По данному баркоду пассажир не найден.");
+                                return;
+                              }
+                              final statuses = await db.getPassengerStatuses(passengerId: passenger.id);
+                              final document = await db.getPersonDocumentById(documentId: passenger.personDocumentId);
+                              final seat = await db.getPassengerSeat(seatId: passenger.seatId);
+                              final person = await db.getPersonById(personId: passenger.personId);
 
-                            final passengerPerson = PassengerPerson(person: person, passenger: passenger, seat: seat, document: document, statuses: statuses);
-                            Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengerInfo,
-                                arguments: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
-                            );
-                          }, allowedFormat: [BarcodeFormat.code128])
+                              final passengerPerson = PassengerPerson(person: person, passenger: passenger, seat: seat, document: document, statuses: statuses);
+                              Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengerInfo,
+                                  arguments: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
+                              );
+                            },
+                            allowedFormat: [BarcodeFormat.code128],
+                            description: "Чтобы считать баркод пассажира наведите на него камеру. Код должен быть читаем и освещение должно быть достаточным для распознования, в противном случае вы можете использовать фонарик камеры."
+                          )
                         );
                       },
                       customBorder: RoundedRectangleBorder(
@@ -113,79 +121,6 @@ class PassengerOptionsSliver extends StatelessWidget {
                           ),
                           SizedBox(height: 10,),
                           Text("Scan", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 15,),
-                  Ink(
-                    width: 150,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                    ),
-                    child: InkWell(
-                      onTap: () async {
-                        // final db = await DBProvider.db;
-                        // await db.DeveloperModeClearPersonTable();
-                        // print("TABLE DELETE::::");
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
-                          arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckIn')
-                        );
-                      },
-                      customBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      splashColor: AppColors.backgroundMain5,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Image.asset(
-                              "assets/icons/check-in-desk.png",
-                              width: 40,
-                              height: 40,
-                              color: AppColors.textMain,
-                            ),
-                          ),
-                          SizedBox(height: 10,),
-                          Text("Check-in", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 15,),
-                  Ink(
-                    width: 150,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                    ),
-                    child: InkWell(
-                      onTap: () async {
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
-                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckOut')
-                        );
-                      },
-                      customBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      splashColor: AppColors.backgroundMain5,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Image.asset(
-                              "assets/icons/check-out.png",
-                              width: 40,
-                              height: 40,
-                              color: AppColors.textMain,
-                            ),
-                          ),
-                          SizedBox(height: 10,),
-                          Text("Check-out", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
                         ],
                       ),
                     ),
@@ -259,6 +194,41 @@ class PassengerOptionsSliver extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(color: AppColors.textMain, fontSize: 18)
                           )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 15,),
+                  Ink(
+                    width: 150,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    child: InkWell(
+                      onTap: () async {
+                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
+                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckOut')
+                        );
+                      },
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      splashColor: AppColors.backgroundMain5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            child: Image.asset(
+                              "assets/icons/check-out.png",
+                              width: 40,
+                              height: 40,
+                              color: AppColors.textMain,
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          Text("Check-out", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
                         ],
                       ),
                     ),

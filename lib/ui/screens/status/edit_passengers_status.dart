@@ -86,7 +86,8 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
     return SafeArea(
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: CustomAppBar(child: null, scrollController: null),
+        appBar: CustomAppBar(child: const Text("Добавить статус",
+            style: AppStyles.mainTitleTextStyle), scrollController: null),
         body: ThemeBackgroundWidget(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -98,12 +99,13 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
                       children: [
                         Column(
                           children: [
-                            SizedBox(height: 80, width: MediaQuery.of(context).size.width),
+                            SizedBox(height: 120, width: MediaQuery.of(context).size.width),
                             Text(widget.statusName, style: AppStyles.mainTitleTextStyle),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             Expanded(
                               child: passengers!.length > 0
                               ? ListView.builder(
+                                padding: EdgeInsets.all(0),
                                 itemCount: passengers!.length,
                                 itemBuilder: (context, index) {
                                   return _passengersOptions(passengers![index], persons![index]);

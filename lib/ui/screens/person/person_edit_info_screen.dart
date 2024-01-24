@@ -772,27 +772,9 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen> {
   }
   Future<void> _openAddingChildPage() async {
     Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen,
-      arguments: AddNewPersonScreenArguments(parentId: widget.person.id, routeName: MainNavigationRouteNames.editPersonInfoScreen)
+      arguments: AddNewPersonScreenArguments(parentId: widget.person.id, routeName: MainNavigationRouteNames.homeScreen)
     );
   }
-  // Future<void> _openAddingChildPage() async {
-  //   return await showDialog(
-  //       context: context,
-  //       builder: (context) =>
-  //     Scaffold(
-  //       body: Container(
-  //         height: MediaQuery.of(context).size.height,
-  //         width: MediaQuery.of(context).size.width,
-  //         child: Column(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Text("Добавить ребенка", style: AppStyles.submainTitleTextStyle)
-  //           ],
-  //         ),
-  //       ),
-  //     )
-  //   );
-  // }
   void firstnameSetter(String value) {
     setState(() {
       firstname = value;

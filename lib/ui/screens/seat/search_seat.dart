@@ -40,7 +40,7 @@ class _SeatSearchScreenState extends State<SeatSearchScreen> {
       });
     });
     if (widget.person != null) {
-      db.getParentTripSeat(personId: widget.person!.id, tripId: widget.tripId).then((seat) {
+      db.getParentTripSeat(personId: widget.person!.parentId!, tripId: widget.tripId).then((seat) {
         setState(() {
           parentSeat = seat;
         });
@@ -66,28 +66,55 @@ class _SeatSearchScreenState extends State<SeatSearchScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               children: [
-                const SizedBox(height: 100),
-                Container(
-                  height: 500,
+                SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Свободные места:', style: TextStyle(fontSize: 24, color: Colors.white))),
+                const SizedBox(height: 10),
+                Expanded(
                   child: GridView.builder(
+                    padding: EdgeInsets.all(0),
                     itemCount: availableSeats!.length,
                     itemBuilder: (context, index) => SeatWidget(
-                          seat: availableSeats![index],
-                          callback: widget.onResultCallback,
-                        ),
+                      seat: availableSeats![index],
+                      callback: widget.onResultCallback,
+                    ),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4
+                      crossAxisCount: 4, mainAxisSpacing: 4, crossAxisSpacing: 4
                     )
                   ),
                 ),
                 const SizedBox(height: 10),
-                parentSeat != null ? Row(
-                  children: [
-                    SeatWidget(seat: parentSeat!, callback: widget.onResultCallback),
-                    Divider(),
-                    Text("Вы можете назначить ребенку одно место с родителем. Один родитель - один ребенок.")
-                  ],
-                ) : const SizedBox.shrink()
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Место с родителем:', style: TextStyle(fontSize: 24, color: Colors.white))),
+                const SizedBox(height: 10),
+                if (parentSeat != null) Container(
+                  height: 80,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SeatWidget(seat: parentSeat!, callback: widget.onResultCallback),
+                      const VerticalDivider(width: 30, thickness: 2, color: Colors.white24),
+                      Expanded(
+                        child: Container(
+                          height: 80,
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                            color: Colors.white
+                          ),
+                          child: const Text(
+                            "Вы можете назначить ребенку одно место с родителем. Один родитель - один ребенок.",
+                            style: TextStyle(fontSize: 16, height: 1.1),
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                ) else const SizedBox.shrink(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
               ],
             ),
           ),

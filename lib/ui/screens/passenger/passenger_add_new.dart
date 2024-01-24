@@ -270,7 +270,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                   controller: _scrollController,
                   child: Column(
                     children: [
-                      const SizedBox(height: 90),
+                      const SizedBox(height: 120),
                       const BlockTitle(message: "Персона", bottomPadding: 0),
                       _personBlock(),
                       const SizedBox(height: 10),

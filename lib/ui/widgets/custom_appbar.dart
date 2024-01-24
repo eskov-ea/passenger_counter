@@ -6,7 +6,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget{
   const CustomAppBar({
     required this.child,
     required this.scrollController,
-    this.height = 40,
+    this.height = 55,
     this.leadingWidth = 50,
     this.hideHomeButton = false,
     Key? key
@@ -78,15 +78,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
           duration: const Duration(milliseconds: 200),
           child: Container(
             padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.bottomLeft,
             child: Image.asset("assets/icons/back-arrow.png",
+              width: 30, height: 30,
               fit: BoxFit.contain,
             ),
           ),
         ),
       ),
       actions: [
-        widget.hideHomeButton ? const SizedBox.shrink() : GestureDetector(
+        widget.hideHomeButton ? const SizedBox(width: 30, height: 30) : GestureDetector(
           onTap: () {
             Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
           },
@@ -94,8 +95,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
             opacity: isBackArrowHidden ? 0 : 1,
             duration: const Duration(milliseconds: 200),
             child: Container(
+              alignment: Alignment.bottomRight,
               padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
               child: Image.asset("assets/icons/homescreen_icon.png",
+                width: 30, height: 30,
                 fit: BoxFit.contain,
               ),
             ),
@@ -105,7 +108,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
       title: AnimatedOpacity(
         opacity: isBackArrowHidden ? 0 : 1,
         duration: const Duration(milliseconds: 200),
-        child: widget.child,
+        child: Center(
+          child: Transform.translate(
+            offset: Offset(0, 10),
+            child: widget.child
+          ),
+        ),
       )
     );
   }

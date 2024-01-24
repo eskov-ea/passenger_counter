@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/global/helpers.dart';
-import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/models/passenger/passenger_status.dart';
 import 'package:pleyona_app/models/trip_model.dart';
@@ -82,7 +81,8 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
     return SafeArea(
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: CustomAppBar(child: null, scrollController: null),
+        appBar: CustomAppBar(child: const Text("Текущий рейс",
+          style: AppStyles.mainTitleTextStyle), scrollController: null, hideHomeButton: true),
         body: ThemeBackgroundWidget(
           child: Stack(
             children: [
@@ -98,7 +98,7 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
   Widget _optionsBlock() {
     return Column(
       children: [
-        const SizedBox(height: 70),
+        const SizedBox(height: 90),
         _tripNameBloc(),
         const SizedBox(height: 20),
         _tripPassengersStatus(),

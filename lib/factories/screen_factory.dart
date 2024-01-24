@@ -51,7 +51,7 @@ class ScreenFactory {
   }
 
   Widget makeScannerScreen(ScannerScreenArguments arguments) {
-    return QRScanner(setStateCallback: arguments.setStateCallback, allowedFormat: arguments.allowedFormat);
+    return QRScanner(setStateCallback: arguments.setStateCallback, allowedFormat: arguments.allowedFormat, description: arguments.description,);
   }
 
   Widget makeAddingPersonOptionsPage(AddingPersonOptionsArguments arguments) {

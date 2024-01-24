@@ -33,18 +33,29 @@ class PersonCardBrief extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            person.photo != ""
-              ? Image.memory(base64Decode(person.photo),
-                fit: BoxFit.cover,
-                width: 80,
-                height: 120,
-              )
-              : Image.asset("assets/images/no_avatar.png",
-                fit: BoxFit.cover,
-                width: 80,
-                height: 120,
-              ),
-            SizedBox(width: 10,),
+            Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                person.photo != ""
+                    ? Image.memory(base64Decode(person.photo),
+                  fit: BoxFit.cover,
+                  width: 80,
+                  height: 120,
+                )
+                    : Image.asset("assets/images/no_avatar.png",
+                  fit: BoxFit.cover,
+                  width: 80,
+                  height: 120,
+                ),
+                person.parentId != 0 ? Transform.translate(
+                  offset: const Offset(20, 2),
+                  child: Image.asset("assets/icons/baby-icon.png",
+                    width: 50, height: 50, fit: BoxFit.contain,
+                  ),
+                ) : const SizedBox.shrink()
+              ],
+            ),
+            const SizedBox(width: 10,),
             Container(
               width: MediaQuery.of(context).size.width - 100 - 50,
               height: 200,

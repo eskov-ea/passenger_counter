@@ -21,7 +21,6 @@ class PassengerDBLayer {
       List<Object> res = await txn.rawQuery(
           'SELECT * FROM passenger WHERE trip_id="$tripId" AND deleted_at IS NULL '
       );
-      print(res);
       return res.map((el) => Passenger.fromJson(el)).toList();
     });
   }

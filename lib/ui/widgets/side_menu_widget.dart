@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 
 
-enum SideMenuItemName { HOMESCREEN, ROUTES, PASSENGERS, SUITES }
+enum SideMenuItemName { HOMESCREEN, FAQ, PASSENGERS, SUITES, NONE }
 
 class SideMenu extends StatefulWidget {
   const SideMenu({
@@ -22,7 +23,7 @@ class SideMenu extends StatefulWidget {
 
 class _SideMenuState extends State<SideMenu> {
 
-  SideMenuItemName _currentPage = SideMenuItemName.HOMESCREEN;
+  SideMenuItemName _currentPage = SideMenuItemName.NONE;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class _SideMenuState extends State<SideMenu> {
               ),),
             ),
           ),
-          SizedBox(height: 50,),
+          const SizedBox(height: 50),
           SizedBox(
             height: 350,
             child: ListView(
@@ -75,43 +76,40 @@ class _SideMenuState extends State<SideMenu> {
                     icon: Icon(Icons.settings, color: AppColors.textMain),
                     name: "Настройки"
                 ),
-                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                AppDrawerTile(
-                    pageName: SideMenuItemName.ROUTES,
-                    currentPageName: _currentPage,
-                    onTap: (){
-                      print("Clicked!");
-                      setState(() {
-                        _currentPage = SideMenuItemName.ROUTES;
-                      });
-                    },
-                    icon: Icon(Icons.directions_boat, color: AppColors.textMain),
-                    name: "Рейсы"
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Divider(height: 20, color: AppColors.textFaded, thickness: 1)
                 ),
-                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
-                AppDrawerTile(
-                    pageName: SideMenuItemName.PASSENGERS,
-                    currentPageName: _currentPage,
-                    onTap: (){
-                      print("Clicked!");
-                      setState(() {
-                        _currentPage = SideMenuItemName.PASSENGERS;
-                      });
-                    },
-                    icon: Icon(Icons.people, color: AppColors.textMain),
-                    name: "Пассажиры"
-                ),
-                Divider(height: 20, color: AppColors.textFaded, thickness: 1,),
                 AppDrawerTile(
                     pageName: SideMenuItemName.SUITES,
                     currentPageName: _currentPage,
-                    onTap: (){
+                    onTap: () async {
                       setState(() {
                         _currentPage = SideMenuItemName.SUITES;
                       });
+                      widget.showMenu();
+                      await Future.delayed(const Duration(milliseconds: 100));
+                      Navigator.of(context).pushNamed(MainNavigationRouteNames.seatManagerScreen);
+                      _currentPage = SideMenuItemName.NONE;
                     },
                     icon: Icon(Icons.hotel_rounded, color: AppColors.textMain),
                     name: "Номерной фонд"
+                ),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Divider(height: 20, color: AppColors.textFaded, thickness: 1)
+                ),
+                AppDrawerTile(
+                    pageName: SideMenuItemName.SUITES,
+                    currentPageName: _currentPage,
+                    onTap: () async {
+                      setState(() {
+                        _currentPage = SideMenuItemName.FAQ;
+                      });
+                      widget.showMenu();
+                    },
+                    icon: Icon(Icons.help, color: AppColors.textMain),
+                    name: "FAQ"
                 )
 
               ],

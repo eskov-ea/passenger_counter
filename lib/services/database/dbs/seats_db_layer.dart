@@ -95,7 +95,17 @@ class SeatsDBLayer {
     return await db.transaction((txn) async {
       final res = await txn.rawUpdate(
           'UPDATE seat SET status = 0 WHERE seat.id IN ("$ids")');
-      return res;
+      // return res;
+    });
+  }
+
+  Future<List<Seat>> getSeats() async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      List<Object> res = await txn.rawQuery(
+          'SELECT * FROM seat'
+      );
+      return res.map((e) => Seat.fromJson(e)).toList();
     });
   }
 

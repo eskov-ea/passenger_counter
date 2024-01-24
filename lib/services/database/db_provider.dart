@@ -119,6 +119,7 @@ class DBProvider {
   Future<void> initializeSeats({required List<Seat> s}) => SeatsDBLayer().initializeSeats(s);
   Future<Seat?> getParentTripSeat({required int personId, required int tripId}) => SeatsDBLayer().getParentTripSeat(personId, tripId);
   Future<bool> checkSeatsInitialized() => SeatsDBLayer().checkSeatsInitialized();
+  Future<List<Seat>> getSeats() => SeatsDBLayer().getSeats();
 
   /// BAGAGE
 

@@ -43,6 +43,7 @@ abstract class MainNavigationRouteNames {
   static const barcodeScanScreen = '/scan_barcode';
   static const tripsCalendarScreen = '/trips_calendar';
   static const seatManagerScreen = '/seat_manager';
+  static const faqScreen = '/faq';
   static const test = '/test';
 }
 
@@ -134,6 +135,8 @@ class MainNavigation {
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeSeatManagerScreen());
       case MainNavigationRouteNames.tripsCalendarScreen:
         return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeTripsCalendarsScreen());
+      case MainNavigationRouteNames.faqScreen:
+        return CupertinoPageRoute(builder: (BuildContext context) => _screenFactory.makeFAQScreen());
       case MainNavigationRouteNames.test:
         return PageRouteBuilder(
           settings: const RouteSettings(name: MainNavigationRouteNames.allPersonsScreen),

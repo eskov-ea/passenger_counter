@@ -8,6 +8,7 @@ import 'package:pleyona_app/bloc/db_bloc/db_state.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/calendar_widget.dart';
 import 'package:pleyona_app/ui/widgets/person/person_options_sliver.dart';
+import 'package:pleyona_app/ui/widgets/title_decoration_container.dart';
 import '../../bloc/db_bloc/db_event.dart';
 import '../widgets/passenger/passenger_options_sliver.dart';
 import '../widgets/trip/trip_options_sliver.dart';
@@ -44,30 +45,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   const SizedBox(height: 70),
                   Container(
-                      padding: EdgeInsets.only(left: 15, bottom: 0, right: 15),
-                      child: const Text("Пассажиры",
-                        style: AppStyles.mainTitleTextStyle,
+                      padding: EdgeInsets.only(left: 15, bottom: 10, right: 15),
+                      child: const TitleDecorationWidget(
+                        child: Text("Пассажиры",
+                          style: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w600),
+                        ),
                       )
                   ),
                   PassengerOptionsSliver(),
+                  const SizedBox(height: 50),
                   Container(
-                    padding: const EdgeInsets.only(left: 15, bottom: 0, top: 25),
-                    child: const Text("Ближайший рейс",
-                      style: AppStyles.mainTitleTextStyle,
+                    padding: const EdgeInsets.only(left: 15, bottom: 10, right: 15),
+                    child: const TitleDecorationWidget(
+                      child: Text("Ближайший рейс",
+                        style: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                   TripOptionsSliver(),
+                  const SizedBox(height: 50),
                   Container(
-                    padding: EdgeInsets.only(left: 15, bottom: 0, right: 15, top: 25),
-                    child: const Text("Люди",
-                      style: AppStyles.mainTitleTextStyle,
+                    padding: EdgeInsets.only(left: 15, bottom: 10, right: 15),
+                    child: const TitleDecorationWidget(
+                      child: Text("Люди",
+                        style: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                   PersonOptionsSliver(),
+                  const SizedBox(height: 50),
                   Container(
-                    padding: const EdgeInsets.only(left: 15, bottom: 0, top: 25),
-                    child: const Text("Календарь рейсов",
-                      style: AppStyles.mainTitleTextStyle,
+                    padding: const EdgeInsets.only(left: 15, bottom: 10, right: 15),
+                    child: TitleDecorationWidget(
+                      child: Text("Календарь рейсов",
+                        style: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                   CalendarWidget(),

@@ -21,6 +21,7 @@ import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import 'package:pleyona_app/ui/widgets/seats/seat_card.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
+import 'package:pleyona_app/ui/widgets/title_decoration_container.dart';
 import 'package:pleyona_app/ui/widgets/trip/trip_card.dart';
 import '../../widgets/form_block_title.dart';
 import '../person/person_search_screen.dart';
@@ -263,71 +264,70 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 120),
-                      const BlockTitle(message: "Персона", bottomPadding: 0),
-                      _personBlock(),
-                      const SizedBox(height: 10),
-                      const BlockTitle(message: "Рейс", bottomPadding: 0),
-                      _tripBlock(),
-                      const SizedBox(height: 10),
-                      const BlockTitle(message: "Выбор места", bottomPadding: 0),
-                      _seatBlock(),
-                      const SizedBox(height: 10),
-                      const BlockTitle(message: "Дополнительная информация",
-                        bottomPadding: 0, alignment: Alignment.center,
-                      ),
-                      const SizedBox(height: 10),
-                      PassengerBagageInfoWidget(resultCallback: setBagage),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: commentTextController,
-                        focusNode: commentFieldFocus,
-                        onTapOutside: (event) {
-                          if(commentFieldFocus.hasFocus) {
-                            commentFieldFocus.unfocus();
-                          }
-                        },
-                        decoration: InputDecoration(
-                          label: Text("Добавить комментарий", style: AppStyles.submainTitleTextStyle,),
-                          contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0, right: 15.0),
-                          floatingLabelBehavior: FloatingLabelBehavior.auto,
-                          fillColor: AppColors.textMain,
-                          filled: true,
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                              borderSide: BorderSide(
-                                  color: AppColors.backgroundMain4
-                              )
-                          ),
-                          enabledBorder:  OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                              borderSide: BorderSide(
-                                  color: AppColors.backgroundMain2
-                              )
-                          ),
-                        ),
-                        style: AppStyles.secondaryTextStyle,
-                        maxLines: null,
-                        minLines: 3,
-                      ),
-                    ],
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              children: [
+                const SizedBox(height: 140),
+                const TitleDecorationWidget(child: BlockTitle(message: "Персона", bottomPadding: 0)),
+                _personBlock(),
+                const SizedBox(height: 50),
+                const TitleDecorationWidget(child: BlockTitle(message: "Рейс", bottomPadding: 0)),
+                const SizedBox(height: 10),
+                _tripBlock(),
+                const SizedBox(height: 50),
+                const TitleDecorationWidget(child: BlockTitle(message: "Выбор места", bottomPadding: 0)),
+                const SizedBox(height: 10),
+                _seatBlock(),
+                const SizedBox(height: 50),
+                const TitleDecorationWidget(
+                  child: BlockTitle(message: "Дополнительная информация",
+                    bottomPadding: 0, alignment: Alignment.center,
                   ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: trip != null && person != null && personDocuments != null
-                  ? SaveButton(onTap: _onSave, label: "Сохранить")
-                  : SaveButton(onTap: () {}, label: "Сохранить", color: Color(0xBBFFFFFF),)
-              )
-            ],
+                const SizedBox(height: 10),
+                PassengerBagageInfoWidget(resultCallback: setBagage),
+                const SizedBox(height: 30),
+                TextField(
+                  controller: commentTextController,
+                  focusNode: commentFieldFocus,
+                  onTapOutside: (event) {
+                    if(commentFieldFocus.hasFocus) {
+                      commentFieldFocus.unfocus();
+                    }
+                  },
+                  decoration: InputDecoration(
+                    label: Text("Добавить комментарий", style: AppStyles.submainTitleTextStyle,),
+                    contentPadding: EdgeInsets.only(top: 2.0, left: 15, bottom: 2.0, right: 15.0),
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    fillColor: AppColors.textMain,
+                    filled: true,
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                            color: AppColors.backgroundMain4
+                        )
+                    ),
+                    enabledBorder:  OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                            color: AppColors.backgroundMain2
+                        )
+                    ),
+                  ),
+                  style: AppStyles.secondaryTextStyle,
+                  maxLines: null,
+                  minLines: 3,
+                ),
+                const SizedBox(height: 20),
+                Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: trip != null && person != null && personDocuments != null
+                        ? SaveButton(onTap: _onSave, label: "Сохранить")
+                        : SaveButton(onTap: () {}, label: "Сохранить", color: Color(0xBBFFFFFF),)
+                )
+              ],
+            ),
           )
         ),
       ),

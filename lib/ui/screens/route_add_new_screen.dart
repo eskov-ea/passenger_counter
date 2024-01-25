@@ -314,7 +314,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
                   },
                   decoration: InputDecoration(
                     contentPadding:
-                        EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                     fillColor: isDropDownMenuHasError
                         ? AppColors.errorFieldFillColor
                         : Colors.transparent,
@@ -340,9 +340,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               Text(
                 "Прибытие",
                 style: AppStyles.submainTitleTextStyle,
@@ -495,9 +493,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
                   )
                 ],
               ),
-              SizedBox(
-                height: 7,
-              ),
+              const SizedBox(height: 7),
               isDepartureSelectionDateFieldError
                   ? Text(
                 "Некорректное время рейса",
@@ -510,8 +506,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
               ),
 
 
-              Text(
-                "Дата и время прибытия",
+              Text("Дата и время прибытия",
                 style: AppStyles.submainTitleTextStyle,
               ),
               Container(
@@ -536,9 +531,7 @@ class _RouteAddNewScreenState extends State<RouteAddNewScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               Row(
                 children: [
                   Material(

@@ -36,11 +36,9 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
 
     _animationController = AnimationController(
         vsync: this,
-        duration: Duration(milliseconds: 100)
+        duration: const Duration(milliseconds: 400)
     )..addListener(() {
-      setState(() {
-
-      });
+      setState(() {});
     });
     animation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.fastOutSlowIn)
@@ -48,6 +46,7 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
     scaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.fastOutSlowIn)
     );
+
 
     super.initState();
   }
@@ -60,20 +59,25 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
     }
     if ( !selectionMode) {
       selectionMode = true;
-      _animationController.reverse();
+      _animationController.forward();
     }
     setState(() {});
   }
   void _onSelectionDone() {
     selectedIds = [];
     selectionMode = false;
-    _animationController.forward();
+    _animationController.reverse();
     setState(() {});
   }
   void _onSelectionStart() {
-    setState(() {
-      selectionMode = true;
-    });
+    selectionMode = true;
+    _animationController.forward();
+  }
+
+  Future<void> _seatStatusChange(int status) async {
+    await _db.changeSeatStatus(status: status, ids: selectedIds);
+    seats = await _db.getSeats();
+    _onSelectionDone();
   }
 
   @override
@@ -96,63 +100,74 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
               const SizedBox(height: 150, width: double.infinity),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: selectionMode ? Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      _onSelectionDone();
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: 100,
-                      height: 30,
-                      decoration: const BoxDecoration(
-                          color: Color(0xFFE8E8E8),
-                          borderRadius: BorderRadius.all(Radius.circular(6))
-                      ),
-                      child: Text('Отменить'),
-                    ),
-                  ),
-                ) : Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.5 - 23,
+                      width: MediaQuery.of(context).size.width * 0.5 - 18,
                       height: 30,
                       decoration: const BoxDecoration(
-                          color: Color(0xFFE8E8E8),
+                          color: Color(0xFFE1E1E1),
                           borderRadius: BorderRadius.all(Radius.circular(6))
                       ),
                       alignment: Alignment.center,
                       child: const Text.rich(
                         TextSpan(
                             children: [
-                              WidgetSpan(child: Icon(Icons.circle, color: Color(0xcc33d33a), size: 22)),
+                              WidgetSpan(child: Icon(Icons.circle, color: Color(0xcc33b239), size: 22)),
                               WidgetSpan(child: SizedBox(width: 10,)),
-                              WidgetSpan(child: Text("В работе", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                              WidgetSpan(child: Text("В работе", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black54))),
                             ]
                         ),
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.5 - 23,
+                      width: MediaQuery.of(context).size.width * 0.5 - 18,
                       height: 30,
                       decoration: const BoxDecoration(
-                          color: Color(0xFFE8E8E8),
+                          color: Color(0xFFE1E1E1),
                           borderRadius: BorderRadius.all(Radius.circular(6))
                       ),
                       alignment: Alignment.center,
                       child: const Text.rich(
                         TextSpan(
                             children: [
-                              WidgetSpan(child: Icon(Icons.circle, color: Color(0xcce80606), size: 22)),
+                              WidgetSpan(child: Icon(Icons.circle, color: Color(0xccda1919), size: 22)),
                               WidgetSpan(child: SizedBox(width: 10,)),
-                              WidgetSpan(child: Text("Выключены", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                              WidgetSpan(child: Text("Выключены", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black54))),
                             ]
                         ),
                       ),
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 5),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Ink(
+                    width: MediaQuery.of(context).size.width,
+                    height: 30,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF1F1F1),
+                      borderRadius: BorderRadius.all(Radius.circular(6))
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        selectionMode ? _onSelectionDone() : _onSelectionStart();
+                      },
+                      customBorder: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(selectionMode ? 'Отменить' : 'Выбрать',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)
+                        )
+                      )
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -213,7 +228,7 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
                 animation: _animationController,
                 builder: (context, child) {
                   return Transform.translate(
-                    offset: Offset(0, 65 * _animationController.value),
+                    offset: Offset(0, 65 - 65 * _animationController.value),
                     child: Container(
                       height: 80,
                       width: MediaQuery.of(context).size.width,
@@ -229,7 +244,12 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.28,
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () async {
+                                PopupManager.showLoadingPopup(context);
+                                await _seatStatusChange(0);
+                                await Future.delayed(const Duration(milliseconds: 300));
+                                PopupManager.closePopup(context);
+                              },
                               child: Text('Выключить', textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w600,
@@ -248,7 +268,12 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.28,
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () async {
+                                PopupManager.showLoadingPopup(context);
+                                await _seatStatusChange(1);
+                                await Future.delayed(const Duration(milliseconds: 300));
+                                PopupManager.closePopup(context);
+                              },
                               child: Text('Включить', textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.w600, height: 1,

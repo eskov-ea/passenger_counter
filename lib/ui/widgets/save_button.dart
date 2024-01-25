@@ -8,12 +8,16 @@ class SaveButton extends StatelessWidget {
     required this.onTap,
     required this.label,
     this.color = const Color(0xFF35D2AB),
+    this.splashColor = const Color(0xFF5FD2B5),
+    this.textStyle = const TextStyle(fontSize: 24),
     super.key
   });
 
   final onTap;
   final String label;
   final Color color;
+  final Color splashColor;
+  final TextStyle textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +33,11 @@ class SaveButton extends StatelessWidget {
         ),
         child: InkWell(
             onTap: onTap,
-            splashColor: AppColors.accent5,
+            splashColor: splashColor,
+            customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(6))),
             child: Center(
               child: Text(
-                label,
-                style: const TextStyle(fontSize: 24, ),
+                label, style: textStyle,
               ),
             )
         ),

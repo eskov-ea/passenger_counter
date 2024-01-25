@@ -8,6 +8,7 @@ import 'package:pleyona_app/ui/screens/trip/trip_edit_info.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/search_date_widget.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
+import 'package:pleyona_app/ui/widgets/title_decoration_container.dart';
 import 'package:pleyona_app/ui/widgets/trip/trips_result_list_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as d;
@@ -187,9 +188,12 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
                 const SizedBox(height: 10,),
                 _filterWidget(),
                 const SizedBox(height: 40,),
-                Text("Рейсы",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 32, color: AppColors.textMain),
+                TitleDecorationWidget(
+                  alignment: Alignment.center,
+                  child: Text(filterDate == null ? "Все рейсы" : "Найденные рейсы",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 20, color: Color(0xFF000000)),
+                  ),
                 ),
                 SizedBox(height: 10,),
                 TripsResultList(

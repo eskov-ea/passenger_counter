@@ -67,9 +67,16 @@ class _SeatSearchScreenState extends State<SeatSearchScreen> {
             child: Column(
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-                const Align(
+                Container(
                   alignment: Alignment.centerLeft,
-                  child: Text('Свободные места:', style: TextStyle(fontSize: 24, color: Colors.white))),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    color: Color(0xFFFFFFFF)
+                  ),
+                  child: Text('Свободные места:',
+                      style: TextStyle(fontSize: 20, color: AppColors.secondary4, fontWeight: FontWeight.w600))
+                ),
                 const SizedBox(height: 10),
                 Expanded(
                   child: GridView.builder(
@@ -85,9 +92,16 @@ class _SeatSearchScreenState extends State<SeatSearchScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Место с родителем:', style: TextStyle(fontSize: 24, color: Colors.white))),
+                if (parentSeat != null) Container(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        color: Color(0xFFFFFFFF)
+                    ),
+                    child: Text('Место с родителем:',
+                        style: TextStyle(fontSize: 20, color: AppColors.secondary4, fontWeight: FontWeight.w600))
+                ),
                 const SizedBox(height: 10),
                 if (parentSeat != null) Container(
                   height: 80,

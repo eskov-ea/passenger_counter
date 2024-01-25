@@ -100,13 +100,16 @@ class _SideMenuState extends State<SideMenu> {
                     child: Divider(height: 20, color: AppColors.textFaded, thickness: 1)
                 ),
                 AppDrawerTile(
-                    pageName: SideMenuItemName.SUITES,
+                    pageName: SideMenuItemName.FAQ,
                     currentPageName: _currentPage,
                     onTap: () async {
                       setState(() {
                         _currentPage = SideMenuItemName.FAQ;
                       });
                       widget.showMenu();
+                      await Future.delayed(const Duration(milliseconds: 100));
+                      Navigator.of(context).pushNamed(MainNavigationRouteNames.faqScreen);
+                      _currentPage = SideMenuItemName.NONE;
                     },
                     icon: Icon(Icons.help, color: AppColors.textMain),
                     name: "FAQ"

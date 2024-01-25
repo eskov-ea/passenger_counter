@@ -21,6 +21,6 @@ class BlockTitle extends StatelessWidget {
         textAlign: TextAlign.start,
         style: const TextStyle(fontSize: 24, color: Color(0xFF000000), fontWeight: FontWeight.w500),
       ),
-    );();
+    );
   }
 }

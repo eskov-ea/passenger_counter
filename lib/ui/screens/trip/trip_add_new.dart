@@ -86,6 +86,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
 
   Future<void> _onSave() async {
     checkIfDataFilledCorrect();
+    _checkTripTimeRange();
     if (!isStartTripDateFieldError && !isEndTripDateFieldError && !isTripNameHasError) {
       final DateTime start = _makeDateWithTime(_startTripDateSelection!, _startTripTimeSelection!);
       final DateTime end = _makeDateWithTime(_endTripDateSelection!, _endTripTimeSelection!);
@@ -158,6 +159,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
       _startTripTimeSelection = time;
     });
     setStartTripDateTimeString();
+    validateStartTripTime();
   }
 
   void _onConfirmEndTripTime(DateTime time) {
@@ -165,6 +167,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
       _endTripTimeSelection = time;
     });
     setEndTripDateTimeString();
+    validateEndTripTime();
   }
 
   void setStartTripDateTimeString() {
@@ -255,6 +258,23 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
     });
   }
 
+  void _checkTripTimeRange() {
+    if (_startTripDateSelection != null && _startTripTimeSelection != null &&
+      _endTripDateSelection != null && _endTripTimeSelection != null) {
+      final start = DateTime(_startTripDateSelection!.year, _startTripDateSelection!.month, _startTripDateSelection!.day,
+          _startTripTimeSelection!.hour, _startTripTimeSelection!.minute);
+      final end = DateTime(_endTripDateSelection!.year, _endTripDateSelection!.month, _endTripDateSelection!.day,
+          _endTripTimeSelection!.hour, _endTripTimeSelection!.minute);
+
+      if (end.millisecondsSinceEpoch - start.millisecondsSinceEpoch <= 0) {
+        setState(() {
+          isStartTripDateFieldError = true;
+          isEndTripDateFieldError = true;
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -305,9 +325,9 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
   Widget _nameTripBlock() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: Color(0x99FFFFFF)
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
+        color: isTripNameHasError ? AppColors.errorFieldFillColor : const Color(0x99FFFFFF),
       ),
       child: Column(
         children: [
@@ -323,7 +343,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
             keyboardType: TextInputType.text,
             cursorHeight: 25,
             onEditingComplete: (){
-              // onNextFieldFocus(context, lastnameFocus, firstnameFocus);
+              validateTripName();
             },
             onTapOutside: (event) {
               if(nameFocusNode.hasFocus) {
@@ -367,12 +387,15 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
               focusColor: AppColors.accent5,
             ),
           ),
-          isTripNameHasError
-              ? Text("Название рейся обязательно",
-            style: TextStyle(fontSize: 16, color: AppColors.errorMain),
-          )
-              : const SizedBox.shrink(),
-          SizedBox(height: 40),
+          SizedBox(
+            height: 20,
+            child: Center(
+              child: Text(isTripNameHasError ? "Название рейся обязательно" : "",
+                style: TextStyle(fontSize: 16, color: AppColors.errorMain),
+              )
+            ),
+          ),
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -381,9 +404,9 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
   Widget _arrivalTripBlock() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: Color(0x99FFFFFF)
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
+        color: isEndTripDateFieldError ? AppColors.errorFieldFillColor : const Color(0x99FFFFFF),
       ),
       child: Column(
         children: [
@@ -483,14 +506,15 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
           SizedBox(
             height: 7,
           ),
-          isStartTripDateFieldError
-              ? Text(
-            "Некорректное время рейса",
-            style:
-            TextStyle(fontSize: 16, color: AppColors.errorMain),
-          )
-              : SizedBox.shrink(),
-          const SizedBox(height: 30),
+          SizedBox(
+            height: 20,
+            child: Center(
+                child: Text(isEndTripDateFieldError ? "Некорректное время рейса" : "",
+                  style: TextStyle(fontSize: 16, color: AppColors.errorMain),
+                )
+            ),
+          ),
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -499,9 +523,9 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
   Widget _departureTripBlock() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-        color: Color(0x99FFFFFF)
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
+        color: isStartTripDateFieldError ? AppColors.errorFieldFillColor : const Color(0x99FFFFFF),
       ),
       child: Column(
         children: [
@@ -594,11 +618,14 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
             ],
           ),
           const SizedBox(height: 7),
-          isStartTripDateFieldError
-              ? Text("Некорректное время рейса",
-            style: TextStyle(fontSize: 16, color: AppColors.errorMain),
-          )
-              : SizedBox.shrink(),
+          SizedBox(
+            height: 20,
+            child: Center(
+                child: Text(isStartTripDateFieldError ? "Некорректное время рейса" : "",
+                  style: TextStyle(fontSize: 16, color: AppColors.errorMain),
+                )
+            ),
+          ),
           const SizedBox(height: 40),
         ],
       ),

@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
@@ -67,12 +68,15 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
     statuses = await _db.getAvailableStatuses();
   }
   void _openAllTripPassengersScreen() {
-    Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengers,
-      arguments: TripPassengersScreenArguments(tripPassengers: passengers)
+    context.goNamed(
+        NavigationRoutes.tripPassengers.name,
+        extra: TripPassengersScreenArguments(tripPassengers: passengers)
     );
   }
   void _openTripSeatsScreen() {
-    Navigator.of(context).pushNamed(MainNavigationRouteNames.currentTripSeatsScreen);
+    context.goNamed(
+        NavigationRoutes.currentTripSeatsScreen.name
+    );
   }
 
   void _onCurrentTripState(CurrentTripState event) {

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/storage/data_storage.dart';
 import 'package:pleyona_app/theme.dart';
@@ -358,10 +359,9 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         await _db.addDocument(document: newDoc);
         // TODO: handle error
       PopupManager.closePopup(context);
-      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
-          arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: widget.routeName ?? MainNavigationRouteNames.homeScreen,
-          person: newPerson, personDocuments: [ newDoc ])
-        );
+      context.goNamed(
+          NavigationRoutes.homeScreen.name
+      );
       // } else {
       //   Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,
       //     arguments: AddingPersonOptionsArguments(newPerson: newPerson, persons: persons,

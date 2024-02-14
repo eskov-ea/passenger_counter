@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/bloc/camera_bloc/camera_state.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
@@ -127,8 +128,8 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen>{
         }
       }
       await DBProvider.db.updatePerson(p: updatedPerson, photo: photo);
-      Navigator.of(context).pop();
-      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.allPersonsScreen);
+      context.goNamed(NavigationRoutes.allPersonsScreen.name);
+      //Todo: check dispose
       BlocProvider.of<CameraBloc>(context).add(DisposeCameraEvent());
     }
   }
@@ -384,7 +385,9 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen>{
     final parentPersonId = widget.person.id;
     try {
       await DBProvider.db.addChildToPerson(childPersonId: child.id, parentPersonId: parentPersonId);
-      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
+      context.goNamed(
+          NavigationRoutes.homeScreen.name
+      );
     } catch (err, stackTrace) {
       PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.error, message: "Произошла ошибка при привязке ребенка к родителю. Пропробуйте снова.");
     }
@@ -869,13 +872,15 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen>{
     });
   }
   void _openAddChildFromSearchPage() {
-    Navigator.of(context).pushNamed(MainNavigationRouteNames.searchPersonScreen,
-        arguments: SearchPersonScreenArguments(callback: setPersonChildToParent)
+    context.goNamed(
+      NavigationRoutes.searchPersonScreen.name,
+      extra: SearchPersonScreenArguments(callback: setPersonChildToParent)
     );
   }
   void _openAddChildWithNewPerson() {
-    Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen,
-        arguments: AddNewPersonScreenArguments(parentId: widget.person.id, routeName: MainNavigationRouteNames.homeScreen)
+    context.goNamed(
+        NavigationRoutes.addPersonScreen.name,
+        extra: AddNewPersonScreenArguments(parentId: widget.person.id, routeName: '')
     );
   }
   void firstnameSetter(String value) {

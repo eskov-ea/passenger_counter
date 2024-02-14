@@ -18,7 +18,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  static final MainNavigation mainNavigation = MainNavigation();
+  // static final MainNavigationRoutes mainNavigation = MainNavigationRoutes;
 
 
   @override
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           CurrentTripBloc()
         )
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'Pleyona App',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -55,9 +55,9 @@ class MyApp extends StatelessWidget {
         ),
         themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,
-        routes: mainNavigation.routes,
-        initialRoute: MainNavigationRouteNames.loaderWidget,
-        onGenerateRoute: mainNavigation.onGenerateRoute
+        routerConfig: MainNavigationRoutes.router,
+        // initialRoute: MainNavigationRouteNames.loaderWidget,
+        // onGenerateRoute: mainNavigation.onGenerateRoute
       ),
     );
   }

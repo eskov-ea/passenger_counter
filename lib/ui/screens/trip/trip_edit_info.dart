@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
@@ -212,8 +213,9 @@ class _TripEditInfoState extends State<TripEditInfo> {
       tripStartDate: start,
       tripEndDate: end
     );
-    Navigator.of(context).pop();
-    Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.allTripsScreen);
+    context.goNamed(
+        NavigationRoutes.allTripsScreen.name
+    );
   }
   void _startTripDateHasChanges() {
     if(_startTripDateSelection == null) return;

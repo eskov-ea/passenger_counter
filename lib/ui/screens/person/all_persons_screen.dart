@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
@@ -31,8 +32,9 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
   }
 
   void navigateToEditScreen(Person person) {
-    Navigator.of(context).pushNamed(MainNavigationRouteNames.editPersonInfoScreen,
-      arguments: EditPersonScreenArguments(person: person)
+    context.goNamed(
+      NavigationRoutes.editPersonInfoScreen.name,
+      extra: EditPersonScreenArguments(person: person)
     );
   }
 

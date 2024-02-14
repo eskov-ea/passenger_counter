@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
@@ -189,8 +190,9 @@ class _TripsCalendarScreenState extends State<TripsCalendarScreen> {
                         child: Column(
                           children: [
                             ..._currentDateTrips.map((trip) => TripCard(trip: trip, callback: (trip){
-                              Navigator.of(context).pushNamed(MainNavigationRouteNames.tripFullInfoScreen,
-                                arguments: TripFullInfoScreenArguments(trip: trip)
+                              context.goNamed(
+                                NavigationRoutes.tripFullInfoScreen.name,
+                                extra: TripFullInfoScreenArguments(trip: trip)
                               );
                             })).toList()
                           ],

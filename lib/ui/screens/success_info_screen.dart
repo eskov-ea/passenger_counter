@@ -49,14 +49,7 @@ class SuccessInfoScreen extends StatelessWidget {
                         PersonCardFullSize(person: person, personDocuments: personDocuments),
                         ElevatedButton(
                           onPressed: () {
-                            if(routeName == MainNavigationRouteNames.editPersonInfoScreen) {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.editPersonInfoScreen,
-                                  arguments: EditPersonScreenArguments(person: person)
-                              );
-                            } else {
-                              Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
-                            }
+
                           },
                           child: Text("Продолжить"),
                         ),

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_brief.dart';
 import 'package:pleyona_app/ui/widgets/person/person_card_fullsize.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/save_button.dart';
 import '../../models/person_model.dart';
 import '../../navigation/navigation.dart';
@@ -11,13 +13,13 @@ import '../screens/success_info_screen.dart';
 
 
 
-class AddingPersonOptions extends StatefulWidget {
+class PersonCollisionOptions extends StatefulWidget {
   final Person newPerson;
   final String personDocumentName;
   final String personDocumentNumber;
   final List<Person> persons;
 
-  const AddingPersonOptions({
+  const PersonCollisionOptions({
     required this.newPerson,
     required this.personDocumentName,
     required this.personDocumentNumber,
@@ -26,10 +28,10 @@ class AddingPersonOptions extends StatefulWidget {
   });
 
   @override
-  State<AddingPersonOptions> createState() => _AddingPersonOptionsState();
+  State<PersonCollisionOptions> createState() => _PersonCollisionOptionsState();
 }
 
-class _AddingPersonOptionsState extends State<AddingPersonOptions> {
+class _PersonCollisionOptionsState extends State<PersonCollisionOptions> {
 
   Person? updatedPerson;
   List<PersonDocument>? updatedPersonDocuments;
@@ -53,11 +55,8 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
         personId: personId
       );
       await DBProvider.db.addDocument(document: document);
-      print("[ DATABASE RESULT]:::   $personId");
-      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
-          arguments: InfoScreenArguments(message: "Контакт успешно сохранен в Базу Данных!", routeName: MainNavigationRouteNames.homeScreen,
-              person: widget.newPerson, personDocuments: [document])
-      );
+      PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.success, message: 'Контакт успешно сохранен в Базу Данных!');
+      context.goNamed(NavigationRoutes.homeScreen.name);
     } catch (err) {
       print("[ DATABASE ERROR]:::   $err");
     }
@@ -88,11 +87,8 @@ class _AddingPersonOptionsState extends State<AddingPersonOptions> {
       }
       final res = await DBProvider.db.updatePersonsContactInformation(id: updatedPerson!.id, phone: phone, email: email);
       final List<PersonDocument> allPersonDocs = await DBProvider.db.getPersonDocuments(personId: updatedPerson!.id);
-      print("[ DATABASE RESULT]:::   $res");
-      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.successInfoScreen,
-          arguments: InfoScreenArguments(message: "Контакт успешно обновлен!", routeName: MainNavigationRouteNames.homeScreen,
-              person: updatedPerson!, personDocuments: allPersonDocs)
-      );
+      PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.success, message: 'Контакт успешно сохранен!');
+      context.goNamed(NavigationRoutes.homeScreen.name);
     } catch(err) {
       print("[ DATABASE ERROR]:::   $err");
     }

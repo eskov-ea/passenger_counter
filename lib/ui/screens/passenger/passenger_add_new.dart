@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
@@ -160,7 +161,9 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
         );
         BlocProvider.of<CurrentTripBloc>(context).add(AddNewTripPassengerEvent(passenger: passenger, baggage: personBagage));
         PopupManager.closePopup(context);
-        Navigator.pushReplacementNamed(context, MainNavigationRouteNames.homeScreen);
+        context.goNamed(
+            NavigationRoutes.homeScreen.name,
+        );
         PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.success, message: "Пассажир зарегистрирован на рейс.");
       } catch (err, stack) {
         log(err.toString(), stackTrace: stack);
@@ -351,10 +354,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               child: InkWell(
-                onTap: () async {
-                  await Navigator.of(context).pushNamed(
-                      MainNavigationRouteNames.searchPersonScreen,
-                      arguments: SearchPersonScreenArguments(callback: setPerson)
+                onTap: () {
+                  context.goNamed(
+                    NavigationRoutes.searchPersonScreen.name,
+                    extra: SearchPersonScreenArguments(callback: setPerson)
                   );
                 },
                 customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -382,10 +385,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             )
           ),
           child: InkWell(
-            onTap: () async {
-              await Navigator.of(context).pushNamed(
-                  MainNavigationRouteNames.searchPersonScreen,
-                  arguments: SearchPersonScreenArguments(callback: setPerson)
+            onTap: () {
+              context.goNamed(
+                  NavigationRoutes.searchPersonScreen.name,
+                  extra: SearchPersonScreenArguments(callback: setPerson)
               );
             },
             customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -415,10 +418,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               child: InkWell(
-                onTap: () async {
-                  await Navigator.of(context).pushNamed(
-                      MainNavigationRouteNames.tripSearchScreen,
-                      arguments: TripSearchScreenArguments(onResultCallback: setTrip)
+                onTap: () {
+                  context.goNamed(
+                      NavigationRoutes.tripSearchScreen.name,
+                      extra: TripSearchScreenArguments(onResultCallback: setTrip)
                   );
                 },
                 customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -446,10 +449,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
             )
           ),
           child: InkWell(
-            onTap: () async {
-              await Navigator.of(context).pushNamed(
-                MainNavigationRouteNames.tripSearchScreen,
-                arguments: TripSearchScreenArguments(onResultCallback: setTrip)
+            onTap: () {
+              context.goNamed(
+                  NavigationRoutes.tripSearchScreen.name,
+                  extra: TripSearchScreenArguments(onResultCallback: setTrip)
               );
             },
             customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -491,10 +494,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               child: InkWell(
-                onTap: () async {
-                  await Navigator.of(context).pushNamed(
-                      MainNavigationRouteNames.seatSearchScreen,
-                      arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
+                onTap: () {
+                  context.goNamed(
+                      NavigationRoutes.seatSearchScreen.name,
+                      extra: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
                   );
                 },
                 customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -522,10 +525,10 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
               )
           ),
           child: InkWell(
-            onTap: () async {
-              await Navigator.of(context).pushNamed(
-                  MainNavigationRouteNames.seatSearchScreen,
-                  arguments: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
+            onTap: () {
+              context.goNamed(
+                  NavigationRoutes.seatSearchScreen.name,
+                  extra: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
               );
             },
             customBorder: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
@@ -42,7 +43,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.passengerAddNewScreen);
+                        context.goNamed(
+                            NavigationRoutes.passengerAddNewScreen.name
+                        );
                       },
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -75,8 +78,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.scannerScreen,
-                          arguments: ScannerScreenArguments(
+                        context.goNamed(
+                          NavigationRoutes.scannerScreen.name,
+                          extra: ScannerScreenArguments(
                             setStateCallback: (result ) async {
                               final barcode = result.code;
                               final db = DBProvider.db;
@@ -95,13 +99,18 @@ class PassengerOptionsSliver extends StatelessWidget {
                               final person = await db.getPersonById(personId: passenger.personId);
 
                               final passengerPerson = PassengerPerson(person: person, passenger: passenger, seat: seat, document: document, statuses: statuses);
-                              Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengerInfo,
-                                  arguments: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
+                              context.goNamed(
+                                  NavigationRoutes.editTripPassengersStatus.name,
+                                  extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OffBoard')
+                              );
+                              context.goNamed(
+                                  NavigationRoutes.tripPassengerInfo.name,
+                                  extra: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
                               );
                             },
-                            allowedFormat: [BarcodeFormat.code128],
-                            description: "Чтобы считать баркод пассажира наведите на него камеру. Код должен быть читаем и освещение должно быть достаточным для распознования, в противном случае вы можете использовать фонарик камеры."
-                          )
+                          allowedFormat: [BarcodeFormat.code128],
+                          description: "Чтобы считать баркод пассажира наведите на него камеру. Код должен быть читаем и освещение должно быть достаточным для распознования, в противном случае вы можете использовать фонарик камеры."
+                        )
                         );
                       },
                       customBorder: RoundedRectangleBorder(
@@ -135,8 +144,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
-                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OffBoard')
+                        context.goNamed(
+                            NavigationRoutes.editTripPassengersStatus.name,
+                            extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OffBoard')
                         );
                       },
                       customBorder: RoundedRectangleBorder(
@@ -170,8 +180,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
-                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OnBoard')
+                        context.goNamed(
+                            NavigationRoutes.editTripPassengersStatus.name,
+                            extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OnBoard')
                         );
                       },
                       customBorder: RoundedRectangleBorder(
@@ -208,8 +219,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () async {
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripPassengersStatus,
-                            arguments: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckOut')
+                        context.goNamed(
+                          NavigationRoutes.editTripPassengersStatus.name,
+                          extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckOut')
                         );
                       },
                       customBorder: RoundedRectangleBorder(
@@ -253,8 +265,9 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        // DBProvider.db.DeveloperModeClearPersonTable();
-                        Navigator.of(context).pushNamed(MainNavigationRouteNames.passengerAddNewScreen);
+                        context.goNamed(
+                            NavigationRoutes.passengerAddNewScreen.name
+                        );
                       },
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),

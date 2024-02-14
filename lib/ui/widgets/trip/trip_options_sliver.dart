@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/models/trip_model.dart';
@@ -48,7 +49,9 @@ class TripOptionsSliver extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).pushNamed(MainNavigationRouteNames.addNewTripScreen);
+                      context.goNamed(
+                          NavigationRoutes.addNewTripScreen.name
+                      );
                     },
                     customBorder: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -80,7 +83,9 @@ class TripOptionsSliver extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).pushNamed(MainNavigationRouteNames.allTripsScreen);
+                      context.goNamed(
+                          NavigationRoutes.allTripsScreen.name
+                      );
                     },
                     customBorder: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -118,9 +123,10 @@ class TripOptionsSliver extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () async {
-                      await Navigator.of(context).pushNamed(
-                          MainNavigationRouteNames.tripSearchScreen,
-                          arguments: TripSearchScreenArguments(onResultCallback: onCurrentTripSet));
+                      context.goNamed(
+                        NavigationRoutes.tripSearchScreen.name,
+                        extra: TripSearchScreenArguments(onResultCallback: onCurrentTripSet)
+                      );
                     },
                     customBorder: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),

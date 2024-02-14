@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../navigation/navigation.dart';
 import '../../theme.dart';
 import '../../view_models/auth_view_cubit/auth_view_cubit.dart';
@@ -187,7 +188,9 @@ class _AuthScreenState extends State<AuthScreen> {
       AuthViewCubitState state
       ) {
     if (state is AuthViewCubitSuccessAuthState) {
-      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
+      context.goNamed(
+          NavigationRoutes.homeScreen.name
+      );
     } else {
       setState(() {
         _authState = state;
@@ -200,7 +203,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _login(username, pass, context) async {
     BlocProvider.of<AuthViewCubit>(context).auth(email:username, password:pass);
-    Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
+    context.goNamed(
+        NavigationRoutes.homeScreen.name
+    );
   }
 
 }

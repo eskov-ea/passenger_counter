@@ -56,8 +56,8 @@ class ScreenFactory {
     return QRScanner(setStateCallback: arguments.setStateCallback, allowedFormat: arguments.allowedFormat, description: arguments.description,);
   }
 
-  Widget makeAddingPersonOptionsPage(AddingPersonOptionsArguments arguments) {
-    return AddingPersonOptions(newPerson: arguments.newPerson,
+  Widget makePersonCollisionScreen(AddingPersonOptionsArguments arguments) {
+    return PersonCollisionOptions(newPerson: arguments.newPerson,
         persons: arguments.persons, personDocumentName: arguments.personDocumentName,
         personDocumentNumber: arguments.personDocumentNumber,);
   }

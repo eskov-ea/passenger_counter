@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
@@ -31,8 +32,9 @@ class PersonOptionsSliver extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed(MainNavigationRouteNames.addPersonScreen,
-                      arguments: AddNewPersonScreenArguments(parentId: null, routeName: null)
+                  context.push(
+                    NavigationRoutes.addPersonScreen.path,
+                    extra: AddNewPersonScreenArguments(parentId: null, routeName: null)
                   );
                 },
                 customBorder: RoundedRectangleBorder(
@@ -64,7 +66,9 @@ class PersonOptionsSliver extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () async {
-                  Navigator.of(context).pushNamed(MainNavigationRouteNames.allPersonsScreen);
+                  context.goNamed(
+                    NavigationRoutes.allPersonsScreen.name
+                  );
                 },
                 customBorder: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
@@ -66,8 +67,9 @@ class PassengerCard extends StatelessWidget {
       callback: _openDeleteAlertDialog,
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).pushNamed(MainNavigationRouteNames.tripPassengerInfo,
-            arguments: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
+          context.goNamed(
+            NavigationRoutes.tripPassengerInfo.name,
+            extra: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
           );
         },
         child: Container(

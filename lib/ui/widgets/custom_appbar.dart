@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget{
@@ -89,7 +90,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
       actions: [
         widget.hideHomeButton ? const SizedBox(width: 30, height: 30) : GestureDetector(
           onTap: () {
-            Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.homeScreen);
+            context.goNamed(
+                NavigationRoutes.homeScreen.name
+            );
           },
           child: AnimatedOpacity(
             opacity: isBackArrowHidden ? 0 : 1,

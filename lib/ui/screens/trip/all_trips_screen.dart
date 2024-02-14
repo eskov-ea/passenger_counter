@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/trip/trip_edit_info.dart';
@@ -92,8 +93,9 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
   }
 
   void openEditTripScreen(Trip trip) {
-    Navigator.of(context).pushNamed(MainNavigationRouteNames.editTripScreen,
-        arguments: TripEditInfoScreenArguments(trip: trip)
+    context.goNamed(
+      NavigationRoutes.editTripScreen.name,
+      extra: TripEditInfoScreenArguments(trip: trip)
     );
   }
 

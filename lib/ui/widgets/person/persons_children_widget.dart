@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/ui/screens/person/person_edit_info_screen.dart';
@@ -17,8 +18,9 @@ class PersonsChildrenWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<void> openEditPersonScreen() async {
-      Navigator.of(context).pushNamed(MainNavigationRouteNames.editPersonInfoScreen,
-        arguments: EditPersonScreenArguments(person: child)
+      context.goNamed(
+        NavigationRoutes.editPersonInfoScreen.name,
+        extra: EditPersonScreenArguments(person: child)
       );
     }
     Future<void> _deleteChildGuard() async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/qr_scanner.dart';
@@ -34,9 +35,9 @@ class ScanButton extends StatelessWidget {
         ),
         child: InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(
-                MainNavigationRouteNames.scannerScreen,
-                arguments: ScannerScreenArguments(setStateCallback: onQRScanResultCallback,
+              context.push(
+                NavigationRoutes.scannerScreen.path,
+                extra: ScannerScreenArguments(setStateCallback: onQRScanResultCallback,
                     allowedFormat: allowedFormat, description: description
                 )
               );

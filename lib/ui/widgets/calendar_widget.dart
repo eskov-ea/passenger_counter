@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
@@ -70,7 +71,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           ),
           child: InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(MainNavigationRouteNames.tripsCalendarScreen);
+              context.goNamed(
+                  NavigationRoutes.tripsCalendarScreen.name
+              );
             },
             customBorder: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
@@ -86,7 +89,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget _calendarChildBlock() {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(MainNavigationRouteNames.tripsCalendarScreen);
+        context.goNamed(
+            NavigationRoutes.tripsCalendarScreen.name
+        );
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),

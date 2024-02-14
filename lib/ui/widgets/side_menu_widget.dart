@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 
@@ -89,7 +90,9 @@ class _SideMenuState extends State<SideMenu> {
                       });
                       widget.showMenu();
                       await Future.delayed(const Duration(milliseconds: 100));
-                      Navigator.of(context).pushNamed(MainNavigationRouteNames.seatManagerScreen);
+                      context.goNamed(
+                          NavigationRoutes.seatManagerScreen.name
+                      );
                       _currentPage = SideMenuItemName.NONE;
                     },
                     icon: Icon(Icons.hotel_rounded, color: AppColors.textMain),
@@ -108,7 +111,9 @@ class _SideMenuState extends State<SideMenu> {
                       });
                       widget.showMenu();
                       await Future.delayed(const Duration(milliseconds: 100));
-                      Navigator.of(context).pushNamed(MainNavigationRouteNames.faqScreen);
+                      context.goNamed(
+                          NavigationRoutes.faqScreen.name
+                      );
                       _currentPage = SideMenuItemName.NONE;
                     },
                     icon: Icon(Icons.help, color: AppColors.textMain),

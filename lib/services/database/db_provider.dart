@@ -78,6 +78,10 @@ class DBProvider {
     required int id, required String phone, required String email
   }) => PersonDBLayer().updatePersonsContactInformation(id: id, phone: phone, email: email);
   Future updatePerson({required Person p, required String? photo}) => PersonDBLayer().updatePerson(p: p, photo: photo);
+  Future addChildToPerson({required int childPersonId, required int parentPersonId}) =>
+      PersonDBLayer().addChildToPerson(childPersonId, parentPersonId);
+  Future removeChildFromPerson({required int childPersonId}) =>
+      PersonDBLayer().removeChildFromPerson(childPersonId);
 
   /// DOCUMENTS
 

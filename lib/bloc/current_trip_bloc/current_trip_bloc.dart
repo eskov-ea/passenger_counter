@@ -92,12 +92,11 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
       AddNewPassengerStatusEvent event,
       Emitter<CurrentTripState> emit
       ) async {
-    final db = DBProvider.db;
-    final newStatus = await db.addPassengerStatus(passengerId: event.passengerId, statusName: event.statusName);
+    if (state is! InitializedCurrentTripState) return;
     final s = state as InitializedCurrentTripState;
     for (var p in s.tripPassengers) {
       if (p.passenger.id == event.passengerId) {
-        p.statuses.insert(0, newStatus);
+        p.statuses.insert(0, event.passengerStatus);
       }
     }
     emit(s.copyWith(
@@ -111,8 +110,7 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
       DeletePassengerStatusEvent event,
       Emitter<CurrentTripState> emit
       ) async {
-    final db = DBProvider.db;
-    await db.deletePassengerStatus(statusId: event.statusId);
+    if (state is! InitializedCurrentTripState) return;
     final s = state as InitializedCurrentTripState;
     for (var p in s.tripPassengers) {
       if (p.passenger.id == event.passengerId) {

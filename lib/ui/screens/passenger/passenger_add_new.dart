@@ -270,6 +270,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
               children: [
                 const SizedBox(height: 140),
                 const TitleDecorationWidget(child: BlockTitle(message: "Персона", bottomPadding: 0)),
+                const SizedBox(height: 10),
                 _personBlock(),
                 const SizedBox(height: 50),
                 const TitleDecorationWidget(child: BlockTitle(message: "Рейс", bottomPadding: 0)),

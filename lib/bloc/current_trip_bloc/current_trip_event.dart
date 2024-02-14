@@ -1,5 +1,6 @@
 
 import 'package:pleyona_app/models/passenger/passenger.dart';
+import 'package:pleyona_app/models/passenger/passenger_status.dart';
 
 abstract class CurrentTripEvent {}
 
@@ -12,10 +13,10 @@ class SetNewCurrentTripEvent extends CurrentTripEvent {
 }
 
 class AddNewPassengerStatusEvent extends CurrentTripEvent {
-  final String statusName;
+  final PassengerStatus passengerStatus;
   final int passengerId;
 
-  AddNewPassengerStatusEvent({required this.statusName, required this.passengerId});
+  AddNewPassengerStatusEvent({required this.passengerStatus, required this.passengerId});
 }
 
 class DeletePassengerStatusEvent extends CurrentTripEvent {

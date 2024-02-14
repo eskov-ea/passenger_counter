@@ -13,8 +13,10 @@ import 'package:pleyona_app/models/passenger/passenger_status.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/models/seat_model.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
+import 'package:pleyona_app/services/statuses/statuses_api_provider.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
+import 'package:pleyona_app/ui/widgets/popup.dart';
 import 'package:pleyona_app/ui/widgets/slidable_wrapper.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
@@ -48,16 +50,17 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
   Future<void> _openUpdateStatusDialogWindow() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (BuildContext context)
     {
       return StatefulBuilder(
           builder: (context, setState) {
+            final rowsCount = (statuses.length ~/ 2 + statuses.length % 2);
             return AlertDialog(
               title: const Text('Обновить статус пассажира'),
               content: Container(
-                height: statuses.length <= 8 ? statuses.length * 30 +
-                    statuses.length * 5 * 0.5 : 400,
+                height: rowsCount <= 8 ? rowsCount * 60 +
+                    rowsCount * 5 * 0.5 : 400,
                 width: MediaQuery.of(context).size.width,
                 decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(6))
@@ -118,18 +121,36 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
                   ),
                   onPressed: () async {
                     if (activeStatusIndex == null) return;
+                    if (passenger?.statuses.first.status == "CheckOut") {
+                      return PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.warning, message: "Нельзя обновить статус сошедшего с судна пассажира.");
+                    }
+                    print("${passenger?.statuses.first.status}, ${statuses[activeStatusIndex!].statusName}");
+                    if (passenger?.statuses.first.status == statuses[activeStatusIndex!].statusName) {
+                      return PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.general, message: "Данный статус уже назначен пассажиру.");
+                    }
                     setState(() {
                       isStatusUpdating = true;
                     });
-                     BlocProvider.of<CurrentTripBloc>(context).add(AddNewPassengerStatusEvent(
-                       passengerId: passenger!.passenger.id,
-                       statusName: statuses[activeStatusIndex!].statusName
-                     ));
-                    Navigator.of(context).pop();
-                    setState(() {
-                      isStatusUpdating = false;
-                      activeStatusIndex = null;
-                    });
+                    try {
+                      final newStatus = await StatusAPIProvider().saveStatus(
+                        passengerId: passenger!.passenger.id,
+                        statusName: statuses[activeStatusIndex!].statusName);
+                      BlocProvider.of<CurrentTripBloc>(context).add(AddNewPassengerStatusEvent(
+                        passengerId: passenger!.passenger.id,
+                        passengerStatus: newStatus
+                      ));
+                      Navigator.of(context).pop();
+                      setState(() {
+                        isStatusUpdating = false;
+                        activeStatusIndex = null;
+                      });
+                    } catch (err, stackTrace) {
+                      PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.error, message: "Произошла ошибка при сохранении статуса. Попробуйте еще раз.");
+                      setState(() {
+                        isStatusUpdating = false;
+                        activeStatusIndex = null;
+                      });
+                    }
                   },
                 ),
                 TextButton(
@@ -159,19 +180,28 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Удалить статус пассажира?'),
+          title: const Text('Удалить статус пассажира?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Удалить',
-                style: TextStyle(color: activeStatusIndex == null ? Color(0x666f1dbb) : Color(0xff6f1dbb),
+              child: const Text('Удалить',
+                style: TextStyle(color: Color(0xff6f1dbb),
                     fontSize: 18, fontWeight: FontWeight.w500
                 ),
               ),
               onPressed: () async {
-                BlocProvider.of<CurrentTripBloc>(context).add(DeletePassengerStatusEvent(
-                  statusId: status.id, passengerId: status.passengerId)
-                );
-                Navigator.of(context).pop();
+                if (status.status == "CheckIn") {
+                  Navigator.of(context).pop();
+                  PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.warning, message: "Нельзя удалить статус 'CheckIn' у пассажира");
+                } else {
+                  try {
+                    await StatusAPIProvider().deleteStatus(statusId: status.id);
+                    BlocProvider.of<CurrentTripBloc>(context).add(
+                        DeletePassengerStatusEvent(statusId: status.id, passengerId: status.passengerId));
+                    Navigator.of(context).pop();
+                  } catch (err, stackTrace) {
+                    PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.error, message: "Не удалось удалить статус пассажира. Попробуйте еще раз.");
+                  }
+                }
               },
             ),
             TextButton(
@@ -212,19 +242,17 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
   void _initializePassenger(InitializedCurrentTripState state) {
     for (var p in state.tripPassengers) {
       if (p.passenger.id == widget.passenger.passenger.id) {
-        print('_onStateChange 3  ${p.statuses.length}');
-        setState(() {
+        if ( !isPassengerInitialized) {
           passenger = p;
           isPassengerInitialized = true;
-        });
+        }
+        setState(() {});
       }
     }
   }
 
   void _onStateChange(CurrentTripState state) {
-    print('_onStateChange 1  $state');
     if (state is InitializedCurrentTripState) {
-      print('_onStateChange 2  $state');
       _initializePassenger(state);
     } else {
       setState(() {
@@ -237,6 +265,7 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
   @override
   void initState() {
     _db.getAvailableStatuses().then((value) {
+      value.removeWhere((statusObj) => statusObj.statusName == "CheckIn");
       setState(() {
         statuses = value;
       });
@@ -245,6 +274,12 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
     _onStateChange(BlocProvider.of<CurrentTripBloc>(context).state);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    streamSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -259,7 +294,7 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
                 children: [
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 120),
                   _personInfoBloc(),
                   const SizedBox(height: 40),
                   const Text('История статусов:', style: AppStyles.mainTitleTextStyle),
@@ -290,7 +325,7 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
     final Seat s = widget.passenger.seat;
     final PersonDocument d = widget.passenger.document;
     return Container(
-      height: 200,
+      height: 250,
       decoration: const BoxDecoration(
         color: Color(0xCCFFFFFF),
         borderRadius: BorderRadius.all(Radius.circular(6))
@@ -319,6 +354,7 @@ class _PassengerFullInfoScreenState extends State<PassengerFullInfoScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: 10),
                         Text('${p.lastname} ${p.firstname} ${p.middlename}', style: style),
                         Text('${p.birthdate}, ${p.gender} ${p.citizenship}', style: style),
                         Text('${d.name} ${d.description}', style: style),

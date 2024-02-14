@@ -88,4 +88,22 @@ class PersonDBLayer {
       return await txn.rawUpdate(sql);
     });
   }
+
+  Future addChildToPerson(int childPersonId, int parentPersonId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      final String sql = "UPDATE person SET "
+          "parent_id = '$parentPersonId' WHERE id = '$childPersonId'";
+      return await txn.rawUpdate(sql);
+    });
+  }
+
+  Future removeChildFromPerson(int childPersonId) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      final String sql = "UPDATE person SET "
+          "parent_id = 0 WHERE id = '$childPersonId'";
+      return await txn.rawUpdate(sql);
+    });
+  }
 }

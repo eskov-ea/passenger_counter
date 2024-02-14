@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
+import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
@@ -26,9 +30,10 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
   Trip? currentTrip;
   final DBProvider _db = DBProvider.db;
   late final CurrentTripBloc _bloc;
-  late final List<PassengerStatusValue> statuses;
-  late final List<PassengerPerson> passengers;
+  List<PassengerStatusValue> statuses = [];
+  List<PassengerPerson> passengers = [];
   final Map<String, List<PassengerPerson>> passengersByStatuses = {};
+  late final StreamSubscription _streamSubscription;
 
 
   void initializeCurrentTrip() async {
@@ -37,6 +42,7 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
       currentTrip = bstate.currentTrip;
       passengers = bstate.tripPassengers;
       await _readStatusValues();
+      passengersByStatuses.clear();
       for (var status in statuses) {
         for (var tp in bstate.tripPassengers) {
           if (tp.statuses.first.status == status.statusName) {
@@ -69,11 +75,22 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
     Navigator.of(context).pushNamed(MainNavigationRouteNames.currentTripSeatsScreen);
   }
 
+  void _onCurrentTripState(CurrentTripState event) {
+    initializeCurrentTrip();
+  }
+
   @override
   void initState() {
     _bloc = BlocProvider.of<CurrentTripBloc>(context);
     initializeCurrentTrip();
+    _streamSubscription = _bloc.stream.listen(_onCurrentTripState);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -101,7 +118,7 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
         const SizedBox(height: 90),
         _tripNameBloc(),
         const SizedBox(height: 20),
-        _tripPassengersStatus(),
+        _tripPassengersStatusInfo(),
         const SizedBox(height: 60),
         _optionButtons(label: 'Пассажиры', callback: _openAllTripPassengersScreen),
         const SizedBox(height: 20),
@@ -114,7 +131,7 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
 
   Widget _placeholderBloc() {
     if (isInitialized) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     } else {
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -152,7 +169,7 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
     );
   }
 
-  Widget _tripPassengersStatus() {
+  Widget _tripPassengersStatusInfo() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 15),
       height: 120,

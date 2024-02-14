@@ -66,8 +66,8 @@ class PersonOptionsSliver extends StatelessWidget {
               ),
               child: InkWell(
                 onTap: () async {
-                  context.goNamed(
-                    NavigationRoutes.allPersonsScreen.name
+                  context.push(
+                    NavigationRoutes.allPersonsScreen.path
                   );
                 },
                 customBorder: RoundedRectangleBorder(

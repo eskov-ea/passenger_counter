@@ -71,8 +71,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           ),
           child: InkWell(
             onTap: () {
-              context.goNamed(
-                  NavigationRoutes.tripsCalendarScreen.name
+              context.push(
+                  NavigationRoutes.tripsCalendarScreen.path
               );
             },
             customBorder: RoundedRectangleBorder(
@@ -87,27 +87,20 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   }
 
   Widget _calendarChildBlock() {
-    return GestureDetector(
-      onTap: () {
-        context.goNamed(
-            NavigationRoutes.tripsCalendarScreen.name
-        );
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        alignment: Alignment.center,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: 7,
-          padding: EdgeInsets.only(bottom: 15),
-          itemBuilder: (context, index) {
-            return _calendarDayItem(tripsForCurrentWeek.values.elementAt(index), tripsForCurrentWeek.keys.elementAt(index), index);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return SizedBox(width: 10);
-          },
-        )
-      ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      alignment: Alignment.center,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: 7,
+        padding: EdgeInsets.only(bottom: 15),
+        itemBuilder: (context, index) {
+          return _calendarDayItem(tripsForCurrentWeek.values.elementAt(index), tripsForCurrentWeek.keys.elementAt(index), index);
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return SizedBox(width: 10);
+        },
+      )
     );
   }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
 
 enum PopupType { error, warning, success, general }
@@ -23,7 +25,7 @@ class PopupManager {
     required PopupType type,
     required String message,
     Widget? title,
-    String? route
+    RouteObj? route
   }) {
     return showDialog(
       barrierDismissible: dismissible,
@@ -69,7 +71,7 @@ class PopupManager {
                   GestureDetector(
                     onTap: () {
                       if (route != null) {
-                        Navigator.of(context).pushNamed(route);
+                        context.goNamed(route.name);
                       } else {
                         Navigator.of(context).pop();
                       }

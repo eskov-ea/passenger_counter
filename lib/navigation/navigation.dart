@@ -97,12 +97,8 @@ class MainNavigationRoutes {
       path: NavigationRoutes.editPersonInfoScreen.path,
       name: NavigationRoutes.editPersonInfoScreen.name,
       builder: (context, state) {
-        final Person person = state.extra as Person;
-        return _screenFactory.makeEditPersonInfoScreen(
-            EditPersonScreenArguments(
-                person: person
-            )
-        );
+        final EditPersonScreenArguments args = state.extra as EditPersonScreenArguments;
+        return _screenFactory.makeEditPersonInfoScreen(args);
       }
     ),
     // GoRoute(

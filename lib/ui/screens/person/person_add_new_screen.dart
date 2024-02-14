@@ -359,8 +359,8 @@ class _PersonAddNewScreenState extends State<PersonAddNewScreen> {
         await _db.addDocument(document: newDoc);
         // TODO: handle error
       PopupManager.closePopup(context);
-      context.goNamed(
-          NavigationRoutes.homeScreen.name
+      PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.success, message: "Персона успешна сохранена!",
+        route: NavigationRoutes.homeScreen
       );
       // } else {
       //   Navigator.of(context).pushNamed(MainNavigationRouteNames.personOptionsScreen,

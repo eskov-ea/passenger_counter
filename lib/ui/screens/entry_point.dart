@@ -1,22 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pleyona_app/services/database/db_provider.dart';
-import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/screens/test_animated.dart';
-import 'package:pleyona_app/ui/screens/trip/all_trips_screen.dart';
-import 'package:pleyona_app/ui/screens/person/person_edit_info_screen.dart';
 import 'package:pleyona_app/ui/screens/homescreen.dart';
-import 'package:pleyona_app/ui/screens/passenger_add_new.dart';
-import 'package:pleyona_app/ui/screens/person/person_add_new_screen.dart';
-import 'package:pleyona_app/ui/screens/person/person_search_screen.dart';
-import 'package:pleyona_app/ui/screens/route_add_new_screen.dart';
-import 'package:pleyona_app/ui/screens/suites_manager_screen.dart';
-import 'package:pleyona_app/ui/widgets/editable_text_fields/editable_text_field_widget.dart';
 import 'package:pleyona_app/ui/widgets/side_menu_widget.dart';
-
-import '../../models/mock_data/passenger_status_mock.dart';
 import '../widgets/theme_background.dart';
 
 

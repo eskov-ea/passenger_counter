@@ -18,12 +18,117 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
 
   final DBProvider _db = DBProvider.db;
   List<Seat> seats = [];
+  final Map<String, List<Seat>> seatsByCabinNumber = {};
   List<int> selectedIds = [];
   bool selectionMode = false;
   late AnimationController _animationController;
   late Animation animation;
   late Animation scaleAnimation;
 
+  void _sortSeatsBySuite() {
+    for (var seat in seats) {
+      if (seatsByCabinNumber.containsKey(seat.cabinNumber)) {
+        seatsByCabinNumber[seat.cabinNumber]!.add(seat);
+      } else {
+        seatsByCabinNumber.addAll({seat.cabinNumber: [seat]});
+      }
+    }
+    seatsByCabinNumber.addAll({"202": [
+        Seat(id: 9, cabinNumber: "202", placeNumber: "A", deck: "1", side: "1", barcode: "0002021", seatClass: 1, status: 1, comment: "", createdAt: "createdAt", updatedAt: "updatedAt"),
+        Seat(id: 10, cabinNumber: "202", placeNumber: "B", deck: "1", side: "1", barcode: "0002022", seatClass: 1, status: 1, comment: "", createdAt: "createdAt", updatedAt: "updatedAt"),
+    ]});
+    seatsByCabinNumber.addAll({"203": [
+        Seat(id: 11, cabinNumber: "203", placeNumber: "A", deck: "1", side: "1", barcode: "0002021", seatClass: 1, status: 1, comment: "", createdAt: "createdAt", updatedAt: "updatedAt"),
+        Seat(id: 12, cabinNumber: "203", placeNumber: "B", deck: "1", side: "1", barcode: "0002022", seatClass: 1, status: 1, comment: "", createdAt: "createdAt", updatedAt: "updatedAt"),
+    ]});
+  }
+
+  Widget _suitesItems() {
+    final int margin = 70;
+    return Container(
+      width: MediaQuery.of(context).size.width - 60,
+      child: Wrap(
+        direction: Axis.horizontal,
+        alignment: WrapAlignment.spaceBetween,
+        children: seatsByCabinNumber.entries.map(
+          (cabin) {
+            final koef = cabin.value.length == 4 ? 0 : 5;
+            return Container(
+              width: (MediaQuery.of(context).size.width - 60 - koef) / 4 * cabin.value.length,
+              height: 80,
+              margin: EdgeInsets.only(bottom: 10),
+              padding: EdgeInsets.symmetric(vertical: 5),
+              alignment: Alignment.bottomLeft,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                  color: Colors.blueGrey.shade200
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(right: 10),
+                    alignment: Alignment.bottomRight,
+                    child: Text('Каюта ${cabin.key}',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: cabin.value.map((suite) => GestureDetector(
+                      onTap: () async {
+                        if (selectionMode) {
+                          _selectSeat(suite.id);
+                        } else {
+                          // await _openSeatInformation(seats![key]!.seat, passengers, state.availableSeats, state.tripPassengers);
+                        }
+                      },
+                      onLongPress: () {
+                        if (selectionMode) return;
+                        _selectSeat(suite.id);
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: (MediaQuery.of(context).size.width - 60 - 40 - 2 * koef) / 4,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: suite.status == 0 ? Colors.red.shade100 : Colors.green.shade100,
+                                borderRadius: BorderRadius.all(Radius.circular(6))
+                            ),
+                            child: Container(
+                                padding: EdgeInsets.only(right: 5),
+                                alignment: Alignment.bottomRight,
+                                child: Text(suite.placeNumber,
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                                )
+                            ),
+                          ),
+                          selectedIds.contains(suite.id) ? Container(
+                            width: (MediaQuery.of(context).size.width - 60 - 40 - 2 * koef) / 4,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                              color: Color(0x80FFFFFF),
+                              borderRadius: const BorderRadius.all(Radius.circular(6)),
+                            ),
+                          ) : const SizedBox.shrink(),
+                          selectedIds.contains(suite.id) ? Container(
+                            margin: EdgeInsets.only(right: 2, bottom: 2),
+                            child: Image.asset("assets/icons/select-icon.png",
+                              width: 30, height: 30,
+                            ),
+                          ) : const SizedBox.shrink(),
+                        ],
+                      ),
+                    )).toList(),
+                  )
+                ],
+              ),
+            );
+          }
+        ).toList(),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -32,6 +137,8 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
       setState(() {
         seats = value;
       });
+      _sortSeatsBySuite();
+      print("_sortSeatsBySuite $seatsByCabinNumber");
     });
 
     _animationController = AnimationController(
@@ -172,56 +279,70 @@ class _SeatManagerScreenState extends State<SeatManagerScreen> with SingleTicker
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    itemCount: seats.length,
-                    itemBuilder: (context, index) {
-                      final selected = selectedIds.contains(seats[index].id);
-                      return GestureDetector(
-                        onTap: () async {
-                          if (selectionMode) {
-                            _selectSeat(seats[index].id);
-                          } else {
-                            // await _openSeatInformation(seats![key]!.seat, passengers, state.availableSeats, state.tripPassengers);
-                          }
-                        },
-                        onLongPress: () {
-                          if (selectionMode) return;
-                          _selectSeat(seats[index].id);
-                        },
-                        child: Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: seats[index].status == 0 ? const Color(0xcce80606) : const Color(0xcc33d33a),
-                                  borderRadius: const BorderRadius.all(Radius.circular(6)),
-                                  border: Border.all(width: 1, color: const Color(0xC0000000))
-                              ),
-                              child: Text("${seats[index].cabinNumber}${seats[index].placeNumber}",
-                                style: AppStyles.submainTitleTextStyle,
-                              ),
-                            ),
-                            selected ? Container(
-                              decoration: const BoxDecoration(
-                                color: Color(0x80FFFFFF),
-                                borderRadius: const BorderRadius.all(Radius.circular(6)),
-                              ),
-                            ) : const SizedBox.shrink(),
-                            selected ? Container(
-                              margin: EdgeInsets.only(right: 2, bottom: 2),
-                              child: Image.asset("assets/icons/select-icon.png",
-                                width: 30, height: 30,
-                              ),
-                            ) : const SizedBox.shrink(),
-                          ],
-                        ),
-                      );
-                    },
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4, mainAxisSpacing: 4, crossAxisSpacing: 4
-                    )
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: Color(0xE6FFFFFF),
+                    borderRadius: BorderRadius.all(Radius.circular(6))
+                  ),
+                  child:
+                    _suitesItems()
+                  // GridView.builder(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 0),
+                  //     itemCount: seats.length,
+                  //     itemBuilder: (context, index) {
+                  //       final selected = selectedIds.contains(seats[index].id);
+                  //       return GestureDetector(
+                  //         onTap: () async {
+                  //           if (selectionMode) {
+                  //             _selectSeat(seats[index].id);
+                  //           } else {
+                  //             // await _openSeatInformation(seats![key]!.seat, passengers, state.availableSeats, state.tripPassengers);
+                  //           }
+                  //         },
+                  //         onLongPress: () {
+                  //           if (selectionMode) return;
+                  //           _selectSeat(seats[index].id);
+                  //         },
+                  //         child: Stack(
+                  //           alignment: Alignment.bottomRight,
+                  //           children: [
+                  //             Column(
+                  //               children: [
+                  //                 Container(
+                  //                   alignment: Alignment.center,
+                  //                   decoration: BoxDecoration(
+                  //                       color: seats[index].status == 0 ? const Color(0xcce80606) : const Color(0xcc33d33a),
+                  //                       borderRadius: const BorderRadius.all(Radius.circular(6)),
+                  //                       border: Border.all(width: 1, color: const Color(0xC0000000))
+                  //                   ),
+                  //                   child: Text("${seats[index].cabinNumber}${seats[index].placeNumber}",
+                  //                     style: AppStyles.submainTitleTextStyle,
+                  //                   ),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //             selected ? Container(
+                  //               decoration: const BoxDecoration(
+                  //                 color: Color(0x80FFFFFF),
+                  //                 borderRadius: const BorderRadius.all(Radius.circular(6)),
+                  //               ),
+                  //             ) : const SizedBox.shrink(),
+                  //             selected ? Container(
+                  //               margin: EdgeInsets.only(right: 2, bottom: 2),
+                  //               child: Image.asset("assets/icons/select-icon.png",
+                  //                 width: 30, height: 30,
+                  //               ),
+                  //             ) : const SizedBox.shrink(),
+                  //           ],
+                  //         ),
+                  //       );
+                  //     },
+                  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  //         crossAxisCount: 4, mainAxisSpacing: 4, crossAxisSpacing: 4
+                  //     )
+                  // ),
                 ),
               ),
               AnimatedBuilder(

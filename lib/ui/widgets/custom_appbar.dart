@@ -70,7 +70,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       systemOverlayStyle: SystemUiOverlayStyle(
         // statusBarColor: isBackArrowHidden ? Colors.transparent : Colors.black,
       ),
-      leading: GestureDetector(
+      leading: Navigator.of(context).canPop() ? GestureDetector(
         onTap: () {
           isBackArrowHidden ? () {} : Navigator.of(context).maybePop();
         },
@@ -86,7 +86,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             ),
           ),
         ),
-      ),
+      ) : const SizedBox.shrink(),
       actions: [
         widget.hideHomeButton ? const SizedBox(width: 30, height: 30) : GestureDetector(
           onTap: () {

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
+import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_state.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_status.dart';
@@ -32,7 +33,7 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
   PassengerStatusValue? status;
   List<Passenger>? passengers;
   List<Person>? persons;
-  Map<int, bool> checkValues = <int, bool>{};
+  Map<int, bool> checkedPassengers = <int, bool>{};
   bool isUpdating = false;
   final DBProvider db = DBProvider.db;
 
@@ -51,7 +52,7 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
     final List<int> ids = cPassengers.map((e) => e.personId).toList();
     final cPersons = await db.getPersons(ids);
     for (var passenger in cPassengers) {
-      checkValues.addAll({passenger.id: false});
+      checkedPassengers.addAll({passenger.id: false});
     }
     setState(() {
       persons = cPersons;
@@ -62,10 +63,13 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
     setState(() {
       isUpdating = true;
     });
-    checkValues.forEach((key, value) async {
-      if (value) {
-        final status = await db.addPassengerStatus(passengerId: key, statusName: widget.statusName);
-        log('Updated status  $status');
+    checkedPassengers.forEach((passengerId, isChecked) async {
+      if (isChecked) {
+        final newStatus = await db.addPassengerStatus(passengerId: passengerId, statusName: widget.statusName);
+        BlocProvider.of<CurrentTripBloc>(context).add(AddNewPassengerStatusEvent(
+            passengerId: passengerId,
+            passengerStatus: newStatus
+        ));
       }
     });
     await _findPassengersByCurrentStatus();
@@ -177,10 +181,10 @@ class _EditTripPassengersStatusState extends State<EditTripPassengersStatus> {
       child: Row(
         children: [
           Checkbox(
-            value: checkValues[passenger.id],
+            value: checkedPassengers[passenger.id],
             onChanged: (value) {
               setState(() {
-                checkValues[passenger.id] = value ?? false;
+                checkedPassengers[passenger.id] = value ?? false;
               });
             }
           ),

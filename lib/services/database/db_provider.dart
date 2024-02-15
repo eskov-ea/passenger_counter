@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:pleyona_app/models/passenger/passenger.dart';
 import 'package:pleyona_app/models/passenger/passenger_bagage.dart';
+import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/models/trip_model.dart';
 import 'package:pleyona_app/services/database/dbs/bagage_db_layer.dart';
@@ -146,6 +149,35 @@ class DBProvider {
   Future<bool> checkStatusValuesInitialized() => PassengerStatusDBLayer().checkStatusValuesInitialized();
 
 
+  /// PASSENGERS PERSON SEATS
+  Future<List<PassengerPerson>> getTripPassengersInfo({required int tripId}) async {
+    final db = await DBProvider.db.database;
+    return await db.transaction((txn) async {
+      final res = await txn.rawQuery(
+          "SELECT p.id, p.person_id, p.trip_id, seat_id, p.person_document_id, p.status, p.comments, p.created_at, p.updated_at, "
+          "person.id as p_id, person.firstname, person.lastname, person.middlename, person.gender, person.birthdate, person.phone, person.email, person.photo, person.citizenship, person.class_person, person.parent_id, "
+          "seat.id as seat_id, seat.cabin_number, seat.place_number, seat.deck, seat.side, seat.barcode, seat.class_seat, seat.status as seat_status, seat.comments as seat_comment, "
+          "doc.name, doc.description, doc.id_person,s.id as s_id, s.passenger_id, s.status as s_status, s.created_at as s_created_at "
+          "FROM passenger p "
+          "JOIN person ON (p.person_id = person.id) "
+          "JOIN seat ON (p.seat_id = seat.id) "
+          "JOIN person_documents doc ON (p.person_document_id = doc.id) "
+          "JOIN passenger_status s ON (p.id = s.passenger_id) "
+          "WHERE trip_id = '$tripId' "
+          "ORDER BY s_created_at DESC "
+      );
+      final Map<int, PassengerPerson> result = {};
+      for (var value in res) {
+        if (result.containsKey(value["id"])) {
+          final status = PassengerStatus(id: value["s_id"] as int, passengerId: value["id"] as int , status: value["s_status"] as String, createdAt: value["s_created_at"] as String);
+          result[value["id"]]?.statuses.add(status);
+        } else {
+          result.addAll({value["id"] as int: PassengerPerson.fromRawJSON(value)});
+        }
+      }
+      return result.values.toList();
+    });
+  }
 
   Future<void> DeveloperModeClearPersonTable() async {
     final db = await database;

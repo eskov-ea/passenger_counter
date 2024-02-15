@@ -32,7 +32,7 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
   }
 
   void navigateToEditScreen(Person person) {
-    context.goNamed(
+    context.pushNamed(
       NavigationRoutes.editPersonInfoScreen.name,
       extra: EditPersonScreenArguments(person: person)
     );
@@ -51,9 +51,9 @@ class _AllPersonsScreenState extends State<AllPersonsScreen> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: AppColors.backgroundNeutral,
-        appBar: CustomAppBar(child: const Text("Все персоны",
+        appBar: const CustomAppBar(scrollController: null, hideHomeButton: false, child: Text("Все персоны",
           style: AppStyles.mainTitleTextStyle,
-        ), scrollController: null, hideHomeButton: true,),
+        )),
         body: ThemeBackgroundWidget(
           child: Container(
             width: MediaQuery.of(context).size.width,

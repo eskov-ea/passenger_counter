@@ -5,6 +5,7 @@ import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_bloc.dart';
 import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_bloc.dart';
 import 'package:pleyona_app/bloc/db_bloc/db_state.dart';
+import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/calendar_widget.dart';
 import 'package:pleyona_app/ui/widgets/person/person_options_sliver.dart';

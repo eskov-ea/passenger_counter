@@ -44,7 +44,7 @@ class PersonsChildrenWidget extends StatelessWidget {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      context.pop();
                     },
                     child: const Text('Отмена',
                       style: TextStyle(

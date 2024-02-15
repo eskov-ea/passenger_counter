@@ -7,19 +7,21 @@ import 'package:pleyona_app/bloc/current_trip_bloc/current_trip_event.dart';
 import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/theme.dart';
-import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
+import 'package:pleyona_app/ui/screens/passenger/current_trip_passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/widgets/avatar.dart';
 import 'package:pleyona_app/ui/widgets/slidable_wrapper.dart';
 
 class PassengerCard extends StatelessWidget {
   const PassengerCard({
     required this.passengerPerson,
+    required this.navigationCallback,
     this.index = 0,
     super.key
   });
 
   final PassengerPerson passengerPerson;
   final int index;
+  final Function() navigationCallback;
 
   Future<void> _openDeleteAlertDialog(BuildContext context) async {
     return showDialog<void>(
@@ -66,12 +68,7 @@ class PassengerCard extends StatelessWidget {
       idKey: passengerPerson.passenger.id.toString(),
       callback: _openDeleteAlertDialog,
       child: GestureDetector(
-        onTap: () {
-          context.goNamed(
-            NavigationRoutes.tripPassengerInfo.name,
-            extra: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
-          );
-        },
+        onTap: navigationCallback,
         child: Container(
           height: 100,
           margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),

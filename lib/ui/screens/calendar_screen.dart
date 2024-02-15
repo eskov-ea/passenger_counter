@@ -190,7 +190,7 @@ class _TripsCalendarScreenState extends State<TripsCalendarScreen> {
                         child: Column(
                           children: [
                             ..._currentDateTrips.map((trip) => TripCard(trip: trip, callback: (trip){
-                              context.goNamed(
+                              context.pushNamed(
                                 NavigationRoutes.tripFullInfoScreen.name,
                                 extra: TripFullInfoScreenArguments(trip: trip)
                               );

@@ -14,6 +14,7 @@ import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/screens/passenger/all_trip_passengers.dart';
+import 'package:pleyona_app/ui/screens/seat/trip_seats_screen.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
 import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
@@ -43,32 +44,38 @@ class _TripFullInfoScreenState extends State<TripFullInfoScreen> {
 
 
   void initializeTrip() async {
-    final tripPassengers = await _db.getPassengers(tripId: widget.trip.id);
-    final List<PassengerPerson> passengerPerson = [];
-    for (var passenger in tripPassengers) {
-      final Person person = await _db.getPersonById(personId: passenger.personId);
-      final Seat seat = await _db.getPassengerSeat(seatId: passenger.seatId);
-      final statuses = await _db.getPassengerStatuses(passengerId: passenger.id);
-      final document = await _db.getPersonDocumentById(documentId: passenger.personDocumentId);
-      passengerPerson.add(PassengerPerson(person: person, passenger: passenger,
-          seat: seat, statuses: statuses, document: document));
-    }
+    passengers = await _db.getTripPassengersInfo(tripId: widget.trip.id);
     statuses = await _db.getAvailableStatuses();
 
+    for (var status in statuses) {
+      for (var pp in passengers) {
+        print("initializeTrip ${pp.statuses}");
+        if (pp.statuses.first.status == status.statusName) {
+
+          if (passengersByStatuses.containsKey(status.statusName)) {
+            passengersByStatuses[status.statusName]!.add(pp);
+          } else {
+            passengersByStatuses.addAll({
+              status.statusName: [pp]
+            });
+          }
+        }
+      }
+    }
     setState(() {
-      passengers = passengerPerson;
       isInitialized = true;
     });
   }
   void _openAllTripPassengersScreen() {
-    context.goNamed(
+    context.pushNamed(
       NavigationRoutes.tripPassengers.name,
       extra: TripPassengersScreenArguments(tripPassengers: passengers)
     );
   }
   void _openTripSeatsScreen() {
-    context.goNamed(
-      NavigationRoutes.currentTripSeatsScreen.name
+    context.pushNamed(
+      NavigationRoutes.tripSeatsScreen.name,
+      extra: TripSeatsScreenArguments(tripId: widget.trip.id, passengers: passengers)
     );
   }
 

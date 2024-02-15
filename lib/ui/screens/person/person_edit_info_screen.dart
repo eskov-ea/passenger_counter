@@ -872,7 +872,7 @@ class _EditPersonInfoScreenState extends State<EditPersonInfoScreen>{
     });
   }
   void _openAddChildFromSearchPage() {
-    context.goNamed(
+    context.pushNamed(
       NavigationRoutes.searchPersonScreen.name,
       extra: SearchPersonScreenArguments(callback: setPersonChildToParent)
     );

@@ -24,7 +24,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
 
   void onCurrentTripSet(Trip trip) {
     BlocProvider.of<CurrentTripBloc>(context).add(SetNewCurrentTripEvent(tripId: trip.id));
-    Navigator.of(context).pop();
+    context.goNamed(NavigationRoutes.homeScreen.name);
   }
 
   @override
@@ -58,7 +58,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                     const Divider(height: 30,),
                     GestureDetector(
                       onTap: () async {
-                        context.goNamed(
+                        context.pushNamed(
                             NavigationRoutes.tripSearchScreen.name,
                             extra: TripSearchScreenArguments(onResultCallback: onCurrentTripSet)
                         );
@@ -91,7 +91,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                 borderRadius: const BorderRadius.all(Radius.circular(20))),
             child: InkWell(
               onTap: () {
-                context.goNamed(
+                context.pushNamed(
                     NavigationRoutes.currentTripFullInfoScreen.name
                 );
               },

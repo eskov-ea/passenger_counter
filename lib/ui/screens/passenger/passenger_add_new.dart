@@ -98,7 +98,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
       person = p;
       personDocuments = documents;
     });
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   void setTrip(Trip t) {
@@ -355,7 +355,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
               ),
               child: InkWell(
                 onTap: () {
-                  context.goNamed(
+                  context.pushNamed(
                     NavigationRoutes.searchPersonScreen.name,
                     extra: SearchPersonScreenArguments(callback: setPerson)
                   );
@@ -386,7 +386,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
           ),
           child: InkWell(
             onTap: () {
-              context.goNamed(
+              context.pushNamed(
                   NavigationRoutes.searchPersonScreen.name,
                   extra: SearchPersonScreenArguments(callback: setPerson)
               );

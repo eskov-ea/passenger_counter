@@ -90,7 +90,7 @@ class _SideMenuState extends State<SideMenu> {
                       });
                       widget.showMenu();
                       await Future.delayed(const Duration(milliseconds: 100));
-                      context.goNamed(
+                      context.pushNamed(
                           NavigationRoutes.seatManagerScreen.name
                       );
                       _currentPage = SideMenuItemName.NONE;
@@ -111,7 +111,7 @@ class _SideMenuState extends State<SideMenu> {
                       });
                       widget.showMenu();
                       await Future.delayed(const Duration(milliseconds: 100));
-                      context.goNamed(
+                      context.pushNamed(
                           NavigationRoutes.faqScreen.name
                       );
                       _currentPage = SideMenuItemName.NONE;

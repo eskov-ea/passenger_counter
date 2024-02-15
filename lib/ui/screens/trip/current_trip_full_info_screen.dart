@@ -68,13 +68,12 @@ class _CurrentTripFullInfoScreenState extends State<CurrentTripFullInfoScreen> {
     statuses = await _db.getAvailableStatuses();
   }
   void _openAllTripPassengersScreen() {
-    context.goNamed(
-        NavigationRoutes.tripPassengers.name,
-        extra: TripPassengersScreenArguments(tripPassengers: passengers)
+    context.pushNamed(
+        NavigationRoutes.currentTripPassengers.name
     );
   }
   void _openTripSeatsScreen() {
-    context.goNamed(
+    context.pushNamed(
         NavigationRoutes.currentTripSeatsScreen.name
     );
   }

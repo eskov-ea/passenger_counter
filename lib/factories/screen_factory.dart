@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pleyona_app/ui/screens/calendar_screen.dart';
 import 'package:pleyona_app/ui/screens/faq_screen.dart';
+import 'package:pleyona_app/ui/screens/passenger/current_trip_passengers.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_add_new.dart';
+import 'package:pleyona_app/ui/screens/passenger/current_trip_passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/person/all_persons_screen.dart';
 import 'package:pleyona_app/ui/screens/seat/search_seat.dart';
 import 'package:pleyona_app/ui/screens/seat/seats_manager_screen.dart';
+import 'package:pleyona_app/ui/screens/seat/current_trip_seats_screen.dart';
 import 'package:pleyona_app/ui/screens/seat/trip_seats_screen.dart';
 import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
 import 'package:pleyona_app/ui/screens/trip/all_trips_screen.dart';
@@ -72,7 +75,7 @@ class ScreenFactory {
   }
 
   Widget makeSearchPersonScreen(SearchPersonScreenArguments arguments) {
-    return SearchPersonScreen(callback: arguments.callback,);
+    return SearchPersonScreen(callback: arguments.callback);
   }
 
   Widget makeAllTripsScreen() {
@@ -111,6 +114,14 @@ class ScreenFactory {
     return AllTripPassengers(tripPassengers: arguments.tripPassengers);
   }
 
+  Widget makeCurrentTripPassengersScreen() {
+    return const CurrentTripPassengers();
+  }
+
+  Widget makeCurrentTripPassengerFullInfoScreen(TripFullPassengerInfoScreenArguments arguments) {
+    return CurrentTripPassengerFullInfoScreen(passenger: arguments.passenger);
+  }
+
   Widget makePassengerFullInfoScreen(TripFullPassengerInfoScreenArguments arguments) {
     return PassengerFullInfoScreen(passenger: arguments.passenger);
   }
@@ -120,7 +131,11 @@ class ScreenFactory {
   }
 
   Widget makeCurrentTripSeatsScreen() {
-    return const TripSeatsScreen();
+    return const CurrentTripSeatsScreen();
+  }
+
+  Widget makeTripSeatsScreen(TripSeatsScreenArguments arguments) {
+    return TripSeatsScreen(tripSeatsScreenArguments: arguments);
   }
 
   Widget makeTripsCalendarsScreen() {

@@ -9,6 +9,7 @@ import 'package:pleyona_app/models/passenger/passenger_person_combined.dart';
 import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
+import 'package:pleyona_app/ui/screens/passenger/current_trip_passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/passenger/passenger_full_info_screen.dart';
 import 'package:pleyona_app/ui/screens/qr_scanner.dart';
 import 'package:pleyona_app/ui/screens/status/edit_passengers_status.dart';
@@ -43,7 +44,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        context.goNamed(
+                        context.pushNamed(
                             NavigationRoutes.passengerAddNewScreen.name
                         );
                       },
@@ -78,7 +79,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        context.goNamed(
+                        context.pushNamed(
                           NavigationRoutes.scannerScreen.name,
                           extra: ScannerScreenArguments(
                             setStateCallback: (result ) async {
@@ -99,11 +100,11 @@ class PassengerOptionsSliver extends StatelessWidget {
                               final person = await db.getPersonById(personId: passenger.personId);
 
                               final passengerPerson = PassengerPerson(person: person, passenger: passenger, seat: seat, document: document, statuses: statuses);
-                              context.goNamed(
+                              context.pushNamed(
                                   NavigationRoutes.editTripPassengersStatus.name,
                                   extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OffBoard')
                               );
-                              context.goNamed(
+                              context.pushNamed(
                                   NavigationRoutes.tripPassengerInfo.name,
                                   extra: TripFullPassengerInfoScreenArguments(passenger: passengerPerson)
                               );
@@ -144,7 +145,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        context.goNamed(
+                        context.pushNamed(
                             NavigationRoutes.editTripPassengersStatus.name,
                             extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OffBoard')
                         );
@@ -180,7 +181,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        context.goNamed(
+                        context.pushNamed(
                             NavigationRoutes.editTripPassengersStatus.name,
                             extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'OnBoard')
                         );
@@ -219,7 +220,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () async {
-                        context.goNamed(
+                        context.pushNamed(
                           NavigationRoutes.editTripPassengersStatus.name,
                           extra: EditTripPassengersStatusScreenArguments(tripId: state.currentTrip.id, statusName: 'CheckOut')
                         );
@@ -265,7 +266,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        context.goNamed(
+                        context.pushNamed(
                             NavigationRoutes.passengerAddNewScreen.name
                         );
                       },

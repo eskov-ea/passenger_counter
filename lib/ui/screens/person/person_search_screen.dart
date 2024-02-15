@@ -56,6 +56,7 @@ class _SearchPersonScreenState extends State<SearchPersonScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.textMain,
+
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,

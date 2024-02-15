@@ -125,10 +125,8 @@ class MainNavigationRoutes {
         path: NavigationRoutes.searchPersonScreen.path,
         name: NavigationRoutes.searchPersonScreen.name,
         builder: (context, state) {
-          final Function(Person) callback = state.extra as Function(Person);
-          return _screenFactory.makeSearchPersonScreen(
-              SearchPersonScreenArguments(callback: callback)
-          );
+          final SearchPersonScreenArguments args = state.extra as SearchPersonScreenArguments;
+          return _screenFactory.makeSearchPersonScreen(args);
         }
     ),
     GoRoute(

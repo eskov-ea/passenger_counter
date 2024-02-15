@@ -161,10 +161,11 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
         );
         BlocProvider.of<CurrentTripBloc>(context).add(AddNewTripPassengerEvent(passenger: passenger, baggage: personBagage));
         PopupManager.closePopup(context);
-        context.goNamed(
-            NavigationRoutes.homeScreen.name,
-        );
-        PopupManager.showInfoPopup(context, dismissible: true, type: PopupType.success, message: "Пассажир зарегистрирован на рейс.");
+        // context.pushNamed(
+        //     NavigationRoutes.homeScreen.name,
+        // );
+        PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.success,
+          message: "Пассажир зарегистрирован на рейс.", route: NavigationRoutes.homeScreen);
       } catch (err, stack) {
         log(err.toString(), stackTrace: stack);
         PopupManager.closePopup(context);
@@ -419,7 +420,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
               ),
               child: InkWell(
                 onTap: () {
-                  context.goNamed(
+                  context.pushNamed(
                       NavigationRoutes.tripSearchScreen.name,
                       extra: TripSearchScreenArguments(onResultCallback: setTrip)
                   );
@@ -450,7 +451,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
           ),
           child: InkWell(
             onTap: () {
-              context.goNamed(
+              context.pushNamed(
                   NavigationRoutes.tripSearchScreen.name,
                   extra: TripSearchScreenArguments(onResultCallback: setTrip)
               );
@@ -495,7 +496,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
               ),
               child: InkWell(
                 onTap: () {
-                  context.goNamed(
+                  context.pushNamed(
                       NavigationRoutes.seatSearchScreen.name,
                       extra: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
                   );
@@ -526,7 +527,7 @@ class _PassengerAddNewScreenState extends State<PassengerAddNewScreen> {
           ),
           child: InkWell(
             onTap: () {
-              context.goNamed(
+              context.pushNamed(
                   NavigationRoutes.seatSearchScreen.name,
                   extra: SeatSearchScreenArguments(onResultCallback: setSeat, tripId: trip!.id, person: person)
               );

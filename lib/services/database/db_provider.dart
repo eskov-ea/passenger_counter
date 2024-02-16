@@ -163,7 +163,7 @@ class DBProvider {
           "JOIN seat ON (p.seat_id = seat.id) "
           "JOIN person_documents doc ON (p.person_document_id = doc.id) "
           "JOIN passenger_status s ON (p.id = s.passenger_id) "
-          "WHERE trip_id = '$tripId' "
+          "WHERE trip_id = '$tripId' AND p.deleted_at IS NULL AND s.deleted_at IS NULL "
           "ORDER BY s_created_at DESC "
       );
       final Map<int, PassengerPerson> result = {};
@@ -175,7 +175,9 @@ class DBProvider {
           result.addAll({value["id"] as int: PassengerPerson.fromRawJSON(value)});
         }
       }
-      return result.values.toList();
+      final r = result.values.toList();
+      log("TRIP PASSENGERS   $r");
+return r;
     });
   }
 

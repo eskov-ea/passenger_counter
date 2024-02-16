@@ -34,7 +34,7 @@ class PassengerOptionsSliver extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  SizedBox(width: 15,),
+                  const SizedBox(width: 15,),
                   Ink(
                     width: 100,
                     height: 100,
@@ -64,14 +64,14 @@ class PassengerOptionsSliver extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 10,),
-                          Text("Add", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
+                          Text("Добавить", style: TextStyle(color: AppColors.textMain, fontSize: 16),)
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(width: 15,),
+                  const SizedBox(width: 5),
                   Ink(
-                    width: 100,
+                    width: 120,
                     height: 100,
                     decoration: BoxDecoration(
                       color: cardColor,
@@ -129,15 +129,15 @@ class PassengerOptionsSliver extends StatelessWidget {
                               color: AppColors.textMain,
                             ),
                           ),
-                          SizedBox(height: 10,),
-                          Text("Scan", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
+                          const SizedBox(height: 10,),
+                          Text("Сканировать", style: TextStyle(color: AppColors.textMain, fontSize: 16),)
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(width: 15,),
+                  const SizedBox(width: 5,),
                   Ink(
-                    width: 150,
+                    width: 120,
                     height: 120,
                     decoration: BoxDecoration(
                       color: cardColor,
@@ -166,14 +166,14 @@ class PassengerOptionsSliver extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 10,),
-                          Text("Сошел с судна", style: TextStyle(color: AppColors.textMain, fontSize: 18),)
+                          Text("Сошел с судна", style: TextStyle(color: AppColors.textMain, fontSize: 16),)
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(width: 15,),
+                  SizedBox(width: 5,),
                   Ink(
-                    width: 150,
+                    width: 120,
                     height: 120,
                     decoration: BoxDecoration(
                       color: cardColor,
@@ -204,15 +204,15 @@ class PassengerOptionsSliver extends StatelessWidget {
                           SizedBox(height: 10,),
                           Text("Вернулся",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: AppColors.textMain, fontSize: 18)
+                            style: TextStyle(color: AppColors.textMain, fontSize: 16)
                           )
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(width: 15,),
+                  SizedBox(width: 5,),
                   Ink(
-                    width: 150,
+                    width: 120,
                     height: 120,
                     decoration: BoxDecoration(
                       color: cardColor,
@@ -241,7 +241,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 10,),
-                          Text("Check-out", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
+                          Text("Завершен", style: TextStyle(color: AppColors.textMain, fontSize: 16),)
                         ],
                       ),
                     ),
@@ -286,7 +286,7 @@ class PassengerOptionsSliver extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 10,),
-                          Text("Add", style: TextStyle(color: AppColors.textMain, fontSize: 20),)
+                          Text("Добавить", style: TextStyle(color: AppColors.textMain, fontSize: 16),)
                         ],
                       ),
                     ),

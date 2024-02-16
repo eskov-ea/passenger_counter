@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:pleyona_app/models/seat_model.dart';
 import 'package:sqflite/sqflite.dart';
 import '../db_provider.dart';
@@ -30,9 +32,9 @@ class SeatsDBLayer {
           'SELECT * FROM seat WHERE seat.id NOT IN '
               '(SELECT passenger.seat_id FROM passenger '
               'WHERE passenger.trip_id = $tripId AND passenger.deleted_at IS NULL) '
-              'AND status != 0 '
+            'AND status != 0 '
       );
-      print(res);
+      log("AVAILABLE $res");
       return res.map((el) => Seat.fromJson(el)).toList();
     });
   }
@@ -44,8 +46,9 @@ class SeatsDBLayer {
           'SELECT * FROM seat WHERE seat.id IN '
               '(SELECT passenger.seat_id FROM passenger '
               'WHERE passenger.trip_id = $tripId AND passenger.deleted_at IS NULL) '
+            'AND status != 0 '
       );
-      print(res);
+      log("OCCUPAID  $res");
       return res.map((el) => Seat.fromJson(el)).toList();
     });
   }

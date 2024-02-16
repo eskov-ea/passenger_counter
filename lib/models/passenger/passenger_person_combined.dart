@@ -33,4 +33,10 @@ class PassengerPerson {
         statuses: [ PassengerStatus(id: json["s_id"], passengerId: json["id"], status: json["s_status"], createdAt: json["s_created_at"]) ],
         document: PersonDocument.fromJson(json)
       );
+
+
+  @override
+  String toString() {
+    return "Instance of PassengerPerson: [ ${passenger.seatId}]";
+  }
 }

@@ -68,6 +68,8 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
     });
   }
 
+
+
   void _onStateChange(CurrentTripState state) {
     if (state is InitializedCurrentTripState) {
       _readAndSortTripSeats();
@@ -235,4 +237,65 @@ class _TripSeatsScreenState extends State<TripSeatsScreen> {
       );
     }
   }
+
+  // Widget _suitesItems() {
+  //   final int margin = 70;
+  //   return Container(
+  //     width: MediaQuery.of(context).size.width - 60,
+  //     child: Wrap(
+  //       direction: Axis.horizontal,
+  //       alignment: WrapAlignment.spaceBetween,
+  //       children: seatsByCabinNumber.entries.map(
+  //               (cabin) {
+  //             final koef = cabin.value.length == 4 ? 0 : 5;
+  //             return Container(
+  //               width: (MediaQuery.of(context).size.width - 60 - koef) / 4 * cabin.value.length,
+  //               height: 80,
+  //               margin: EdgeInsets.only(bottom: 10),
+  //               padding: EdgeInsets.symmetric(vertical: 5),
+  //               alignment: Alignment.bottomLeft,
+  //               decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.all(Radius.circular(6)),
+  //                   color: Colors.blueGrey.shade200
+  //               ),
+  //               child: Column(
+  //                 children: [
+  //                   Container(
+  //                     padding: EdgeInsets.only(right: 10),
+  //                     alignment: Alignment.bottomRight,
+  //                     child: Text('Каюта ${cabin.key}',
+  //                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+  //                     ),
+  //                   ),
+  //                   Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                     children: cabin.value.map((suite) => GestureDetector(
+  //                       onTap: () async {
+  //                         await _openSeatInformation(seats![key]!.seat, passengers, state.availableSeats, state.tripPassengers);
+  //                       },
+  //                       child: Container(
+  //                         width: (MediaQuery.of(context).size.width - 60 - 40 - 2 * koef) / 4,
+  //                         height: 40,
+  //                         decoration: BoxDecoration(
+  //                             color: suite.status == 0 ? Colors.red.shade100 : Colors.green.shade100,
+  //                             borderRadius: BorderRadius.all(Radius.circular(6))
+  //                         ),
+  //                         child: Container(
+  //                             padding: EdgeInsets.only(right: 5),
+  //                             alignment: Alignment.bottomRight,
+  //                             child: Text(suite.placeNumber,
+  //                                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+  //                             )
+  //                         ),
+  //                       ),,
+  //                     )).toList(),
+  //                   )
+  //                 ],
+  //               ),
+  //             );
+  //           }
+  //       ).toList(),
+  //     ),
+  //   );
+  // }
 }

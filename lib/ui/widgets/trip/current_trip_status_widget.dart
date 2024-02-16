@@ -35,7 +35,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
         return Material(
           color: AppColors.transparent,
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
                 color: Color(0xF2576D8A),
                 borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -64,7 +64,7 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                         );
                       },
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.9,
+                        width: MediaQuery.of(context).size.width * 0.7,
                         height: 40,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
@@ -119,56 +119,33 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                             style: TextStyle(
                                 fontSize: 22, color: AppColors.textMain),
                           )
-                        ])),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Дата: ",
-                          style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          height: 66,
-                          child: Column(
-                            children: [
-                              Text(dateToTimeString(state.currentTrip.tripStartDate),
-                                style: TextStyle(fontSize: 30, color: AppColors.textMain),
-                                maxLines: 1,
-                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
-                              ),
-                              // SizedBox(height: 10),
-                              Text(dateToDateString(state.currentTrip.tripStartDate),
-                                style: TextStyle(fontSize: 18, color: AppColors.textMain),
-                                maxLines: 1,
-                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          height: 66,
-                          child: Column(
-                            children: [
-                              Text(dateToTimeString(state.currentTrip.tripEndDate),
-                                style: TextStyle(fontSize: 30, color: AppColors.textMain),
-                                maxLines: 1,
-                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
-                              ),
-                              // SizedBox(height: 10),
-                              Text(dateToDateString(state.currentTrip.tripEndDate),
-                                style: TextStyle(fontSize: 18, color: AppColors.textMain),
-                                maxLines: 1,
-                                textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
+                        ])
                     ),
-                    const SizedBox(height: 10),
-                    Divider(height: 1, color: AppColors.textFaded,),
-                    const SizedBox(height: 15),
+                    Text.rich(TextSpan(
+                        text: "Дата отпр-я:    ",
+                        style: TextStyle(
+                            fontSize: 16, color: AppColors.textSecondary),
+                        children: [
+                          TextSpan(
+                            text: dateToFullDateString(state.currentTrip.tripStartDate),
+                            style: TextStyle(
+                                fontSize: 18, color: AppColors.textMain),
+                          )
+                        ])
+                    ),
+                    Text.rich(TextSpan(
+                        text: "Дата приб-я:    ",
+                        style: TextStyle(
+                            fontSize: 16, color: AppColors.textSecondary),
+                        children: [
+                          TextSpan(
+                            text: dateToFullDateString(state.currentTrip.tripEndDate),
+                            style: TextStyle(
+                                fontSize: 18, color: AppColors.textMain),
+                          )
+                        ])
+                    ),
+                    Divider(height: 30, color: AppColors.textFaded),
                     Container(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -177,13 +154,13 @@ class _CurrentTripStatusWidgetState extends State<CurrentTripStatusWidget> {
                             width: MediaQuery.of(context).size.width * 0.43,
                             child: Text("На борту:".toUpperCase(),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 22, color: AppColors.textMain, height: 1)),
+                                style: TextStyle(fontSize: 18, color: AppColors.textMain, height: 1)),
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.43,
-                            child: Text("Свободно:".toUpperCase(),
+                            child: Text("Свободно мест:".toUpperCase(),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 22, color: AppColors.textMain, height: 1)),
+                                style: TextStyle(fontSize: 18, color: AppColors.textMain, height: 1)),
                           ),
                         ],
                       ),

@@ -109,6 +109,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
             key: lastnameFieldKey,
             validator: validateLastnameField,
             autovalidateMode: AutovalidateMode.disabled,
+            textCapitalization: TextCapitalization.sentences,
             keyboardType: TextInputType.text,
             cursorHeight: 25,
             onEditingComplete: (){
@@ -169,6 +170,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
             key: firstnameFieldKey,
             validator: validateFirstnameField,
             autovalidateMode: AutovalidateMode.disabled,
+            textCapitalization: TextCapitalization.sentences,
             keyboardType: TextInputType.text,
             cursorHeight: 25,
             onEditingComplete: (){
@@ -229,6 +231,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
             key: middlenameFieldKey,
             validator: validateMiddlenameField,
             autovalidateMode: AutovalidateMode.disabled,
+            textCapitalization: TextCapitalization.sentences,
             keyboardType: TextInputType.text,
             cursorHeight: 25,
             onEditingComplete: (){
@@ -359,7 +362,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
                   focusNode: monthBirthFieldFocus,
                   validator: validateMiddlenameField,
                   autovalidateMode: AutovalidateMode.disabled,
-                  keyboardType: TextInputType.text,
+                  keyboardType: TextInputType.number,
                   cursorHeight: 25,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(2)
@@ -427,7 +430,7 @@ class PersonGeneralInfoBlock extends StatelessWidget {
                   focusNode: yearBirthFieldFocus,
                   validator: validateMiddlenameField,
                   autovalidateMode: AutovalidateMode.disabled,
-                  keyboardType: TextInputType.text,
+                  keyboardType: TextInputType.number,
                   cursorHeight: 25,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(4)

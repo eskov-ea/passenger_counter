@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:pleyona_app/models/person_model.dart';
 import 'package:pleyona_app/theme.dart';
 
@@ -23,11 +24,11 @@ class PersonCardBrief extends StatelessWidget {
     return GestureDetector(
       onTap: () { onTap(person); },
       child: Container(
-        margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+        margin: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        height: 130,
+        height: 100,
         decoration: BoxDecoration(
-          color: Color(0xCCFFFFFF),
+          color: Color(0xFFF1F1F1),
           borderRadius: BorderRadius.all(Radius.circular(10))
         ),
         child: Row(
@@ -39,13 +40,13 @@ class PersonCardBrief extends StatelessWidget {
                 person.photo != ""
                     ? Image.memory(base64Decode(person.photo),
                   fit: BoxFit.cover,
-                  width: 80,
-                  height: 120,
+                  width: 60,
+                  height: 100,
                 )
                     : Image.asset("assets/images/no_avatar.png",
                   fit: BoxFit.cover,
-                  width: 80,
-                  height: 120,
+                  width: 60,
+                  height: 100,
                 ),
                 person.parentId != 0 ? Transform.translate(
                   offset: const Offset(20, 2),
@@ -58,28 +59,28 @@ class PersonCardBrief extends StatelessWidget {
             const SizedBox(width: 10,),
             Container(
               width: MediaQuery.of(context).size.width - 100 - 50,
-              height: 200,
+              height: 100,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 5),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                     child: Text(personName,
-                      style: AppStyles.submainTitleTextStyle,
+                      style: TextStyle(fontSize: 20, color: AppColors.backgroundMain2, height: 1),
                     ),
                   ),
+                  const SizedBox(height: 5),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
                     child: Text(person.birthdate,
-                      style: AppStyles.secondaryTextStyle,
+                      style: TextStyle(fontSize: 14, color: AppColors.backgroundMain2, height: 1),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                     child: Text(person.phone,
-                      style: AppStyles.secondaryTextStyle,
+                      style: TextStyle(fontSize: 14, color: AppColors.backgroundMain2, height: 1),
                     ),
                   ),
                 ],

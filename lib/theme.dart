@@ -116,7 +116,7 @@ abstract class AppColors {
 abstract class AppStyles {
 
   static const mainTitleTextStyle = TextStyle(fontSize: 28, color: Color(0xFF000000), fontWeight: FontWeight.w600);
-  static final submainTitleTextStyle = TextStyle(fontSize: 20, color: AppColors.backgroundMain2);
+  static final submainTitleTextStyle = TextStyle(fontSize: 20, color: AppColors.backgroundMain2, height: 1);
 
   static const secondaryTextStyle = TextStyle(fontSize: 16, color: Color(0xFF242424));
   static const secondaryHalfTextStyle = TextStyle(fontSize: 12, color: Color(0xFF242424));

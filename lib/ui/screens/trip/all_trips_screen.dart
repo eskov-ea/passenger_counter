@@ -93,7 +93,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
   }
 
   void openEditTripScreen(Trip trip) {
-    context.goNamed(
+    context.pushNamed(
       NavigationRoutes.editTripScreen.name,
       extra: TripEditInfoScreenArguments(trip: trip)
     );

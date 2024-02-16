@@ -12,6 +12,7 @@ import 'package:pleyona_app/models/seat_model.dart';
 import 'package:pleyona_app/services/database/db_provider.dart';
 import 'package:pleyona_app/theme.dart';
 import 'package:pleyona_app/ui/widgets/custom_appbar.dart';
+import 'package:pleyona_app/ui/widgets/theme_background.dart';
 
 
 class SeatWithStatus {
@@ -36,23 +37,32 @@ class _CurrentTripSeatsScreenState extends State<CurrentTripSeatsScreen> {
   Person? seatPassenger;
   Seat? changingSeatPlace;
   late final StreamSubscription _subscription;
+  final Map<String, List<SeatWithStatus>> seatsByCabinNumber = {};
+  
 
-  void _readAndSortTripSeats() {
-    final state = BlocProvider.of<CurrentTripBloc>(context).state;
-    if (state is InitializedCurrentTripState) {
-      seats = <int, SeatWithStatus>{};
-      for (final seat in state.availableSeats) {
-        seats!.addAll({seat.id: SeatWithStatus(seat, false)});
+  void _sortSeatsBySuite() async {
+    final state = BlocProvider.of<CurrentTripBloc>(context).state as InitializedCurrentTripState;
+
+    for (var seat in state.availableSeats) {
+      if (seatsByCabinNumber.containsKey(seat.cabinNumber)) {
+        seatsByCabinNumber[seat.cabinNumber]!.add(SeatWithStatus(seat, false));
+      } else {
+        seatsByCabinNumber.addAll({seat.cabinNumber: [SeatWithStatus(seat, false)]});
       }
-      for (final seat in state.occupiedSeats) {
-        seats!.addAll({seat.id: SeatWithStatus(seat, true)});
+    }
+    for (var seat in state.occupiedSeats) {
+      if (seatsByCabinNumber.containsKey(seat.cabinNumber)) {
+        seatsByCabinNumber[seat.cabinNumber]!.add(SeatWithStatus(seat, true));
+      } else {
+        seatsByCabinNumber.addAll({seat.cabinNumber: [SeatWithStatus(seat, true)]});
       }
     }
   }
 
   void _onStateChange(CurrentTripState state) {
     if (state is InitializedCurrentTripState) {
-      _readAndSortTripSeats();
+      seatsByCabinNumber.clear();
+      _sortSeatsBySuite();
     }
   }
 
@@ -254,9 +264,11 @@ class _CurrentTripSeatsScreenState extends State<CurrentTripSeatsScreen> {
         });
   }
 
+
+
   @override
   void initState() {
-    _readAndSortTripSeats();
+    _sortSeatsBySuite();
     _subscription = BlocProvider.of<CurrentTripBloc>(context).stream.listen(_onStateChange);
 
     super.initState();
@@ -273,9 +285,9 @@ class _CurrentTripSeatsScreenState extends State<CurrentTripSeatsScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xFFF0F0F0),
+        extendBodyBehindAppBar: true,
         appBar: const CustomAppBar(child: null, scrollController: null),
-        body: Material(
-          color: const Color(0xFFF9F9F9),
+        body: ThemeBackgroundWidget(
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -286,7 +298,8 @@ class _CurrentTripSeatsScreenState extends State<CurrentTripSeatsScreen> {
                   return Column(
                     children: [
                       _infoBloc(state),
-                      _seatsBloc(state)
+                      _suitesItems(state),
+                      const SizedBox(height: 20)
                     ],
                   );
                 } else {
@@ -360,48 +373,83 @@ class _CurrentTripSeatsScreenState extends State<CurrentTripSeatsScreen> {
       ),
     );
   }
+  
 
-  Widget _seatsBloc(InitializedCurrentTripState state) {
-    log("SEATS   $seats");
-    if (seats == null) {
-      return Container(
-        height: 400,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColors.backgroundMain2),
+  Widget _suitesItems(InitializedCurrentTripState state) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Color(0xE6FFFFFF),
+          borderRadius: BorderRadius.all(Radius.circular(6))
         ),
-      );
-    } else {
-      return Expanded(
-        child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, mainAxisExtent: 60, crossAxisSpacing: 10, mainAxisSpacing: 10),
-            itemCount: seats!.length,
-            itemBuilder: (context, index) {
-              int key = seats!.keys.elementAt(index);
-              return GestureDetector(
-                onTap: () async {
-                  List<PassengerPerson> passengers = [];
-                  for (final p in state.tripPassengers) {
-                    if (p.passenger.seatId == seats![key]!.seat.id) {
-                      passengers.add(p);
-                    }
-                  }
-                  await _openSeatInformation(seats![key]!.seat, passengers, state.availableSeats, state.tripPassengers);
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: seats![key]!.status ? const Color(0xcce80606) : const Color(0xcc33d33a),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    border: Border.all(width: 1, color: Color(0xC0000000))
-                  ),
-                  child: Text("${seats![key]!.seat.cabinNumber}${seats![key]!.seat.placeNumber}",
-                    style: AppStyles.submainTitleTextStyle,
-                  ),
-                ),
-              );
-            }),
-      );
-    }
+        alignment: Alignment.topCenter,
+        width: MediaQuery.of(context).size.width - 30,
+        child: SingleChildScrollView(
+          child: Wrap(
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.spaceBetween,
+            children: seatsByCabinNumber.entries.map(
+                (cabin) {
+                  final koef = cabin.value.length == 4 ? 0 : 5;
+                  return Container(
+                    width: (MediaQuery.of(context).size.width - 60 - koef) / 4 * cabin.value.length,
+                    height: 80,
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    alignment: Alignment.bottomLeft,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        color: Colors.blueGrey.shade200
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(right: 10),
+                          alignment: Alignment.bottomRight,
+                          child: Text('Каюта ${cabin.key}',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: cabin.value.map((suite) => GestureDetector(
+                            onTap: () async {
+                              List<PassengerPerson> passengers = [];
+                              for (final p in state.tripPassengers) {
+                                if (p.passenger.seatId == suite.seat.id) {
+                                  passengers.add(p);
+                                }
+                              }
+                              await _openSeatInformation(suite.seat, passengers, state.availableSeats, state.tripPassengers);
+                            },
+                            child: Container(
+                              width: (MediaQuery.of(context).size.width - 60 - 40 - 2 * koef) / 4,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: suite.status ? Colors.red.shade100 : Colors.green.shade100,
+                                  borderRadius: BorderRadius.all(Radius.circular(6))
+                              ),
+                              child: Container(
+                                  padding: EdgeInsets.only(right: 5),
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(suite.seat.placeNumber,
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)
+                                  )
+                              ),
+                            ),
+                          )).toList(),
+                        )
+                      ],
+                    ),
+                  );
+                }
+            ).toList(),
+          ),
+        ),
+      ),
+    );
   }
+
+
 }

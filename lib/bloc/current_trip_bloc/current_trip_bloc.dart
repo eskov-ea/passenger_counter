@@ -64,6 +64,9 @@ class CurrentTripBloc extends Bloc<CurrentTripEvent, CurrentTripState> {
     final List<PassengerPerson> passengerPerson = await db.getTripPassengersInfo(tripId: current.id);
     final List<Seat> availableSeats = await db.getAvailableSeats(tripId: current.id);
     final List<Seat> occupiedSeats = await db.getOccupiedTripSeats(tripId: current.id);
+
+    log("Available seats  ${availableSeats}");
+    log("Occupaid seats  ${occupiedSeats}");
     final newState = InitializedCurrentTripState(currentTrip: current,
         tripPassengers: passengerPerson, availableSeats: availableSeats, occupiedSeats: occupiedSeats);
     emit(newState);

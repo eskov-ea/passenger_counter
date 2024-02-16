@@ -22,7 +22,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
+  bool isTripOptionsMenuOpen = false;
+  void toggleTripOptionsMenu() {
+    setState(() {
+      isTripOptionsMenuOpen = !isTripOptionsMenuOpen;
+    });
+  }
   
   @override
   void initState() {
@@ -57,13 +62,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 50),
                   Container(
                     padding: const EdgeInsets.only(left: 15, bottom: 10, right: 15),
-                    child: const TitleDecorationWidget(
-                      child: Text("Ближайший рейс",
-                        style: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w600),
+                    child: GestureDetector(
+                      onTap: toggleTripOptionsMenu,
+                      child: TitleDecorationWidget(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text("Рейсы",
+                                style: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.w600),
+                              )
+                            ),
+                            RotatedBox(
+                              quarterTurns: isTripOptionsMenuOpen ? 2 : 0,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.shade200
+                                ),
+                                child: Icon(Icons.arrow_drop_down, color: Colors.black54, size: 30,),
+                              ),
+                            )
+                          ],
+                        )
+
+                        ,
                       ),
                     ),
                   ),
-                  TripOptionsSliver(),
+                  TripOptionsSliver(menuToggle: toggleTripOptionsMenu, isMenuOpen: isTripOptionsMenuOpen),
                   const SizedBox(height: 50),
                   Container(
                     padding: EdgeInsets.only(left: 15, bottom: 10, right: 15),

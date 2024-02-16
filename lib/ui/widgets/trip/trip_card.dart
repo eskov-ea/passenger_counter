@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pleyona_app/global/helpers.dart';
 import 'package:pleyona_app/models/trip_model.dart';
+import 'package:pleyona_app/navigation/navigation.dart';
 import 'package:pleyona_app/ui/widgets/slidable_wrapper.dart';
 import '../../../theme.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -36,14 +38,15 @@ class TripCard extends StatelessWidget {
               child: const Text('Удалить'),
               onPressed: () async {
                 await _deleteTrip();
-                Navigator.of(context).pop();
+                context.goNamed(
+                    NavigationRoutes.allTripsScreen.name
+                );
               },
             ),
             TextButton(
               child: const Text('Отменить'),
               onPressed: () {
-                Navigator.of(context).pop();
-
+                context.pop();
               },
             )
           ],

@@ -102,7 +102,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
       final res = await _db.addTrip(trip: newTrip);
       //Todo Implement navigation
       await PopupManager.showInfoPopup(context, dismissible: false, type: PopupType.success, message: "Рейс успешно добавлен",
-          route: NavigationRoutes.allTripsScreen);
+          route: NavigationRoutes.homeScreen);
     }
   }
 
@@ -344,6 +344,7 @@ class _TripAddNewScreenState extends State<TripAddNewScreen> {
             autovalidateMode: AutovalidateMode.disabled,
             keyboardType: TextInputType.text,
             cursorHeight: 25,
+            textCapitalization: TextCapitalization.words,
             onEditingComplete: (){
               validateTripName();
             },

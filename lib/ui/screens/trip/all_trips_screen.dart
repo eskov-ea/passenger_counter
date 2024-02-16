@@ -203,7 +203,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
                   isSearching: isSearching,
                   callback: openEditTripScreen,
                 ),
-                SizedBox(height: 40,),
+                SizedBox(height: 40),
               ],
             ),
           ),

@@ -31,7 +31,11 @@ class TripsResultList extends StatelessWidget {
           child: Text("Не запланировано ни одного рейса"),
         );
       } else {
-        return Container(
+        return Column(
+          children: trips!.map((trip) => TripCard(trip: trip, index: 0, callback: callback)).toList()
+        );
+
+          Container(
           height: 105.0 * trips!.length,
           alignment: Alignment.topCenter,
           child: ListView.builder(

@@ -80,6 +80,7 @@ class TripCard extends StatelessWidget {
       child: GestureDetector(
         onTap: callFunction,
         child: Container(
+          height: 100,
           margin: EdgeInsets.only(bottom: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(6)),

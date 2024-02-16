@@ -166,6 +166,7 @@ class _AllTripsScreenState extends State<AllTripsScreen> {
                   ],
                 ),
                 isCalendarOpen ? Container(
+                  height: 350,
                   margin: EdgeInsets.only(top: 10),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(6)),
